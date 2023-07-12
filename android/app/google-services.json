@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "180903521622",
+    "project_id": "rnofficer-db77f",
+    "storage_bucket": "rnofficer-db77f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:180903521622:android:4c98d7fb600fb5b8c0baf7",
+        "android_client_info": {
+          "package_name": "com.officer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "180903521622-kokbnkquep6ovlnfjiq699ip769om90j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.officer",
+            "certificate_hash": "c1f6abdcc99098d50d1011e9ec53f0effb80523a"
+          }
+        },
+        {
+          "client_id": "180903521622-bnh65fcm9eoba0ku79r512t8em03b90j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxjoUoVaQZouC0R9Y2NN8QlW6hALGJePc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "180903521622-bnh65fcm9eoba0ku79r512t8em03b90j.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "180903521622-ipjplv4l5uc9cel1fk7v4ber77ar4ua1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.officer.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
