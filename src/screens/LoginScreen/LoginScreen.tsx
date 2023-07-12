@@ -15,7 +15,9 @@ import {
   GOOGLE_WEB_CLIENT,
   handleGoogleLogin,
 } from '../../services/GoogleLoginService';
-import { StackActions, useNavigation } from '@react-navigation/native';
+import { setInAsync } from '../../utils';
+import { ASYNC_KEY } from '../../constant';
+import { useNavigation } from '@react-navigation/native';
 
 GoogleSignin.configure({
   webClientId: GOOGLE_WEB_CLIENT,
@@ -25,8 +27,10 @@ const LoginScreen = () => {
   const navigation = useNavigation();
   const onPressGoogleLogin = () => {
     handleGoogleLogin()
-      .then(() => {
-        navigation.dispatch(StackActions.replace('AppStackScreens'));
+      .then(async res => {
+        await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(res.user));
+        navigation.navigate('RegistrationScreen', { userData: res.user });
+        // navigation.dispatch(StackActions.replace('AppStackScreens'));
       })
       .catch(err => {
         Alert.alert(err.message);

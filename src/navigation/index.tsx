@@ -11,6 +11,11 @@ export type AppStackParamList = {
   OfficerListScreen: { cityObj: { name: string } };
 };
 
+export type AuthStackParamList = {
+  LoginScreen: undefined;
+  RegistrationScreen: { userData: any };
+};
+
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator<AppStackParamList>();
 
@@ -20,8 +25,8 @@ const AuthStack = () => {
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="RegistrationScreen" component={RegistrationScreen} />
+      <Stack.Screen name="LoginScreen" component={LoginScreen} />
     </Stack.Navigator>
   );
 };
