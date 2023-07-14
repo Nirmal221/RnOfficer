@@ -5,6 +5,8 @@ import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import LoginScreen from '../screens/LoginScreen/LoginScreen';
 import OfficerListScreen from '../screens/OfficerListScreen/OfficerListScreen';
 import RegistrationScreen from '../screens/RegistrationScreen/RegistrationScreen';
+import { type } from 'os';
+import SplashScreen from '../screens/SplashScreen/SplashScreen';
 
 export type AppStackParamList = {
   HomeScreen: undefined;
@@ -13,10 +15,17 @@ export type AppStackParamList = {
 
 export type AuthStackParamList = {
   LoginScreen: undefined;
-  RegistrationScreen: { userData: any };
+  RegistrationScreen: undefined;
+};
+
+export type RootStackParamList = {
+  AuthStack: undefined;
+  SplashScreen: undefined;
+  AppStackScreens: undefined;
 };
 
 const Stack = createStackNavigator();
+const RootStack = createStackNavigator<RootStackParamList>();
 const AppStack = createStackNavigator<AppStackParamList>();
 
 const AuthStack = () => {
@@ -46,13 +55,15 @@ const AppStackScreens = () => {
 const Root = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator
+      <RootStack.Navigator
         screenOptions={{
           headerShown: false,
         }}>
-        <Stack.Screen name="AuthStack" component={AuthStack} />
-        <Stack.Screen name="AppStackScreens" component={AppStackScreens} />
-      </Stack.Navigator>
+        <RootStack.Screen name="SplashScreen" component={SplashScreen} />
+
+        <RootStack.Screen name="AuthStack" component={AuthStack} />
+        <RootStack.Screen name="AppStackScreens" component={AppStackScreens} />
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 };

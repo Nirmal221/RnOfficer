@@ -6,16 +6,22 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
+import {
+  ImageLibraryOptions,
+  launchImageLibrary,
+} from 'react-native-image-picker';
+import moment from 'moment';
+import { Camera } from '../../assets';
 import colors from '../../themes/Colors';
 import { APP_CONSTANT } from '../../constant';
-import { ActionButton, RenderPanel, TextInputField } from '../../components';
 import { AuthStackParamList } from '../../navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
+import { ActionButton, RenderPanel, TextInputField } from '../../components';
 
 type RegistrationScreenProps = NativeStackScreenProps<
   AuthStackParamList,
@@ -25,26 +31,34 @@ type RegistrationScreenProps = NativeStackScreenProps<
 const RegistrationScreen = (props: RegistrationScreenProps) => {
   const { route } = props;
   const data = {
-    displayName: 'Nirmal Sorathiya',
-    email: 'nirmalsorathiya112233@gmail.com',
+    multiFactor: {
+      enrolledFactors: [],
+    },
+    metadata: {
+      lastSignInTime: 1689352746741,
+      creationTime: 1689352746740,
+    },
+    photoURL:
+      'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
+    phoneNumber: null,
+    tenantId: null,
+    displayName: 'Gunjan Rupapara',
     emailVerified: true,
     isAnonymous: false,
-    metadata: {
-      creationTime: 1688663450902,
-      lastSignInTime: 1689178117100,
-    },
-    multiFactor: {
-      enrolledFactors: [Array],
-    },
-    phoneNumber: null,
-    photoURL:
-      'https://lh3.googleusercontent.com/a/AAcHTtdwwx25aEHs-1k-9_aukZ3xov_7ZJchEM3aXlL5CwbC45o=s96-c',
-    providerData: [[Object]],
+    uid: 'xdRahuUqtFQNPfL5gJjfLqIVkHq2',
+    email: 'gunjan87800@gmail.com',
+    providerData: [
+      {
+        email: 'gunjan87800@gmail.com',
+        providerId: 'google.com',
+        photoURL:
+          'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
+        phoneNumber: null,
+        displayName: 'Gunjan Rupapara',
+        uid: '108759649820766826984',
+      },
+    ],
     providerId: 'firebase',
-    refreshToken:
-      'APZUo0REBWyEcameQgDSDC_iFvl1pHBk_pEoldB3Bkr0rroZIC2mudB7NfhAcpPTfyM8tn3gqY45ARQTvOLVI3sFQq6TcUQ3eiSDXGfDdeGWtGB9jYizxtMKAs0IFtz24g6ZyoNeKZEY103jN8pKt0rPGSWbObaDzG6Sa7fd927tyBmFBuBCBVV1pfgtVcloFlMOq3IfXV-P5wuXVXd8htTR4BCLmKJLXWZga9vIy4-ohZLpB1qBhCJM4c2J2WdRLZT45Qwl3jQUxV8HmvGqeLx3h7fbibsZxCEq0Kyu5ttFcL79lVqoUkKdmjHFTh0bugEwtGi0ck51-SHgOV0RhOjMvYMn51G0ga5--jw-B7l6DOs4Ifo1bdipSTkLYngXWDDWSot720-diqACObwOiMEpLKq-yQdOug7CB3fpK6w8S3KwP1XVB1m28EKHZUJ8_gat_a2e85bA',
-    tenantId: null,
-    uid: 'khhMyX4F8VYmij9Zub10F6MzRi03',
   };
   // const data = route.params.userData;
   const [profileImg, setProfileImg] = useState('');
@@ -53,7 +67,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   const [sureName, setSureName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [dob, setdob] = useState(new Date());
+  const [dob, setDob] = useState(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   useEffect(() => {
@@ -75,10 +89,26 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
     setDatePickerVisibility(false);
   };
 
-  const handleConfirm = date => {
+  const handleConfirm = (date: Date) => {
     console.warn('A date has been picked: ', date);
-    setdob(date);
+    setDob(date);
     hideDatePicker();
+  };
+
+  const imageOptions: ImageLibraryOptions = {
+    mediaType: 'photo',
+    quality: 0.2,
+    presentationStyle: 'currentContext',
+    includeBase64: true,
+  };
+
+  const onPressCameraIcon = () => {
+    launchImageLibrary(imageOptions, async function (image) {
+      if (!image || image.didCancel) {
+      } else if (image.assets) {
+        setProfileImg(`${image.assets[0].uri}`);
+      }
+    });
   };
 
   return (
@@ -89,13 +119,20 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}>
-        <ScrollView style={styles.scrollContainer}>
+        <ScrollView
+          style={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}>
           <View style={styles.imgContainer}>
             <Image
               source={{ uri: profileImg }}
               style={styles.profileImg}
-              resizeMode="contain"
+              resizeMode="cover"
             />
+            <TouchableOpacity
+              style={styles.cameraIcon}
+              onPress={() => onPressCameraIcon()}>
+              <Camera color={colors.secondary} height={25} width={25} />
+            </TouchableOpacity>
           </View>
           <View>
             <TextInputField
@@ -117,7 +154,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               onChangeText={text => setSureName(text)}
             />
             <RenderPanel
-              panelTitle="panelTitle"
+              panelTitle="Date of Birth"
               value={moment(dob).format('DD/MM/YYYY')}
               valueTextStyle={styles.dob}
               onPress={() => showDatePicker()}
@@ -139,8 +176,11 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
             />
           </View>
         </ScrollView>
-        <ActionButton title="Test" mainContainerStyle={{}} />
       </KeyboardAvoidingView>
+      <ActionButton
+        title={APP_CONSTANT.CREATE_ACCOUNT}
+        mainContainerStyle={{ marginHorizontal: 20 }}
+      />
       {isDatePickerVisible && (
         <DateTimePickerModal
           isVisible={isDatePickerVisible}
@@ -187,9 +227,8 @@ const styles = StyleSheet.create({
   imgContainer: {
     borderRadius: 50,
     alignSelf: 'center',
-    overflow: 'hidden',
   },
-  profileImg: { height: 100, width: 100 },
+  profileImg: { height: 100, width: 100, borderRadius: 10 },
   dob: {
     borderRadius: 10,
     borderWidth: 0.5,
@@ -197,6 +236,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     fontSize: 15,
+  },
+  cameraIcon: {
+    position: 'absolute',
+    height: 25,
+    width: 25,
+    bottom: 2.5,
+    right: 5,
   },
 });
 

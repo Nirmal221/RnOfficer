@@ -1,10 +1,8 @@
 import React from 'react';
-import AppImages from '../../assets';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import {
   Alert,
-  FlatList,
   Image,
   StyleSheet,
   Text,
@@ -17,7 +15,8 @@ import {
 } from '../../services/GoogleLoginService';
 import { setInAsync } from '../../utils';
 import { ASYNC_KEY } from '../../constant';
-import { useNavigation } from '@react-navigation/native';
+import { StackActions, useNavigation } from '@react-navigation/native';
+import { AppImages } from '../../assets';
 
 GoogleSignin.configure({
   webClientId: GOOGLE_WEB_CLIENT,

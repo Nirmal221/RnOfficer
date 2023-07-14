@@ -10,6 +10,7 @@ const APP_CONSTANT = {
   MOBILE_NO: 'Mobile No.',
   ENTER_MOBILE_NO: '+91 987654321',
   DOB: 'Date of Birth ',
+  CREATE_ACCOUNT: 'Create Account',
 };
 
 const ASYNC_KEY = {

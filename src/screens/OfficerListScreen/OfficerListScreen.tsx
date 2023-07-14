@@ -8,11 +8,11 @@ import {
   Text,
   Platform,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { RenderOfficerDetails } from '../../components';
 import { width } from '../../themes';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AppStackParamList } from '../../navigation';
+import { RenderOfficerDetails } from '../../components';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 type OfficerListScreenProps = NativeStackScreenProps<
   AppStackParamList,
