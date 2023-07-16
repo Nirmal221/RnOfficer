@@ -29,12 +29,14 @@ const RenderPanel = ({
   return (
     <View>
       {panelTitle && <Text style={styles.panelTitleText}>{panelTitle}</Text>}
-      <TouchableOpacity
-        style={[styles.container, containerStyle]}
-        onPress={onPress}>
-        {title && <Text style={styles.titleText}>{title}</Text>}
-        <Text style={[styles.valueText, valueTextStyle]}>{value}</Text>
-      </TouchableOpacity>
+      {value && (
+        <TouchableOpacity
+          style={[styles.container, containerStyle]}
+          onPress={onPress}>
+          {title && <Text style={styles.titleText}>{title}</Text>}
+          <Text style={[styles.valueText, valueTextStyle]}>{value}</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

@@ -4,7 +4,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -16,12 +15,24 @@ import {
 import moment from 'moment';
 import { Camera } from '../../assets';
 import colors from '../../themes/Colors';
-import { APP_CONSTANT } from '../../constant';
+import {
+  APP_CONSTANT,
+  DESIGNATION,
+  GENDER,
+  MODAL_TYPE,
+  STATUS,
+} from '../../constant';
 import { AuthStackParamList } from '../../navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ActionButton, RenderPanel, TextInputField } from '../../components';
+import {
+  ActionButton,
+  RenderPanel,
+  SelectionModal,
+  TextInputField,
+} from '../../components';
+import styles from './RegistrationScreen.style';
 
 type RegistrationScreenProps = NativeStackScreenProps<
   AuthStackParamList,
@@ -29,7 +40,7 @@ type RegistrationScreenProps = NativeStackScreenProps<
 >;
 
 const RegistrationScreen = (props: RegistrationScreenProps) => {
-  const { route } = props;
+  const { navigation, route } = props;
   const data = {
     multiFactor: {
       enrolledFactors: [],
@@ -68,7 +79,18 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [dob, setDob] = useState(new Date());
+  const [gender, setGender] = useState('');
+  const [status, setStatus] = useState('');
+
+  const [officeAddress, setOfficeAddress] = useState('');
+  const [selectedDesignation, setSelectedDesignation] = useState('');
+  const [officeDistrict, setOfficeDistrict] = useState('');
+  const [nativeDistrict, setNativeDistrict] = useState('');
+  const [remarks, setRemarks] = useState('');
+
+  const [showSelectionModal, setShowSelectionModal] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [selectedModalType, setSelectedModalType] = useState('');
 
   useEffect(() => {
     getUserData();
@@ -90,7 +112,6 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   };
 
   const handleConfirm = (date: Date) => {
-    console.warn('A date has been picked: ', date);
     setDob(date);
     hideDatePicker();
   };
@@ -109,6 +130,49 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
         setProfileImg(`${image.assets[0].uri}`);
       }
     });
+  };
+
+  const genderSelection = (value: string) => {
+    if (value === gender) {
+      setGender('');
+    } else {
+      setGender(value);
+    }
+  };
+
+  const statusSelection = (value: string) => {
+    if (value === gender) {
+      setStatus('');
+    } else {
+      setStatus(value);
+    }
+  };
+
+  const handleSelection = (selected: any) => {
+    if (selectedModalType === MODAL_TYPE.DESIGNATION) {
+      setSelectedDesignation(selected);
+    } else if (selectedModalType === MODAL_TYPE.OFFICE_DISTRICT) {
+      setOfficeDistrict(selected);
+    } else if (selectedModalType === MODAL_TYPE.NATIVE_DISTRICT) {
+      setNativeDistrict(selected);
+    }
+  };
+
+  const onPressCreateAccount = () => {
+    const params = {
+      name: name,
+      middalName: middalName,
+      sureName: sureName,
+      gender: gender,
+      dateOfBirth: dob,
+      email: email,
+      mobileNo: phoneNumber,
+      officeAddress: officeAddress,
+      designation: selectedDesignation,
+      officeDistrict: officeDistrict,
+      nativeDistrict: nativeDistrict,
+    };
+    navigation.navigate('AppStackScreens');
   };
 
   return (
@@ -134,7 +198,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               <Camera color={colors.secondary} height={25} width={25} />
             </TouchableOpacity>
           </View>
-          <View>
+          <View style={{ paddingBottom: 50 }}>
             <TextInputField
               value={name}
               title={APP_CONSTANT.NAME}
@@ -153,6 +217,75 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               placeholder={APP_CONSTANT.ENTER_SURENAME}
               onChangeText={text => setSureName(text)}
             />
+
+            <RenderPanel
+              panelTitle="Gender"
+              valueTextStyle={styles.dob}
+              onPress={() => showDatePicker()}
+            />
+            <View style={styles.selectionContainer}>
+              <TouchableOpacity
+                style={styles.genderContainer}
+                onPress={() => {
+                  genderSelection(GENDER.MALE);
+                }}>
+                <View
+                  style={[
+                    styles.radioBtn,
+                    gender === GENDER.MALE && styles.selectedRadioBtn,
+                  ]}
+                />
+                <Text>{APP_CONSTANT.MALE}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.genderContainer}
+                onPress={() => {
+                  genderSelection(GENDER.FEMALE);
+                }}>
+                <View
+                  style={[
+                    styles.radioBtn,
+                    gender === GENDER.FEMALE && styles.selectedRadioBtn,
+                  ]}
+                />
+                <Text>{APP_CONSTANT.FEMALE}</Text>
+              </TouchableOpacity>
+            </View>
+
+            <RenderPanel
+              panelTitle="Status*"
+              valueTextStyle={styles.dob}
+              onPress={() => showDatePicker()}
+            />
+            <View style={styles.selectionContainer}>
+              <TouchableOpacity
+                style={styles.genderContainer}
+                onPress={() => {
+                  statusSelection(STATUS.CURRENT);
+                }}>
+                <View
+                  style={[
+                    styles.radioBtn,
+                    status === STATUS.CURRENT && styles.selectedRadioBtn,
+                  ]}
+                />
+                <Text>{APP_CONSTANT.CURRENT}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.genderContainer}
+                onPress={() => {
+                  statusSelection(STATUS.RETIRED);
+                }}>
+                <View
+                  style={[
+                    styles.radioBtn,
+                    status === STATUS.RETIRED && styles.selectedRadioBtn,
+                  ]}
+                />
+                <Text>{APP_CONSTANT.RETIRED}</Text>
+              </TouchableOpacity>
+            </View>
+
             <RenderPanel
               panelTitle="Date of Birth"
               value={moment(dob).format('DD/MM/YYYY')}
@@ -174,12 +307,68 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               placeholder={APP_CONSTANT.ENTER_MOBILE_NO}
               onChangeText={text => setPhoneNumber(text)}
             />
+            <TextInputField
+              multiline
+              value={officeAddress}
+              title={APP_CONSTANT.OFFICE_ADDRESS}
+              placeholder={APP_CONSTANT.ENTER_OFFICE_ADDRESS}
+              onChangeText={text => setOfficeAddress(text)}
+              textInputStyle={styles.ofcAddressTextInput}
+            />
+            <RenderPanel
+              panelTitle="Designation"
+              value={
+                selectedDesignation.title
+                  ? selectedDesignation.title
+                  : 'Please Select Your Designation*'
+              }
+              valueTextStyle={styles.dob}
+              onPress={() => {
+                setShowSelectionModal(true);
+                setSelectedModalType(MODAL_TYPE.DESIGNATION);
+              }}
+            />
+            <RenderPanel
+              panelTitle="Office District"
+              value={
+                officeDistrict.title
+                  ? officeDistrict.title
+                  : 'Please Select Office District *'
+              }
+              valueTextStyle={styles.dob}
+              onPress={() => {
+                setShowSelectionModal(true);
+                setSelectedModalType(MODAL_TYPE.OFFICE_DISTRICT);
+              }}
+            />
+            <RenderPanel
+              panelTitle="Native District*"
+              value={
+                nativeDistrict.title
+                  ? nativeDistrict.title
+                  : 'Please Select Native District*'
+              }
+              valueTextStyle={styles.dob}
+              onPress={() => {
+                setShowSelectionModal(true);
+                setSelectedModalType(MODAL_TYPE.NATIVE_DISTRICT);
+              }}
+            />
+            <TextInputField
+              multiline
+              value={remarks}
+              title={APP_CONSTANT.REMARKS}
+              placeholder={APP_CONSTANT.PLEASE_ENTER_REMARKS}
+              onChangeText={text => setRemarks(text)}
+              textInputStyle={styles.ofcAddressTextInput}
+            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
       <ActionButton
         title={APP_CONSTANT.CREATE_ACCOUNT}
-        mainContainerStyle={{ marginHorizontal: 20 }}
+        onPress={() => onPressCreateAccount()}
+        mainContainerStyle={styles.createBtnContainer}
       />
       {isDatePickerVisible && (
         <DateTimePickerModal
@@ -189,61 +378,19 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
           onCancel={hideDatePicker}
         />
       )}
+      {showSelectionModal && (
+        <SelectionModal
+          visible={showSelectionModal}
+          data={DESIGNATION}
+          onClose={() => setShowSelectionModal(false)}
+          onSelect={selected => {
+            setShowSelectionModal(false);
+            handleSelection(selected);
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    backgroundColor: colors.secondary,
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: 15,
-    backgroundColor: colors.secondary,
-  },
-  scrollContainer: {
-    flex: 1,
-    backgroundColor: colors.secondary,
-  },
-  headerContainer: {
-    backgroundColor: colors.secondary,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.09,
-    shadowRadius: 1,
-    elevation: 5,
-    marginBottom: 10,
-  },
-  headerTitle: {
-    color: 'black',
-    fontSize: 20,
-    fontWeight: '600',
-    paddingTop: Platform.OS === 'ios' ? 0 : 10,
-    paddingBottom: 10,
-    textAlign: 'center',
-  },
-  imgContainer: {
-    borderRadius: 50,
-    alignSelf: 'center',
-  },
-  profileImg: { height: 100, width: 100, borderRadius: 10 },
-  dob: {
-    borderRadius: 10,
-    borderWidth: 0.5,
-    borderColor: colors.black,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    fontSize: 15,
-  },
-  cameraIcon: {
-    position: 'absolute',
-    height: 25,
-    width: 25,
-    bottom: 2.5,
-    right: 5,
-  },
-});
 
 export default RegistrationScreen;

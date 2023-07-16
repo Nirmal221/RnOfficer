@@ -4,12 +4,19 @@ import colors from '../themes/Colors';
 
 type ActionButtonProps = {
   title: string;
+  onPress: () => void;
   mainContainerStyle: ViewStyle;
 };
 
-const ActionButton = ({ title, mainContainerStyle }: ActionButtonProps) => {
+const ActionButton = ({
+  title,
+  onPress,
+  mainContainerStyle,
+}: ActionButtonProps) => {
   return (
-    <TouchableOpacity style={[styles.mainContainer, mainContainerStyle]}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.mainContainer, mainContainerStyle]}>
       <Text style={styles.titleText}>{title}</Text>
     </TouchableOpacity>
   );

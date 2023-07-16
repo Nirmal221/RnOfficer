@@ -4,6 +4,8 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TextInputProps,
+  TextStyle,
   View,
 } from 'react-native';
 import colors from '../themes/Colors';
@@ -14,7 +16,9 @@ type TextInputFieldProps = {
   placeholder: string;
   maxLength?: number;
   editable?: boolean;
+  multiline?: boolean;
   keyboardType?: KeyboardTypeOptions;
+  textInputStyle?: TextStyle;
   onChangeText: (text: string) => void;
 };
 
@@ -23,8 +27,10 @@ const TextInputField = ({
   title,
   maxLength,
   editable = true,
+  multiline = false,
   placeholder,
   keyboardType = 'default',
+  textInputStyle,
   onChangeText,
 }: TextInputFieldProps) => {
   return (
@@ -33,11 +39,12 @@ const TextInputField = ({
       <TextInput
         value={value}
         editable={editable}
+        multiline={multiline}
         placeholder={placeholder}
         maxLength={maxLength}
         keyboardType={keyboardType}
         onChangeText={text => onChangeText(text)}
-        style={styles.textInput}
+        style={[styles.textInput, textInputStyle]}
       />
     </View>
   );

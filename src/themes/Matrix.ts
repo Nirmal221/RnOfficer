@@ -1,5 +1,7 @@
-import { Dimensions } from 'react-native';
+import { Dimensions, NativeModules } from 'react-native';
+const { StatusBarManager } = NativeModules;
 
 const { width, height } = Dimensions.get('screen');
+const statusBarHeight = StatusBarManager.HEIGHT;
 
-export { width, height };
+export { width, height, statusBarHeight };

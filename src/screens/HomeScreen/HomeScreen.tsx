@@ -8,11 +8,13 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { width } from '../../themes';
-import { useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '../../navigation';
+import { useNavigation } from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { DESTRICT } from '../../constant';
 
 type HomeScreenProps = NativeStackScreenProps<AppStackParamList, 'HomeScreen'>;
 
@@ -30,7 +32,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
           onChangeText={(text: string) => setSearch(text)}
         />
         <FlatList
-          data={['Surat', 'Ahemedabad', 'Vadodara', 'Jamnagar']}
+          data={DESTRICT}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
@@ -46,16 +48,21 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
             />
           }
           numColumns={2}
+          columnWrapperStyle={{ justifyContent: 'space-between' }}
           renderItem={({ item, index }) => (
-            <TouchableOpacity
-              style={styles.cityContainer}
-              onPress={() => {
-                navigation.navigate('OfficerListScreen', {
-                  cityObj: { name: item },
-                });
-              }}>
-              <Text style={styles.cityLabel}>{item}</Text>
-            </TouchableOpacity>
+            <LinearGradient
+              colors={['#FFD3A5', '#FD6585']}
+              style={styles.linearGradient}>
+              <TouchableOpacity
+                style={styles.cityContainer}
+                onPress={() => {
+                  navigation.navigate('OfficerListScreen', {
+                    cityObj: { name: item },
+                  });
+                }}>
+                <Text style={styles.cityLabel}>{item}</Text>
+              </TouchableOpacity>
+            </LinearGradient>
             // <RenderOfficerDetails item={item} index={index} />
           )}
         />
@@ -84,18 +91,17 @@ const styles = StyleSheet.create({
     marginBottom: width * 0.1,
   },
   cityContainer: {
-    width: width * 0.44,
-    height: width * 0.1,
-    marginRight: 5,
-    marginBottom: 5,
-    padding: 5,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: 'grey',
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   cityLabel: { fontSize: 15, fontWeight: '600' },
+  linearGradient: {
+    width: width * 0.43,
+    height: width * 0.1,
+    marginBottom: 10,
+    borderRadius: 10,
+  },
 });
 
 export default HomeScreen;
