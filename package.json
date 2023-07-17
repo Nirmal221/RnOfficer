@@ -10,7 +10,8 @@
     "test": "jest",
     "postinstall": "cd ios && pod install && cd ..",
     "prep": "npm i -f && cd ios && pod install && cd ..",
-    "release-abb": "npx react-native build-android --mode=release"
+    "release-abb": "npx react-native build-android --mode=release",
+    "android-apk": "cd android && ./gradlew clean && ./gradlew app:assembleRelease"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.19.0",

@@ -22,7 +22,15 @@
           }
         },
         {
-          "client_id": "180903521622-bnh65fcm9eoba0ku79r512t8em03b90j.apps.googleusercontent.com",
+          "client_id": "180903521622-t586s0gebc5e46osu3qk9t0psr162rgu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.officer",
+            "certificate_hash": "443e73ccd5476fe964c3e878a506b8e127a99592"
+          }
+        },
+        {
+          "client_id": "180903521622-lspbcvtusa9urvaqoe3kd0jdlom3um75.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

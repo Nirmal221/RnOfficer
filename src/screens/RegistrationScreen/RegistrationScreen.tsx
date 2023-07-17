@@ -12,9 +12,6 @@ import {
   ImageLibraryOptions,
   launchImageLibrary,
 } from 'react-native-image-picker';
-import moment from 'moment';
-import { Camera } from '../../assets';
-import colors from '../../themes/Colors';
 import {
   APP_CONSTANT,
   DESIGNATION,
@@ -22,17 +19,20 @@ import {
   MODAL_TYPE,
   STATUS,
 } from '../../constant';
-import { AuthStackParamList } from '../../navigation';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   ActionButton,
   RenderPanel,
   SelectionModal,
   TextInputField,
 } from '../../components';
+import moment from 'moment';
+import { AppIcons } from '../../assets';
+import colors from '../../themes/Colors';
 import styles from './RegistrationScreen.style';
+import { AuthStackParamList } from '../../navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 type RegistrationScreenProps = NativeStackScreenProps<
   AuthStackParamList,
@@ -41,37 +41,38 @@ type RegistrationScreenProps = NativeStackScreenProps<
 
 const RegistrationScreen = (props: RegistrationScreenProps) => {
   const { navigation, route } = props;
-  const data = {
-    multiFactor: {
-      enrolledFactors: [],
-    },
-    metadata: {
-      lastSignInTime: 1689352746741,
-      creationTime: 1689352746740,
-    },
-    photoURL:
-      'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
-    phoneNumber: null,
-    tenantId: null,
-    displayName: 'Gunjan Rupapara',
-    emailVerified: true,
-    isAnonymous: false,
-    uid: 'xdRahuUqtFQNPfL5gJjfLqIVkHq2',
-    email: 'gunjan87800@gmail.com',
-    providerData: [
-      {
-        email: 'gunjan87800@gmail.com',
-        providerId: 'google.com',
-        photoURL:
-          'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
-        phoneNumber: null,
-        displayName: 'Gunjan Rupapara',
-        uid: '108759649820766826984',
-      },
-    ],
-    providerId: 'firebase',
-  };
-  // const data = route.params.userData;
+  const data = route.params.userData;
+
+  // const data = {
+  //   multiFactor: {
+  //     enrolledFactors: [],
+  //   },
+  //   metadata: {
+  //     lastSignInTime: 1689352746741,
+  //     creationTime: 1689352746740,
+  //   },
+  //   photoURL:
+  //     'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
+  //   phoneNumber: null,
+  //   tenantId: null,
+  //   displayName: 'Gunjan Rupapara',
+  //   emailVerified: true,
+  //   isAnonymous: false,
+  //   uid: 'xdRahuUqtFQNPfL5gJjfLqIVkHq2',
+  //   email: 'gunjan87800@gmail.com',
+  //   providerData: [
+  //     {
+  //       email: 'gunjan87800@gmail.com',
+  //       providerId: 'google.com',
+  //       photoURL:
+  //         'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
+  //       phoneNumber: null,
+  //       displayName: 'Gunjan Rupapara',
+  //       uid: '108759649820766826984',
+  //     },
+  //   ],
+  //   providerId: 'firebase',
+  // };
   const [profileImg, setProfileImg] = useState('');
   const [name, setName] = useState('');
   const [middalName, setMiddalName] = useState('');
@@ -195,7 +196,11 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
             <TouchableOpacity
               style={styles.cameraIcon}
               onPress={() => onPressCameraIcon()}>
-              <Camera color={colors.secondary} height={25} width={25} />
+              <AppIcons.Camera
+                color={colors.secondary}
+                height={25}
+                width={25}
+              />
             </TouchableOpacity>
           </View>
           <View style={{ paddingBottom: 50 }}>

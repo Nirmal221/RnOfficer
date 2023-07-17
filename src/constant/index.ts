@@ -1,1 +1,1 @@
-export * from './AppConstant'
+export * from './AppConstant';

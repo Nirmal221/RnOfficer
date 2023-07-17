@@ -7,63 +7,86 @@ import {
   RefreshControl,
   Text,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
-import { width } from '../../themes';
+import { statusBarHeight, width } from '../../themes';
 import { AppStackParamList } from '../../navigation';
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { DESTRICT } from '../../constant';
+import { APP_CONSTANT, DISTRICT } from '../../constant';
+import colors from '../../themes/Colors';
 
 type HomeScreenProps = NativeStackScreenProps<AppStackParamList, 'HomeScreen'>;
 
 const HomeScreen: React.FC<HomeScreenProps> = () => {
   const navigation = useNavigation();
   const [search, setSearch] = useState('');
+  const [districtList, setDistrictList] = useState(DISTRICT);
   const [refreshing, setRefreshing] = useState(false);
+
+  const onSearch = (text: string) => {
+    setSearch(text);
+    const filtered = DISTRICT.filter(e =>
+      e.title.toLocaleLowerCase().includes(text.toLocaleLowerCase()),
+    );
+    if (filtered.length > 0) {
+      setDistrictList(filtered);
+    } else {
+      setDistrictList(DISTRICT);
+    }
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1500);
+  };
+
   return (
-    <SafeAreaView style={styles.mainContainer}>
+    <SafeAreaView style={styles.mainContainer} edges={['']}>
+      <LinearGradient
+        colors={[colors.primary, colors.pink]}
+        style={styles.headerContainer}>
+        <Text style={styles.headerTitle}>{APP_CONSTANT.DISTRICT}</Text>
+      </LinearGradient>
       <View style={styles.container}>
         <TextInput
           value={search}
           placeholder="Search"
           style={styles.searchTextInput}
-          onChangeText={(text: string) => setSearch(text)}
+          onChangeText={(text: string) => onSearch(text)}
         />
         <FlatList
-          data={DESTRICT}
+          data={districtList}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
               colors={['#9Bd35A', '#689F38']}
               tintColor={'#9Bd35A'}
-              onRefresh={() => {
-                setRefreshing(true);
-                setTimeout(() => {
-                  setRefreshing(false);
-                }, 1500);
-              }}
+              onRefresh={() => onRefresh()}
             />
           }
           numColumns={2}
           columnWrapperStyle={{ justifyContent: 'space-between' }}
-          renderItem={({ item, index }) => (
+          keyboardDismissMode="on-drag"
+          renderItem={({ item }) => (
             <LinearGradient
-              colors={['#FFD3A5', '#FD6585']}
+              colors={[colors.primary, colors.pink]}
               style={styles.linearGradient}>
               <TouchableOpacity
                 style={styles.cityContainer}
                 onPress={() => {
                   navigation.navigate('OfficerListScreen', {
-                    cityObj: { name: item },
+                    cityObj: { name: item.title },
                   });
                 }}>
-                <Text style={styles.cityLabel}>{item}</Text>
+                <Text style={styles.cityLabel}>{item.title}</Text>
               </TouchableOpacity>
             </LinearGradient>
-            // <RenderOfficerDetails item={item} index={index} />
           )}
         />
       </View>
@@ -78,17 +101,27 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 20,
+    padding: 12,
     backgroundColor: 'white',
   },
+  headerContainer: {
+    paddingTop: Platform.OS === 'ios' ? statusBarHeight : statusBarHeight * 0.3,
+  },
+  headerTitle: {
+    color: colors.secondary,
+    fontSize: 20,
+    fontWeight: '600',
+    paddingBottom: 10,
+    textAlign: 'center',
+  },
   searchTextInput: {
-    backgroundColor: 'white',
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 10,
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: Platform.OS === 'ios' ? 10 : 5,
     fontSize: 15,
-    marginBottom: width * 0.1,
+    marginBottom: 10,
   },
   cityContainer: {
     flex: 1,

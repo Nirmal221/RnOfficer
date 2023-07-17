@@ -1,12 +1,13 @@
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import RenderPanel from './RenderPanel';
+import LinearGradient from 'react-native-linear-gradient';
 
 type RenderOfficerDetailsProps = { item: any; index: number };
 
 const RenderOfficerDetails = ({ item, index }: RenderOfficerDetailsProps) => {
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={['#E0D2C7', '#44B09E']} style={styles.container}>
       <Image
         style={styles.officerImage}
         resizeMode="contain"
@@ -21,14 +22,12 @@ const RenderOfficerDetails = ({ item, index }: RenderOfficerDetailsProps) => {
         <RenderPanel title="Office District " value=":-  Current" />
         <RenderPanel title="Office ID Card " value=":-  Current" />
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    borderWidth: 0.3,
-    borderColor: 'black',
     marginBottom: 10,
     paddingHorizontal: 10,
     paddingVertical: 5,

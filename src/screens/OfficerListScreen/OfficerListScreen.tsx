@@ -3,16 +3,19 @@ import {
   View,
   FlatList,
   TextInput,
-  StyleSheet,
   RefreshControl,
   Text,
-  Platform,
+  TouchableOpacity,
 } from 'react-native';
-import { width } from '../../themes';
 import { AppStackParamList } from '../../navigation';
 import { RenderOfficerDetails } from '../../components';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import LinearGradient from 'react-native-linear-gradient';
+import colors from '../../themes/Colors';
+import { DESIGNATION } from '../../constant';
+import { AppIcons } from '../../assets';
+import styles from './OfficerListScreen.style';
 
 type OfficerListScreenProps = NativeStackScreenProps<
   AppStackParamList,
@@ -20,15 +23,27 @@ type OfficerListScreenProps = NativeStackScreenProps<
 >;
 
 const OfficerListScreen = (props: OfficerListScreenProps) => {
-  const { route } = props;
+  const { navigation, route } = props;
   const title = route.params.cityObj?.name;
   const [search, setSearch] = useState('');
   const [refreshing, setRefreshing] = useState(false);
 
   return (
-    <SafeAreaView style={styles.mainContainer} edges={['top']}>
+    <SafeAreaView style={styles.mainContainer} edges={['']}>
+      <LinearGradient
+        colors={['#E0D2C7', '#44B09E']}
+        style={styles.headerContainer}>
+        <TouchableOpacity
+          style={styles.headerLeftContainer}
+          onPress={() => navigation.goBack()}>
+          <AppIcons.BackArrow color={colors.secondary} height={20} width={20} />
+        </TouchableOpacity>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.headerTitle}>{title}</Text>
+        </View>
+        <View style={styles.headerRightContainer} />
+      </LinearGradient>
       <View style={styles.container}>
-        <Text style={styles.headerTitle}>{title}</Text>
         <TextInput
           value={search}
           placeholder="Search"
@@ -36,8 +51,9 @@ const OfficerListScreen = (props: OfficerListScreenProps) => {
           onChangeText={(text: string) => setSearch(text)}
         />
         <FlatList
-          data={['Surat', 'Ahemedabad', 'Vadodara', 'Jamnagar']}
+          data={DESIGNATION}
           showsVerticalScrollIndicator={false}
+          keyboardDismissMode="on-drag"
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -59,47 +75,5 @@ const OfficerListScreen = (props: OfficerListScreenProps) => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: 'white',
-  },
-  headerTitle: {
-    color: 'black',
-    fontSize: 20,
-    fontWeight: '600',
-    paddingTop: Platform.OS === 'ios' ? 0 : 10,
-    paddingBottom: 10,
-    textAlign: 'center',
-  },
-  searchTextInput: {
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 10,
-    padding: 10,
-    fontSize: 15,
-    marginBottom: 10,
-  },
-  cityContainer: {
-    width: width * 0.44,
-    height: width * 0.1,
-    marginRight: 5,
-    marginBottom: 5,
-    padding: 5,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: 'grey',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cityLabel: { fontSize: 15, fontWeight: '600' },
-});
 
 export default OfficerListScreen;

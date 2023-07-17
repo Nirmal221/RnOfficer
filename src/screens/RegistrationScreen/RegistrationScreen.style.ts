@@ -75,7 +75,12 @@ const styles = StyleSheet.create({
     ...ApplicationStyle.rowAlignCenter,
   },
   ofcAddressTextInput: { maxHeight: 250, textAlignVertical: 'top' },
-  createBtnContainer: { marginHorizontal: 20 },
+  createBtnContainer: {
+    marginHorizontal: 20,
+    borderRadius: 10,
+    backgroundColor: colors.pink,
+  },
+  createBtnBg: { backgroundColor: 'transparent' },
 });
 
 export default styles;

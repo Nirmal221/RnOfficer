@@ -14,7 +14,7 @@ export type AppStackParamList = {
 
 export type AuthStackParamList = {
   LoginScreen: undefined;
-  RegistrationScreen: undefined;
+  RegistrationScreen: { userData: any };
 };
 
 export type RootStackParamList = {
@@ -33,8 +33,8 @@ const AuthStack = () => {
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Screen name="RegistrationScreen" component={RegistrationScreen} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
+      <Stack.Screen name="RegistrationScreen" component={RegistrationScreen} />
     </Stack.Navigator>
   );
 };
@@ -59,7 +59,6 @@ const Root = () => {
           headerShown: false,
         }}>
         <RootStack.Screen name="SplashScreen" component={SplashScreen} />
-
         <RootStack.Screen name="AuthStack" component={AuthStack} />
         <RootStack.Screen name="AppStackScreens" component={AppStackScreens} />
       </RootStack.Navigator>
