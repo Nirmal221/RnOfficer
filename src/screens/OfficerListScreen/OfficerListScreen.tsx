@@ -7,15 +7,15 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import { AppStackParamList } from '../../navigation';
-import { RenderOfficerDetails } from '../../components';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import LinearGradient from 'react-native-linear-gradient';
+import { AppIcons } from '../../assets';
 import colors from '../../themes/Colors';
 import { DESIGNATION } from '../../constant';
-import { AppIcons } from '../../assets';
 import styles from './OfficerListScreen.style';
+import { AppStackParamList } from '../../navigation';
+import { RenderOfficerDetails } from '../../components';
+import LinearGradient from 'react-native-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 type OfficerListScreenProps = NativeStackScreenProps<
   AppStackParamList,
@@ -31,7 +31,7 @@ const OfficerListScreen = (props: OfficerListScreenProps) => {
   return (
     <SafeAreaView style={styles.mainContainer} edges={['']}>
       <LinearGradient
-        colors={['#E0D2C7', '#44B09E']}
+        colors={[colors.secondary, colors.pink]}
         style={styles.headerContainer}>
         <TouchableOpacity
           style={styles.headerLeftContainer}
@@ -47,6 +47,7 @@ const OfficerListScreen = (props: OfficerListScreenProps) => {
         <TextInput
           value={search}
           placeholder="Search"
+          placeholderTextColor={colors.grey}
           style={styles.searchTextInput}
           onChangeText={(text: string) => setSearch(text)}
         />

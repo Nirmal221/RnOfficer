@@ -23,7 +23,7 @@ export type RootStackParamList = {
   AppStackScreens: undefined;
 };
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<AuthStackParamList>();
 const RootStack = createStackNavigator<RootStackParamList>();
 const AppStack = createStackNavigator<AppStackParamList>();
 

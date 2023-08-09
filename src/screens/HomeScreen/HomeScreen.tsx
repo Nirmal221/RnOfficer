@@ -1,22 +1,25 @@
 import React, { useState } from 'react';
 import {
   View,
+  Text,
   FlatList,
+  Platform,
   TextInput,
   StyleSheet,
   RefreshControl,
-  Text,
   TouchableOpacity,
-  Platform,
 } from 'react-native';
-import { statusBarHeight, width } from '../../themes';
-import { AppStackParamList } from '../../navigation';
-import { useNavigation } from '@react-navigation/native';
-import LinearGradient from 'react-native-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { APP_CONSTANT, DISTRICT } from '../../constant';
+import { AppIcons } from '../../assets';
 import colors from '../../themes/Colors';
+import { AppStackParamList } from '../../navigation';
+import { APP_CONSTANT, DISTRICT } from '../../constant';
+import LinearGradient from 'react-native-linear-gradient';
+import ApplicationStyle from '../../themes/ApplicationStyle';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ICON_SIZE, statusBarHeight, width } from '../../themes';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StackActions, useNavigation } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 type HomeScreenProps = NativeStackScreenProps<AppStackParamList, 'HomeScreen'>;
 
@@ -45,17 +48,31 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
     }, 1500);
   };
 
+  const onPressSetting = async () => {
+    await AsyncStorage.clear();
+    navigation.dispatch(StackActions.replace('AuthStack'));
+  };
+
   return (
     <SafeAreaView style={styles.mainContainer} edges={['']}>
       <LinearGradient
-        colors={[colors.primary, colors.pink]}
+        colors={[colors.secondary, colors.pink]}
         style={styles.headerContainer}>
+        <View style={{ paddingHorizontal: 20 }} />
         <Text style={styles.headerTitle}>{APP_CONSTANT.DISTRICT}</Text>
+        <TouchableOpacity onPress={() => onPressSetting()}>
+          <AppIcons.Setting
+            height={ICON_SIZE.I_30}
+            width={ICON_SIZE.I_30}
+            color={colors.secondary}
+          />
+        </TouchableOpacity>
       </LinearGradient>
       <View style={styles.container}>
         <TextInput
           value={search}
           placeholder="Search"
+          placeholderTextColor={colors.grey}
           style={styles.searchTextInput}
           onChangeText={(text: string) => onSearch(text)}
         />
@@ -71,11 +88,11 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
             />
           }
           numColumns={2}
-          columnWrapperStyle={{ justifyContent: 'space-between' }}
+          columnWrapperStyle={styles.columnWrapperStyle}
           keyboardDismissMode="on-drag"
           renderItem={({ item }) => (
             <LinearGradient
-              colors={[colors.primary, colors.pink]}
+              colors={[colors.secondary, colors.pink]}
               style={styles.linearGradient}>
               <TouchableOpacity
                 style={styles.cityContainer}
@@ -84,7 +101,9 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
                     cityObj: { name: item.title },
                   });
                 }}>
-                <Text style={styles.cityLabel}>{item.title}</Text>
+                <Text style={styles.cityLabel} numberOfLines={1}>
+                  {item.title}
+                </Text>
               </TouchableOpacity>
             </LinearGradient>
           )}
@@ -97,26 +116,28 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: colors.secondary,
   },
   container: {
     flex: 1,
     padding: 12,
-    backgroundColor: 'white',
+    backgroundColor: colors.secondary,
   },
   headerContainer: {
+    paddingBottom: 5,
+    flexDirection: 'row',
+    paddingHorizontal: 15,
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingTop: Platform.OS === 'ios' ? statusBarHeight : statusBarHeight * 0.3,
   },
   headerTitle: {
     color: colors.secondary,
-    fontSize: 20,
-    fontWeight: '600',
-    paddingBottom: 10,
-    textAlign: 'center',
+    ...ApplicationStyle.f20w600,
   },
   searchTextInput: {
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: colors.grey,
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: Platform.OS === 'ios' ? 10 : 5,
@@ -128,13 +149,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  cityLabel: { fontSize: 15, fontWeight: '600' },
+  cityLabel: { ...ApplicationStyle.f15w600, color: colors.secondary },
   linearGradient: {
-    width: width * 0.43,
+    width: width * 0.45,
     height: width * 0.1,
     marginBottom: 10,
     borderRadius: 10,
   },
+  columnWrapperStyle: { justifyContent: 'space-between' },
 });
 
 export default HomeScreen;

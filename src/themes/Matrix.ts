@@ -4,4 +4,8 @@ const { StatusBarManager } = NativeModules;
 const { width, height } = Dimensions.get('screen');
 const statusBarHeight = StatusBarManager.HEIGHT;
 
-export { width, height, statusBarHeight };
+const ICON_SIZE = {
+  I_30: 30,
+};
+
+export { width, height, statusBarHeight, ICON_SIZE };

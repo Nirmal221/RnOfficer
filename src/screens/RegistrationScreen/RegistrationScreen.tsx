@@ -15,12 +15,14 @@ import {
 import {
   APP_CONSTANT,
   DESIGNATION,
+  DISTRICT,
   GENDER,
   MODAL_TYPE,
   STATUS,
 } from '../../constant';
 import {
   ActionButton,
+  Header,
   RenderPanel,
   SelectionModal,
   TextInputField,
@@ -39,9 +41,14 @@ type RegistrationScreenProps = NativeStackScreenProps<
   'RegistrationScreen'
 >;
 
+type ListProps = {
+  title?: string;
+};
+
 const RegistrationScreen = (props: RegistrationScreenProps) => {
   const { navigation, route } = props;
-  const data = route.params.userData;
+  const data = route.params?.userData;
+  console.log('data------>', data);
 
   // const data = {
   //   multiFactor: {
@@ -84,11 +91,12 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   const [status, setStatus] = useState('');
 
   const [officeAddress, setOfficeAddress] = useState('');
-  const [selectedDesignation, setSelectedDesignation] = useState('');
-  const [officeDistrict, setOfficeDistrict] = useState('');
-  const [nativeDistrict, setNativeDistrict] = useState('');
+  const [selectedDesignation, setSelectedDesignation] = useState<ListProps>('');
+  const [officeDistrict, setOfficeDistrict] = useState<ListProps>({});
+  const [nativeDistrict, setNativeDistrict] = useState<ListProps>({});
   const [remarks, setRemarks] = useState('');
 
+  const [selectionTitle, setSelectionTitle] = useState('');
   const [showSelectionModal, setShowSelectionModal] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedModalType, setSelectedModalType] = useState('');
@@ -177,10 +185,8 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.mainContainer}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerTitle}>Registration</Text>
-      </View>
+    <SafeAreaView style={styles.mainContainer} edges={['bottom']}>
+      <Header title="Registration" />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}>
@@ -225,76 +231,66 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
 
             <RenderPanel
               panelTitle="Gender"
-              valueTextStyle={styles.dob}
+              valueTextStyle={styles.panelValue}
               onPress={() => showDatePicker()}
             />
             <View style={styles.selectionContainer}>
               <TouchableOpacity
                 style={styles.genderContainer}
-                onPress={() => {
-                  genderSelection(GENDER.MALE);
-                }}>
-                <View
-                  style={[
-                    styles.radioBtn,
-                    gender === GENDER.MALE && styles.selectedRadioBtn,
-                  ]}
-                />
-                <Text>{APP_CONSTANT.MALE}</Text>
+                onPress={() => genderSelection(GENDER.MALE)}>
+                {gender === GENDER.MALE ? (
+                  <AppIcons.FillRadioBtn />
+                ) : (
+                  <AppIcons.RadioBtn />
+                )}
+                <Text style={styles.optionTitle}>{APP_CONSTANT.MALE}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.genderContainer}
-                onPress={() => {
-                  genderSelection(GENDER.FEMALE);
-                }}>
-                <View
-                  style={[
-                    styles.radioBtn,
-                    gender === GENDER.FEMALE && styles.selectedRadioBtn,
-                  ]}
-                />
-                <Text>{APP_CONSTANT.FEMALE}</Text>
+                onPress={() => genderSelection(GENDER.FEMALE)}>
+                {gender === GENDER.FEMALE ? (
+                  <AppIcons.FillRadioBtn />
+                ) : (
+                  <AppIcons.RadioBtn />
+                )}
+                <Text style={styles.optionTitle}>{APP_CONSTANT.FEMALE}</Text>
               </TouchableOpacity>
             </View>
 
             <RenderPanel
-              panelTitle="Status*"
-              valueTextStyle={styles.dob}
+              panelTitle={APP_CONSTANT.STATUS}
+              valueTextStyle={styles.panelValue}
               onPress={() => showDatePicker()}
             />
             <View style={styles.selectionContainer}>
               <TouchableOpacity
                 style={styles.genderContainer}
-                onPress={() => {
-                  statusSelection(STATUS.CURRENT);
-                }}>
-                <View
-                  style={[
-                    styles.radioBtn,
-                    status === STATUS.CURRENT && styles.selectedRadioBtn,
-                  ]}
-                />
-                <Text>{APP_CONSTANT.CURRENT}</Text>
+                onPress={() => statusSelection(STATUS.CURRENT)}>
+                {status === STATUS.CURRENT ? (
+                  <AppIcons.FillRadioBtn />
+                ) : (
+                  <AppIcons.RadioBtn />
+                )}
+                <Text style={styles.optionTitle}>{APP_CONSTANT.CURRENT}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.genderContainer}
                 onPress={() => {
                   statusSelection(STATUS.RETIRED);
                 }}>
-                <View
-                  style={[
-                    styles.radioBtn,
-                    status === STATUS.RETIRED && styles.selectedRadioBtn,
-                  ]}
-                />
-                <Text>{APP_CONSTANT.RETIRED}</Text>
+                {status === STATUS.RETIRED ? (
+                  <AppIcons.FillRadioBtn />
+                ) : (
+                  <AppIcons.RadioBtn />
+                )}
+                <Text style={styles.optionTitle}>{APP_CONSTANT.RETIRED}</Text>
               </TouchableOpacity>
             </View>
 
             <RenderPanel
               panelTitle="Date of Birth"
               value={moment(dob).format('DD/MM/YYYY')}
-              valueTextStyle={styles.dob}
+              valueTextStyle={styles.panelValue}
               onPress={() => showDatePicker()}
             />
             <TextInputField
@@ -321,41 +317,44 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               textInputStyle={styles.ofcAddressTextInput}
             />
             <RenderPanel
-              panelTitle="Designation"
+              panelTitle={APP_CONSTANT.DESIGNATION}
               value={
-                selectedDesignation.title
-                  ? selectedDesignation.title
-                  : 'Please Select Your Designation*'
+                selectedDesignation?.title
+                  ? selectedDesignation?.title
+                  : APP_CONSTANT.DESIGNATION_PLACEHOLDER
               }
-              valueTextStyle={styles.dob}
+              valueTextStyle={styles.panelValue}
               onPress={() => {
                 setShowSelectionModal(true);
+                setSelectionTitle(APP_CONSTANT.DESIGNATION);
                 setSelectedModalType(MODAL_TYPE.DESIGNATION);
               }}
             />
             <RenderPanel
-              panelTitle="Office District"
+              panelTitle={APP_CONSTANT.OFFICE_DISTRICT}
               value={
-                officeDistrict.title
-                  ? officeDistrict.title
-                  : 'Please Select Office District *'
+                officeDistrict?.title
+                  ? officeDistrict?.title
+                  : APP_CONSTANT.OFFICE_DISTRICT_PLACEHOLDER
               }
-              valueTextStyle={styles.dob}
+              valueTextStyle={styles.panelValue}
               onPress={() => {
                 setShowSelectionModal(true);
+                setSelectionTitle(APP_CONSTANT.OFFICE_DISTRICT);
                 setSelectedModalType(MODAL_TYPE.OFFICE_DISTRICT);
               }}
             />
             <RenderPanel
-              panelTitle="Native District*"
+              panelTitle={APP_CONSTANT.NATIVE_DISTRICT}
               value={
                 nativeDistrict.title
                   ? nativeDistrict.title
-                  : 'Please Select Native District*'
+                  : APP_CONSTANT.NATIVE_DISTRICT_PLACEHOLDER
               }
-              valueTextStyle={styles.dob}
+              valueTextStyle={styles.panelValue}
               onPress={() => {
                 setShowSelectionModal(true);
+                setSelectionTitle(APP_CONSTANT.NATIVE_DISTRICT);
                 setSelectedModalType(MODAL_TYPE.NATIVE_DISTRICT);
               }}
             />
@@ -385,8 +384,17 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
       )}
       {showSelectionModal && (
         <SelectionModal
+          title={selectionTitle}
           visible={showSelectionModal}
-          data={DESIGNATION}
+          data={
+            selectedModalType === MODAL_TYPE.DESIGNATION
+              ? DESIGNATION
+              : selectedModalType === MODAL_TYPE.NATIVE_DISTRICT
+              ? DISTRICT
+              : selectedModalType === MODAL_TYPE.OFFICE_DISTRICT
+              ? DISTRICT
+              : []
+          }
           onClose={() => setShowSelectionModal(false)}
           onSelect={selected => {
             setShowSelectionModal(false);

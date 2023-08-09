@@ -1,14 +1,16 @@
 import React from 'react';
 import {
+  ColorValue,
   KeyboardTypeOptions,
   StyleSheet,
   Text,
   TextInput,
-  TextInputProps,
   TextStyle,
   View,
 } from 'react-native';
 import colors from '../themes/Colors';
+import { Fonts } from '../themes';
+import ApplicationStyle from '../themes/ApplicationStyle';
 
 type TextInputFieldProps = {
   value: string;
@@ -18,6 +20,7 @@ type TextInputFieldProps = {
   editable?: boolean;
   multiline?: boolean;
   keyboardType?: KeyboardTypeOptions;
+  placeholderTextColor?: ColorValue;
   textInputStyle?: TextStyle;
   onChangeText: (text: string) => void;
 };
@@ -31,16 +34,18 @@ const TextInputField = ({
   placeholder,
   keyboardType = 'default',
   textInputStyle,
+  placeholderTextColor = colors.grey,
   onChangeText,
 }: TextInputFieldProps) => {
   return (
-    <View>
+    <View style={styles.container}>
       {title && <Text style={styles.titleText}>{title}</Text>}
       <TextInput
         value={value}
         editable={editable}
         multiline={multiline}
         placeholder={placeholder}
+        placeholderTextColor={placeholderTextColor}
         maxLength={maxLength}
         keyboardType={keyboardType}
         onChangeText={text => onChangeText(text)}
@@ -53,15 +58,15 @@ const TextInputField = ({
 const styles = StyleSheet.create({
   container: {},
   textInput: {
-    backgroundColor: colors.secondary,
-    borderRadius: 10,
+    borderRadius: 5,
     borderWidth: 0.5,
-    borderColor: colors.black,
     paddingHorizontal: 10,
     paddingVertical: 10,
-    fontSize: 15,
+    borderColor: colors.black,
+    backgroundColor: colors.secondary,
+    ...ApplicationStyle.f15w400,
   },
-  titleText: { fontSize: 15, fontWeight: '600', lineHeight: 30 },
+  titleText: { ...ApplicationStyle.f15w500, lineHeight: 30 },
 });
 
 export default TextInputField;

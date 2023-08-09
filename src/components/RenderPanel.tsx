@@ -1,19 +1,20 @@
 import React from 'react';
 import {
-  StyleSheet,
   Text,
-  TextProps,
-  TextStyle,
-  TouchableOpacity,
   View,
+  TextStyle,
+  StyleSheet,
   ViewStyle,
+  TouchableOpacity,
 } from 'react-native';
+import ApplicationStyle from '../themes/ApplicationStyle';
 
 type RenderPanelProps = {
   title?: string;
   value?: string;
   panelTitle?: string;
   valueTextStyle?: TextStyle;
+  titleStyle?: TextStyle;
   containerStyle?: ViewStyle;
   onPress?: () => void;
 };
@@ -22,18 +23,19 @@ const RenderPanel = ({
   title,
   value,
   panelTitle,
+  titleStyle,
   valueTextStyle,
   containerStyle,
   onPress,
 }: RenderPanelProps) => {
   return (
-    <View>
+    <View style={styles.mainContainer}>
       {panelTitle && <Text style={styles.panelTitleText}>{panelTitle}</Text>}
       {value && (
         <TouchableOpacity
           style={[styles.container, containerStyle]}
           onPress={onPress}>
-          {title && <Text style={styles.titleText}>{title}</Text>}
+          {title && <Text style={[styles.titleText, titleStyle]}>{title}</Text>}
           <Text style={[styles.valueText, valueTextStyle]}>{value}</Text>
         </TouchableOpacity>
       )}
@@ -42,14 +44,16 @@ const RenderPanel = ({
 };
 
 const styles = StyleSheet.create({
+  mainContainer: {},
   container: {
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  titleText: { flex: 0.53, fontSize: 15, fontWeight: '700', lineHeight: 30 },
-  valueText: { flex: 1, fontSize: 15, fontWeight: '400' },
-  panelTitleText: { fontSize: 15, fontWeight: '600', lineHeight: 30 },
+  titleText: { width: 100, lineHeight: 30, ...ApplicationStyle.f15w600 },
+  valueText: { ...ApplicationStyle.f15w400 },
+  panelTitleText: { ...ApplicationStyle.f15w500, lineHeight: 30 },
 });
 
 export default RenderPanel;

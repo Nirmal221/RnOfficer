@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native';
 import colors from '../themes/Colors';
+import ApplicationStyle from '../themes/ApplicationStyle';
+import { StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native';
 
 type ActionButtonProps = {
   title: string;
@@ -30,8 +31,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   titleText: {
-    fontSize: 18,
-    fontWeight: '500',
+    ...ApplicationStyle.f17w500,
     color: colors.secondary,
   },
 });

@@ -20,6 +20,13 @@ const APP_CONSTANT = {
   CURRENT: 'Current',
   RETIRED: 'Retired',
   DISTRICT: 'District',
+  DESIGNATION: 'Designation',
+  DESIGNATION_PLACEHOLDER: 'Please Select Your Designation*',
+  OFFICE_DISTRICT: 'Office District',
+  OFFICE_DISTRICT_PLACEHOLDER: 'Please Select Office District *',
+  NATIVE_DISTRICT: 'Native District',
+  NATIVE_DISTRICT_PLACEHOLDER: 'Please Select Native District*',
+  STATUS: 'Status',
 };
 
 const ASYNC_KEY = {

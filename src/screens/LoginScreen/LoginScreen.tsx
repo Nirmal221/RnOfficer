@@ -17,6 +17,7 @@ import { setInAsync } from '../../utils';
 import { ASYNC_KEY } from '../../constant';
 import { StackActions, useNavigation } from '@react-navigation/native';
 import { AppImages } from '../../assets';
+import { height, width } from '../../themes';
 
 GoogleSignin.configure({
   webClientId: GOOGLE_WEB_CLIENT,
@@ -25,20 +26,21 @@ GoogleSignin.configure({
 const LoginScreen = () => {
   const navigation = useNavigation();
   const onPressGoogleLogin = () => {
-    handleGoogleLogin()
-      .then(async res => {
-        await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(res.user));
-        navigation.navigate('RegistrationScreen', { userData: res.user });
-        // navigation.dispatch(StackActions.replace('AppStackScreens'));
-      })
-      .catch(err => {
-        Alert.alert(err.message);
-      });
+    handleGoogleLogin().then(async res => {
+      await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(res.user));
+      navigation.navigate('RegistrationScreen', { userData: res.user });
+      // navigation.dispatch(StackActions.replace('AppStackScreens'));
+    });
   };
 
   return (
     <SafeAreaView style={styles.mainContainer}>
       <View style={styles.container}>
+        <Image
+          source={AppImages.onBoard}
+          style={{ width: width, height: height * 0.5 }}
+          resizeMode="contain"
+        />
         <TouchableOpacity
           onPress={() => onPressGoogleLogin()}
           activeOpacity={0.5}
