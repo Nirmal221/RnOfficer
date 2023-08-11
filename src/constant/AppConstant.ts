@@ -27,6 +27,8 @@ const APP_CONSTANT = {
   NATIVE_DISTRICT: 'Native District',
   NATIVE_DISTRICT_PLACEHOLDER: 'Please Select Native District*',
   STATUS: 'Status',
+  CLOSE: 'Close',
+  PROFILE: 'Profile',
 };
 
 const ASYNC_KEY = {

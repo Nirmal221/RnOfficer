@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   titleText: {
-    ...ApplicationStyle.f17w500,
     color: colors.secondary,
+    ...ApplicationStyle.f15w500,
   },
 });
 

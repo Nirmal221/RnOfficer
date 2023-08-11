@@ -1,15 +1,17 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import LoginScreen from '../screens/LoginScreen/LoginScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import SplashScreen from '../screens/SplashScreen/SplashScreen';
 import OfficerListScreen from '../screens/OfficerListScreen/OfficerListScreen';
 import RegistrationScreen from '../screens/RegistrationScreen/RegistrationScreen';
-import SplashScreen from '../screens/SplashScreen/SplashScreen';
+import ProfileScreen from '../screens/ProfileScreen/ProfileScreen';
 
 export type AppStackParamList = {
   HomeScreen: undefined;
   OfficerListScreen: { cityObj: { name: string } };
+  ProfileScreen: undefined;
 };
 
 export type AuthStackParamList = {
@@ -47,6 +49,7 @@ const AppStackScreens = () => {
       }}>
       <AppStack.Screen name="HomeScreen" component={HomeScreen} />
       <AppStack.Screen name="OfficerListScreen" component={OfficerListScreen} />
+      <AppStack.Screen name="ProfileScreen" component={ProfileScreen} />
     </AppStack.Navigator>
   );
 };

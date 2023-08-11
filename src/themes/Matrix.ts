@@ -5,6 +5,7 @@ const { width, height } = Dimensions.get('screen');
 const statusBarHeight = StatusBarManager.HEIGHT;
 
 const ICON_SIZE = {
+  I_20: 20,
   I_30: 30,
 };
 

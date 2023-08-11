@@ -7,14 +7,14 @@ import {
   TextInput,
   TextStyle,
   View,
+  ViewStyle,
 } from 'react-native';
 import colors from '../themes/Colors';
-import { Fonts } from '../themes';
 import ApplicationStyle from '../themes/ApplicationStyle';
 
 type TextInputFieldProps = {
   value: string;
-  title: string;
+  title?: string;
   placeholder: string;
   maxLength?: number;
   editable?: boolean;
@@ -22,6 +22,7 @@ type TextInputFieldProps = {
   keyboardType?: KeyboardTypeOptions;
   placeholderTextColor?: ColorValue;
   textInputStyle?: TextStyle;
+  containerStyle?: ViewStyle;
   onChangeText: (text: string) => void;
 };
 
@@ -34,11 +35,12 @@ const TextInputField = ({
   placeholder,
   keyboardType = 'default',
   textInputStyle,
+  containerStyle,
   placeholderTextColor = colors.grey,
   onChangeText,
 }: TextInputFieldProps) => {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, containerStyle]}>
       {title && <Text style={styles.titleText}>{title}</Text>}
       <TextInput
         value={value}

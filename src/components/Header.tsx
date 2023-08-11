@@ -12,7 +12,7 @@ type HeaderProps = {
 const Header = ({ title }: HeaderProps) => {
   return (
     <LinearGradient
-      colors={[colors.primary, colors.pink]}
+      colors={[colors.primary, colors.green]}
       style={styles.headerContainer}>
       <Text style={styles.headerTitle}>{title}</Text>
     </LinearGradient>

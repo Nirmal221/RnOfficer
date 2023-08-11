@@ -35,6 +35,7 @@ import { AuthStackParamList } from '../../navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { showError } from '../../components/ToastAlert';
 
 type RegistrationScreenProps = NativeStackScreenProps<
   AuthStackParamList,
@@ -47,39 +48,38 @@ type ListProps = {
 
 const RegistrationScreen = (props: RegistrationScreenProps) => {
   const { navigation, route } = props;
-  const data = route.params?.userData;
-  console.log('data------>', data);
+  // const data = route.params?.userData;
 
-  // const data = {
-  //   multiFactor: {
-  //     enrolledFactors: [],
-  //   },
-  //   metadata: {
-  //     lastSignInTime: 1689352746741,
-  //     creationTime: 1689352746740,
-  //   },
-  //   photoURL:
-  //     'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
-  //   phoneNumber: null,
-  //   tenantId: null,
-  //   displayName: 'Gunjan Rupapara',
-  //   emailVerified: true,
-  //   isAnonymous: false,
-  //   uid: 'xdRahuUqtFQNPfL5gJjfLqIVkHq2',
-  //   email: 'gunjan87800@gmail.com',
-  //   providerData: [
-  //     {
-  //       email: 'gunjan87800@gmail.com',
-  //       providerId: 'google.com',
-  //       photoURL:
-  //         'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
-  //       phoneNumber: null,
-  //       displayName: 'Gunjan Rupapara',
-  //       uid: '108759649820766826984',
-  //     },
-  //   ],
-  //   providerId: 'firebase',
-  // };
+  const data = {
+    multiFactor: {
+      enrolledFactors: [],
+    },
+    metadata: {
+      lastSignInTime: 1689352746741,
+      creationTime: 1689352746740,
+    },
+    photoURL:
+      'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
+    phoneNumber: null,
+    tenantId: null,
+    displayName: 'Gunjan Rupapara',
+    emailVerified: true,
+    isAnonymous: false,
+    uid: 'xdRahuUqtFQNPfL5gJjfLqIVkHq2',
+    email: 'gunjan87800@gmail.com',
+    providerData: [
+      {
+        email: 'gunjan87800@gmail.com',
+        providerId: 'google.com',
+        photoURL:
+          'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
+        phoneNumber: null,
+        displayName: 'Gunjan Rupapara',
+        uid: '108759649820766826984',
+      },
+    ],
+    providerId: 'firebase',
+  };
   const [profileImg, setProfileImg] = useState('');
   const [name, setName] = useState('');
   const [middalName, setMiddalName] = useState('');
@@ -91,9 +91,14 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   const [status, setStatus] = useState('');
 
   const [officeAddress, setOfficeAddress] = useState('');
-  const [selectedDesignation, setSelectedDesignation] = useState<ListProps>('');
-  const [officeDistrict, setOfficeDistrict] = useState<ListProps>({});
-  const [nativeDistrict, setNativeDistrict] = useState<ListProps>({});
+  const [designationList, setDesignationList] = useState(DESIGNATION);
+  const [selectedDesignation, setSelectedDesignation] = useState<ListProps>({});
+  const [ofcDistrictList, setOfcDistrictList] = useState(DISTRICT);
+  const [selectedOfficeDistrict, setSelectedOfficeDistrict] =
+    useState<ListProps>({});
+  const [nativeDistrictList, setNativeDistrictList] = useState(DISTRICT);
+  const [selectedNativeDistrict, setSelectedNativeDistrict] =
+    useState<ListProps>({});
   const [remarks, setRemarks] = useState('');
 
   const [selectionTitle, setSelectionTitle] = useState('');
@@ -107,7 +112,8 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   }, []);
 
   const getUserData = async () => {
-    setName(data.displayName);
+    setName(data.displayName.split(' ')[0] ?? '');
+    setSureName(data.displayName.split(' ')[1] ?? '');
     setEmail(data.email);
     setProfileImg(data.photoURL);
   };
@@ -161,27 +167,56 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
     if (selectedModalType === MODAL_TYPE.DESIGNATION) {
       setSelectedDesignation(selected);
     } else if (selectedModalType === MODAL_TYPE.OFFICE_DISTRICT) {
-      setOfficeDistrict(selected);
+      setSelectedOfficeDistrict(selected);
     } else if (selectedModalType === MODAL_TYPE.NATIVE_DISTRICT) {
-      setNativeDistrict(selected);
+      setSelectedNativeDistrict(selected);
+    }
+  };
+
+  const checkValidation = () => {
+    if (
+      name === '' ||
+      middalName === '' ||
+      sureName === '' ||
+      officeAddress === '' ||
+      remarks === ''
+    ) {
+      showError('Error', 'Enter All Fields');
+      return false;
+    } else if (phoneNumber === '') {
+      showError('Error', 'Enter Phone Number');
+      return false;
+    } else if (Object.keys(selectedDesignation).length === 0) {
+      showError('Error', 'Please Select Your Designation');
+      return false;
+    } else if (Object.keys(officeAddress).length === 0) {
+      showError('Error', 'Please Select Your Office Address');
+      return false;
+    } else if (Object.keys(selectedNativeDistrict).length === 0) {
+      showError('Error', 'Please Select Your Native District');
+      return false;
+    } else {
+      return true;
     }
   };
 
   const onPressCreateAccount = () => {
-    const params = {
-      name: name,
-      middalName: middalName,
-      sureName: sureName,
-      gender: gender,
-      dateOfBirth: dob,
-      email: email,
-      mobileNo: phoneNumber,
-      officeAddress: officeAddress,
-      designation: selectedDesignation,
-      officeDistrict: officeDistrict,
-      nativeDistrict: nativeDistrict,
-    };
-    navigation.navigate('AppStackScreens');
+    if (checkValidation()) {
+      const params = {
+        name: name,
+        middalName: middalName,
+        sureName: sureName,
+        gender: gender,
+        dateOfBirth: dob,
+        email: email,
+        mobileNo: phoneNumber,
+        officeAddress: officeAddress,
+        designation: selectedDesignation,
+        selectedOfficeDistrict: selectedOfficeDistrict,
+        selectedNativeDistrict: selectedNativeDistrict,
+      };
+      navigation.navigate('AppStackScreens');
+    }
   };
 
   return (
@@ -239,7 +274,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
                 style={styles.genderContainer}
                 onPress={() => genderSelection(GENDER.MALE)}>
                 {gender === GENDER.MALE ? (
-                  <AppIcons.FillRadioBtn />
+                  <AppIcons.FillRadioBtn color={colors.green} />
                 ) : (
                   <AppIcons.RadioBtn />
                 )}
@@ -249,7 +284,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
                 style={styles.genderContainer}
                 onPress={() => genderSelection(GENDER.FEMALE)}>
                 {gender === GENDER.FEMALE ? (
-                  <AppIcons.FillRadioBtn />
+                  <AppIcons.FillRadioBtn color={colors.green} />
                 ) : (
                   <AppIcons.RadioBtn />
                 )}
@@ -267,7 +302,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
                 style={styles.genderContainer}
                 onPress={() => statusSelection(STATUS.CURRENT)}>
                 {status === STATUS.CURRENT ? (
-                  <AppIcons.FillRadioBtn />
+                  <AppIcons.FillRadioBtn color={colors.green} />
                 ) : (
                   <AppIcons.RadioBtn />
                 )}
@@ -275,11 +310,9 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.genderContainer}
-                onPress={() => {
-                  statusSelection(STATUS.RETIRED);
-                }}>
+                onPress={() => statusSelection(STATUS.RETIRED)}>
                 {status === STATUS.RETIRED ? (
-                  <AppIcons.FillRadioBtn />
+                  <AppIcons.FillRadioBtn color={colors.green} />
                 ) : (
                   <AppIcons.RadioBtn />
                 )}
@@ -288,7 +321,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
             </View>
 
             <RenderPanel
-              panelTitle="Date of Birth"
+              panelTitle={APP_CONSTANT.DOB}
               value={moment(dob).format('DD/MM/YYYY')}
               valueTextStyle={styles.panelValue}
               onPress={() => showDatePicker()}
@@ -333,8 +366,8 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
             <RenderPanel
               panelTitle={APP_CONSTANT.OFFICE_DISTRICT}
               value={
-                officeDistrict?.title
-                  ? officeDistrict?.title
+                selectedOfficeDistrict?.title
+                  ? selectedOfficeDistrict?.title
                   : APP_CONSTANT.OFFICE_DISTRICT_PLACEHOLDER
               }
               valueTextStyle={styles.panelValue}
@@ -347,8 +380,8 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
             <RenderPanel
               panelTitle={APP_CONSTANT.NATIVE_DISTRICT}
               value={
-                nativeDistrict.title
-                  ? nativeDistrict.title
+                selectedNativeDistrict.title
+                  ? selectedNativeDistrict.title
                   : APP_CONSTANT.NATIVE_DISTRICT_PLACEHOLDER
               }
               valueTextStyle={styles.panelValue}
@@ -388,17 +421,41 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
           visible={showSelectionModal}
           data={
             selectedModalType === MODAL_TYPE.DESIGNATION
-              ? DESIGNATION
+              ? designationList
               : selectedModalType === MODAL_TYPE.NATIVE_DISTRICT
-              ? DISTRICT
+              ? nativeDistrictList
               : selectedModalType === MODAL_TYPE.OFFICE_DISTRICT
-              ? DISTRICT
+              ? ofcDistrictList
               : []
           }
           onClose={() => setShowSelectionModal(false)}
           onSelect={selected => {
             setShowSelectionModal(false);
             handleSelection(selected);
+          }}
+          onSearch={searchText => {
+            if (selectedModalType === MODAL_TYPE.DESIGNATION) {
+              const filter = DESIGNATION.filter(e =>
+                e.title
+                  .toLocaleLowerCase()
+                  .includes(searchText.toLocaleLowerCase()),
+              );
+              setDesignationList(filter);
+            } else if (selectedModalType === MODAL_TYPE.NATIVE_DISTRICT) {
+              const filter = DISTRICT.filter(e =>
+                e.title
+                  .toLocaleLowerCase()
+                  .includes(searchText.toLocaleLowerCase()),
+              );
+              setNativeDistrictList(filter);
+            } else if (selectedModalType === MODAL_TYPE.OFFICE_DISTRICT) {
+              const filter = DISTRICT.filter(e =>
+                e.title
+                  .toLocaleLowerCase()
+                  .includes(searchText.toLocaleLowerCase()),
+              );
+              setOfcDistrictList(filter);
+            }
           }}
         />
       )}

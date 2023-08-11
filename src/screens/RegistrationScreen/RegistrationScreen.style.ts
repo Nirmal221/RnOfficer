@@ -1,4 +1,3 @@
-import { Fonts } from '../../themes';
 import { StyleSheet } from 'react-native';
 import colors from '../../themes/Colors';
 import ApplicationStyle from '../../themes/ApplicationStyle';
@@ -55,12 +54,11 @@ const styles = StyleSheet.create({
   createBtnContainer: {
     marginHorizontal: 20,
     borderRadius: 10,
-    backgroundColor: colors.pink,
+    backgroundColor: colors.green,
   },
   optionTitle: {
-    fontFamily: Fonts.type.POPPINS_SEMI_BOLD,
-    fontWeight: '500',
     paddingLeft: 5,
+    ...ApplicationStyle.f14w400,
   },
 });
 

@@ -18,15 +18,15 @@ const ApplicationStyle = StyleSheet.create({
     fontWeight: '600',
     fontFamily: Fonts.type.POPPINS_BOLD,
   },
-  f15w500: {
-    fontSize: 15,
-    fontWeight: '500',
-    fontFamily: Fonts.type.POPPINS_SEMI_BOLD,
-  },
   f15w400: {
     fontSize: 15,
     fontWeight: '400',
     fontFamily: Fonts.type.POPPINS_MEDIUM,
+  },
+  f15w500: {
+    fontSize: 15,
+    fontWeight: '500',
+    fontFamily: Fonts.type.POPPINS_SEMI_BOLD,
   },
   f17w500: {
     fontSize: 17,

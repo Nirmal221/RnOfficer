@@ -56,9 +56,19 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
   return (
     <SafeAreaView style={styles.mainContainer} edges={['']}>
       <LinearGradient
-        colors={[colors.secondary, colors.pink]}
+        colors={[colors.secondary, colors.green]}
         style={styles.headerContainer}>
-        <View style={{ paddingHorizontal: 20 }} />
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('ProfileScreen');
+          }}>
+          <AppIcons.Avatar
+            height={ICON_SIZE.I_30}
+            width={ICON_SIZE.I_30}
+            color={colors.secondary}
+          />
+        </TouchableOpacity>
+        {/* <View style={{ paddingHorizontal: 20 }} /> */}
         <Text style={styles.headerTitle}>{APP_CONSTANT.DISTRICT}</Text>
         <TouchableOpacity onPress={() => onPressSetting()}>
           <AppIcons.Setting
@@ -92,7 +102,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
           keyboardDismissMode="on-drag"
           renderItem={({ item }) => (
             <LinearGradient
-              colors={[colors.secondary, colors.pink]}
+              colors={[colors.secondary, colors.green]}
               style={styles.linearGradient}>
               <TouchableOpacity
                 style={styles.cityContainer}

@@ -9,7 +9,7 @@ type RenderOfficerDetailsProps = { item: any; index: number };
 const RenderOfficerDetails = ({ item, index }: RenderOfficerDetailsProps) => {
   return (
     <LinearGradient
-      colors={[colors.secondary, colors.pink]}
+      colors={[colors.secondary, colors.green]}
       style={styles.container}>
       <Image
         style={styles.officerImage}

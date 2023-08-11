@@ -31,7 +31,7 @@ const OfficerListScreen = (props: OfficerListScreenProps) => {
   return (
     <SafeAreaView style={styles.mainContainer} edges={['']}>
       <LinearGradient
-        colors={[colors.secondary, colors.pink]}
+        colors={[colors.secondary, colors.green]}
         style={styles.headerContainer}>
         <TouchableOpacity
           style={styles.headerLeftContainer}
