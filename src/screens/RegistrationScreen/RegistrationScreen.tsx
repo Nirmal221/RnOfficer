@@ -32,10 +32,10 @@ import { AppIcons } from '../../assets';
 import colors from '../../themes/Colors';
 import styles from './RegistrationScreen.style';
 import { AuthStackParamList } from '../../navigation';
+import { showError } from '../../components/ToastAlert';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { showError } from '../../components/ToastAlert';
 
 type RegistrationScreenProps = NativeStackScreenProps<
   AuthStackParamList,

@@ -6,6 +6,7 @@ const statusBarHeight = StatusBarManager.HEIGHT;
 
 const ICON_SIZE = {
   I_20: 20,
+  I_25: 25,
   I_30: 30,
 };
 

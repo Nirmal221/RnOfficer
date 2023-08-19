@@ -11,12 +11,11 @@ import {
 } from 'react-native';
 import { AppIcons } from '../../assets';
 import colors from '../../themes/Colors';
+import { ICON_SIZE, width } from '../../themes';
 import { AppStackParamList } from '../../navigation';
 import { APP_CONSTANT, DISTRICT } from '../../constant';
-import LinearGradient from 'react-native-linear-gradient';
 import ApplicationStyle from '../../themes/ApplicationStyle';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ICON_SIZE, statusBarHeight, width } from '../../themes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackActions, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -54,38 +53,25 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
   };
 
   return (
-    <SafeAreaView style={styles.mainContainer} edges={['']}>
-      <LinearGradient
-        colors={[colors.secondary, colors.green]}
-        style={styles.headerContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('ProfileScreen');
-          }}>
+    <SafeAreaView style={styles.mainContainer} edges={['top']}>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen')}>
           <AppIcons.Avatar
             height={ICON_SIZE.I_30}
             width={ICON_SIZE.I_30}
             color={colors.secondary}
           />
         </TouchableOpacity>
-        {/* <View style={{ paddingHorizontal: 20 }} /> */}
         <Text style={styles.headerTitle}>{APP_CONSTANT.DISTRICT}</Text>
         <TouchableOpacity onPress={() => onPressSetting()}>
           <AppIcons.Setting
             height={ICON_SIZE.I_30}
             width={ICON_SIZE.I_30}
-            color={colors.secondary}
+            color={colors.black}
           />
         </TouchableOpacity>
-      </LinearGradient>
+      </View>
       <View style={styles.container}>
-        <TextInput
-          value={search}
-          placeholder="Search"
-          placeholderTextColor={colors.grey}
-          style={styles.searchTextInput}
-          onChangeText={(text: string) => onSearch(text)}
-        />
         <FlatList
           data={districtList}
           showsVerticalScrollIndicator={false}
@@ -100,10 +86,17 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
           numColumns={2}
           columnWrapperStyle={styles.columnWrapperStyle}
           keyboardDismissMode="on-drag"
+          ListHeaderComponent={
+            <TextInput
+              value={search}
+              placeholder={APP_CONSTANT.SEARCH}
+              placeholderTextColor={colors.grey}
+              style={styles.searchTextInput}
+              onChangeText={(text: string) => onSearch(text)}
+            />
+          }
           renderItem={({ item }) => (
-            <LinearGradient
-              colors={[colors.secondary, colors.green]}
-              style={styles.linearGradient}>
+            <View style={styles.linearGradient}>
               <TouchableOpacity
                 style={styles.cityContainer}
                 onPress={() => {
@@ -115,7 +108,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
                   {item.title}
                 </Text>
               </TouchableOpacity>
-            </LinearGradient>
+            </View>
           )}
         />
       </View>
@@ -130,20 +123,22 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 12,
+    paddingHorizontal: 12,
     backgroundColor: colors.secondary,
   },
   headerContainer: {
     paddingBottom: 5,
     flexDirection: 'row',
     paddingHorizontal: 15,
+    marginBottom: 10,
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: Platform.OS === 'ios' ? statusBarHeight : statusBarHeight * 0.3,
+    backgroundColor: colors.secondary,
+    ...ApplicationStyle.headerShadow,
   },
   headerTitle: {
-    color: colors.secondary,
-    ...ApplicationStyle.f20w600,
+    color: colors.black,
+    ...ApplicationStyle.f17w500,
   },
   searchTextInput: {
     borderWidth: 1,
@@ -159,12 +154,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  cityLabel: { ...ApplicationStyle.f15w600, color: colors.secondary },
+  cityLabel: { ...ApplicationStyle.f15w600, color: colors.black },
   linearGradient: {
     width: width * 0.45,
     height: width * 0.1,
     marginBottom: 10,
     borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.grey,
   },
   columnWrapperStyle: { justifyContent: 'space-between' },
 });

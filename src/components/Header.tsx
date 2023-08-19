@@ -1,8 +1,7 @@
 import React from 'react';
 import colors from '../themes/Colors';
 import { statusBarHeight } from '../themes';
-import { Platform, StyleSheet, Text } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import ApplicationStyle from '../themes/ApplicationStyle';
 
 type HeaderProps = {
@@ -11,11 +10,9 @@ type HeaderProps = {
 
 const Header = ({ title }: HeaderProps) => {
   return (
-    <LinearGradient
-      colors={[colors.primary, colors.green]}
-      style={styles.headerContainer}>
+    <View style={styles.headerContainer}>
       <Text style={styles.headerTitle}>{title}</Text>
-    </LinearGradient>
+    </View>
   );
 };
 const styles = StyleSheet.create({
@@ -28,6 +25,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginBottom: 10,
     paddingTop: Platform.OS === 'ios' ? statusBarHeight : statusBarHeight * 0.3,
+    ...ApplicationStyle.headerShadow,
   },
   headerTitle: {
     paddingBottom: 10,

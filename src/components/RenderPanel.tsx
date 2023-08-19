@@ -17,6 +17,7 @@ type RenderPanelProps = {
   titleStyle?: TextStyle;
   containerStyle?: ViewStyle;
   onPress?: () => void;
+  disabled?: boolean;
 };
 
 const RenderPanel = ({
@@ -27,12 +28,14 @@ const RenderPanel = ({
   valueTextStyle,
   containerStyle,
   onPress,
+  disabled,
 }: RenderPanelProps) => {
   return (
     <View style={styles.mainContainer}>
       {panelTitle && <Text style={styles.panelTitleText}>{panelTitle}</Text>}
       {value && (
         <TouchableOpacity
+          disabled={disabled}
           style={[styles.container, containerStyle]}
           onPress={onPress}>
           {title && <Text style={[styles.titleText, titleStyle]}>{title}</Text>}

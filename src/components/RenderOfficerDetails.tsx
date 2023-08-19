@@ -1,16 +1,17 @@
 import React from 'react';
 import colors from '../themes/Colors';
 import RenderPanel from './RenderPanel';
-import { Image, StyleSheet, View } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-type RenderOfficerDetailsProps = { item: any; index: number };
+type RenderOfficerDetailsProps = { item: any; index: number; onPress: any };
 
-const RenderOfficerDetails = ({ item, index }: RenderOfficerDetailsProps) => {
+const RenderOfficerDetails = ({
+  item,
+  index,
+  onPress,
+}: RenderOfficerDetailsProps) => {
   return (
-    <LinearGradient
-      colors={[colors.secondary, colors.green]}
-      style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
       <Image
         style={styles.officerImage}
         resizeMode="contain"
@@ -21,31 +22,36 @@ const RenderOfficerDetails = ({ item, index }: RenderOfficerDetailsProps) => {
       <View style={{ flex: 1 }}>
         <RenderPanel
           title="Name"
+          disabled={false}
           value="Akshay Sonani"
           containerStyle={styles.containerStyle}
         />
         <RenderPanel
           title="Status "
           value="Current"
+          disabled={false}
           titleStyle={styles.panelTitle}
         />
         <RenderPanel
           title="Designation "
           value="Junior Clerk"
+          disabled={false}
           titleStyle={styles.panelTitle}
         />
         <RenderPanel
           title="Office District "
           value="Current"
+          disabled={false}
           titleStyle={styles.panelTitle}
         />
         <RenderPanel
           title="Office ID Card "
           value="Current"
+          disabled={false}
           titleStyle={styles.panelTitle}
         />
       </View>
-    </LinearGradient>
+    </TouchableOpacity>
   );
 };
 
@@ -57,6 +63,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.grey,
   },
   officerImage: {
     width: 80,

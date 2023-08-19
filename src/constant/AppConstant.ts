@@ -14,7 +14,7 @@ const APP_CONSTANT = {
   MALE: 'Male',
   FEMALE: 'Female',
   OFFICE_ADDRESS: 'Office Address',
-  ENTER_OFFICE_ADDRESS: 'Please Select Your Office Address',
+  ENTER_OFFICE_ADDRESS: 'Please Enter Your Office Address',
   REMARKS: 'Remarks',
   PLEASE_ENTER_REMARKS: 'Please Enter Remarks',
   CURRENT: 'Current',
@@ -29,6 +29,7 @@ const APP_CONSTANT = {
   STATUS: 'Status',
   CLOSE: 'Close',
   PROFILE: 'Profile',
+  SEARCH: 'Search',
 };
 
 const ASYNC_KEY = {

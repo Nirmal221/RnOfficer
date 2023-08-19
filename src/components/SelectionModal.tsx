@@ -9,10 +9,10 @@ import {
 } from 'react-native';
 import Separator from './Separator';
 import colors from '../themes/Colors';
-import ApplicationStyle from '../themes/ApplicationStyle';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { APP_CONSTANT } from '../constant';
 import TextInputField from './TextInputField';
+import ApplicationStyle from '../themes/ApplicationStyle';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type SelectionModalProp = {
   title: string;
@@ -71,11 +71,12 @@ const SelectionModal = ({
           showsVerticalScrollIndicator={false}
           keyboardDismissMode="on-drag"
           ItemSeparatorComponent={() => <Separator />}
-          renderItem={({ item }: { item: { title: string } }) => {
+          renderItem={({ item, index }: { item: { title: string } }) => {
             return (
               <TouchableOpacity
                 style={styles.listItemContainer}
                 onPress={() => onSelect(item)}>
+                <Text style={styles.itemTitle}>{`${index + 1}.  `}</Text>
                 <Text style={styles.itemTitle}>{item.title}</Text>
               </TouchableOpacity>
             );
@@ -97,11 +98,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingLeft: 15,
+    paddingBottom: 10,
     alignItems: 'center',
   },
-  headerLeftTitle: { ...ApplicationStyle.f15w500, color: colors.red },
-  headerTitle: { ...ApplicationStyle.f15w500, color: colors.green },
+  headerLeftTitle: { ...ApplicationStyle.f15w500, color: colors.blue },
+  headerTitle: { ...ApplicationStyle.f15w500, color: colors.black },
   listItemContainer: {
+    flexDirection: 'row',
     paddingVertical: 10,
     paddingHorizontal: 10,
   },

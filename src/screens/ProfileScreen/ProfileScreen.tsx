@@ -12,7 +12,6 @@ import { AppIcons } from '../../assets';
 import colors from '../../themes/Colors';
 import { APP_CONSTANT } from '../../constant';
 import { AppStackParamList } from '../../navigation';
-import LinearGradient from 'react-native-linear-gradient';
 import { ICON_SIZE, statusBarHeight } from '../../themes';
 import ApplicationStyle from '../../themes/ApplicationStyle';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -22,6 +21,26 @@ type ProfileScreenProps = NativeStackScreenProps<
   AppStackParamList,
   'ProfileScreen'
 >;
+
+const RenderPanel = ({
+  title,
+  value,
+  showSeprator,
+}: {
+  title: string;
+  value: string;
+  showSeprator: boolean;
+}) => {
+  return (
+    <>
+      <View style={styles.panelContainer}>
+        <Text style={styles.panelTitle}>{title}</Text>
+        <Text style={styles.valueText}>{value !== 'null' ? value : ''}</Text>
+      </View>
+      {showSeprator && <View style={styles.separator} />}
+    </>
+  );
+};
 
 const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [profileImg, setProfileImg] = useState('');
@@ -65,24 +84,19 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     setSureName(data.displayName.split(' ')[1] ?? '');
     setProfileImg(data.photoURL);
   }, []);
+
   return (
     <SafeAreaView style={styles.mainContainer} edges={['bottom']}>
-      <LinearGradient
-        colors={[colors.secondary, colors.green]}
-        style={styles.headerContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.goBack();
-          }}>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <AppIcons.BackArrow
-            height={ICON_SIZE.I_20}
-            width={ICON_SIZE.I_20}
+            height={ICON_SIZE.I_25}
+            width={ICON_SIZE.I_25}
             color={colors.secondary}
           />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{APP_CONSTANT.PROFILE}</Text>
-        <View style={{ paddingHorizontal: 20 }} />
-      </LinearGradient>
+      </View>
       <ScrollView style={styles.container}>
         <View style={styles.imgContainer}>
           <Image
@@ -91,40 +105,32 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             resizeMode="cover"
           />
         </View>
-        {/* Name */}
-        <View style={styles.panelContainer}>
-          <Text style={styles.panelTitle}>{APP_CONSTANT.NAME}</Text>
-          <View style={styles.valueContainer}>
-            <Text style={styles.valueText}>{name}</Text>
-          </View>
-        </View>
-        {/* Middal Name */}
-        <View style={styles.panelContainer}>
-          <Text style={styles.panelTitle}>{APP_CONSTANT.MIDDAL_NAME}</Text>
-          <View style={styles.valueContainer}>
-            <Text style={styles.valueText}>{middalName}</Text>
-          </View>
-        </View>
-        {/* Sure Name */}
-        <View style={styles.panelContainer}>
-          <Text style={styles.panelTitle}>{APP_CONSTANT.SURENAME}</Text>
-          <View style={styles.valueContainer}>
-            <Text style={styles.valueText}>{sureName}</Text>
-          </View>
-        </View>
-        {/* Email Name */}
-        <View style={styles.panelContainer}>
-          <Text style={styles.panelTitle}>{APP_CONSTANT.EMAIL}</Text>
-          <View style={styles.valueContainer}>
-            <Text style={styles.valueText}>{data.email}</Text>
-          </View>
-        </View>
-        {/* Phone Number */}
-        <View style={styles.panelContainer}>
-          <Text style={styles.panelTitle}>{APP_CONSTANT.MOBILE_NO}</Text>
-          <View style={styles.valueContainer}>
-            <Text style={styles.valueText}>{data.phoneNumber}</Text>
-          </View>
+        <View style={styles.contentContainer}>
+          <RenderPanel
+            title={APP_CONSTANT.NAME}
+            value={name}
+            showSeprator={true}
+          />
+          <RenderPanel
+            title={APP_CONSTANT.MIDDAL_NAME}
+            value={middalName}
+            showSeprator={true}
+          />
+          <RenderPanel
+            title={APP_CONSTANT.SURENAME}
+            value={sureName}
+            showSeprator={true}
+          />
+          <RenderPanel
+            title={APP_CONSTANT.EMAIL}
+            value={data.email}
+            showSeprator={true}
+          />
+          <RenderPanel
+            title={APP_CONSTANT.MOBILE_NO}
+            value={`${data?.phoneNumber}`}
+            showSeprator={false}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -139,33 +145,40 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 12,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.background,
   },
   headerContainer: {
     paddingBottom: 5,
     flexDirection: 'row',
     paddingHorizontal: 15,
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingTop: Platform.OS === 'ios' ? statusBarHeight : statusBarHeight * 0.3,
   },
   headerTitle: {
-    color: colors.secondary,
-    ...ApplicationStyle.f20w600,
+    paddingLeft: 10,
+    color: colors.black,
+    ...ApplicationStyle.f17w500,
   },
   imgContainer: {
     alignSelf: 'center',
     marginBottom: 20,
   },
   profileImg: { height: 100, width: 100, borderRadius: 50 },
+  contentContainer: {
+    backgroundColor: colors.secondary,
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+  },
   panelContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingVertical: 10,
+    paddingHorizontal: 5,
   },
   panelTitle: {
-    width: '45%',
-    ...ApplicationStyle.f17w500,
+    ...ApplicationStyle.f16w400,
     color: colors.black,
   },
   valueContainer: {
@@ -175,8 +188,14 @@ const styles = StyleSheet.create({
     borderLeftColor: colors.grey,
   },
   valueText: {
-    ...ApplicationStyle.f15w500,
-    color: colors.black,
+    ...ApplicationStyle.f16w400,
+    color: colors.blue,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: colors.grey,
+    borderRadius: 10,
+    opacity: 0.5,
   },
 });
 

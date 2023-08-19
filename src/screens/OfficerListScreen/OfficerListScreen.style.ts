@@ -17,8 +17,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    color: colors.secondary,
-    ...ApplicationStyle.f20w600,
+    color: colors.black,
+    ...ApplicationStyle.f17w500,
   },
   headerContainer: {
     flexDirection: 'row',
@@ -26,12 +26,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: Platform.OS === 'ios' ? statusBarHeight : statusBarHeight * 0.3,
     paddingBottom: 5,
+    backgroundColor: colors.secondary,
   },
   headerLeftContainer: {
     paddingLeft: 12,
     paddingVertical: 5,
   },
-
   headerRightContainer: { paddingHorizontal: 15 },
   searchTextInput: {
     borderWidth: 1,
