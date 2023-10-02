@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: 15,
   },
+  pT50: { paddingVertical: 0, paddingTop: 10 },
   cameraIcon: {
     position: 'absolute',
     height: 25,
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
     ...ApplicationStyle.rowAlignCenter,
     justifyContent: 'space-between',
   },
-  genderContainer: {
+  optionTouchableContainer: {
     width: '50%',
     ...ApplicationStyle.rowAlignCenter,
   },
@@ -58,6 +59,7 @@ const styles = StyleSheet.create({
   },
   optionTitle: {
     paddingLeft: 5,
+    paddingTop: 2,
     ...ApplicationStyle.f14w400,
   },
 });

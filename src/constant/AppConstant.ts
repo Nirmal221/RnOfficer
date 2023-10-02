@@ -26,10 +26,16 @@ const APP_CONSTANT = {
   OFFICE_DISTRICT_PLACEHOLDER: 'Please Select Office District *',
   NATIVE_DISTRICT: 'Native District',
   NATIVE_DISTRICT_PLACEHOLDER: 'Please Select Native District*',
+  PREFIX: 'Prefix',
   STATUS: 'Status',
   CLOSE: 'Close',
   PROFILE: 'Profile',
   SEARCH: 'Search',
+  GENDER: 'Gender',
+  DR: 'Dr.',
+  MR: 'Mr.',
+  MS: 'Ms.',
+  MRS: 'Mrs.',
 };
 
 const ASYNC_KEY = {
@@ -41,6 +47,12 @@ const GENDER = {
   FEMALE: 'FEMALE',
 };
 
+const USER_PREFIX = {
+  DR: 'DR',
+  MR: 'MR',
+  MS: 'MS',
+  MRS: 'MRS',
+};
 const STATUS = {
   CURRENT: 'CURRENT',
   RETIRED: 'RETIRED',
@@ -181,4 +193,5 @@ export {
   MODAL_TYPE,
   DISTRICT,
   DESIGNATION,
+  USER_PREFIX,
 };

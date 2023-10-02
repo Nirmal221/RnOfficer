@@ -1,36 +1,42 @@
 import React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import {
-  Alert,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import {
   GOOGLE_WEB_CLIENT,
   handleGoogleLogin,
 } from '../../services/GoogleLoginService';
 import { setInAsync } from '../../utils';
-import { ASYNC_KEY } from '../../constant';
-import { StackActions, useNavigation } from '@react-navigation/native';
 import { AppImages } from '../../assets';
+import { ASYNC_KEY } from '../../constant';
 import { height, width } from '../../themes';
+import { AuthStackParamList } from '../../navigation';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import colors from '../../themes/Colors';
 
 GoogleSignin.configure({
   webClientId: GOOGLE_WEB_CLIENT,
 });
 
-const LoginScreen = () => {
-  const navigation = useNavigation();
+type LoginScreenProps = NativeStackScreenProps<
+  AuthStackParamList,
+  'LoginScreen'
+>;
+
+const LoginScreen = (props: LoginScreenProps) => {
+  const { navigation } = props;
+  // const navigation = useNavigation();
   const onPressGoogleLogin = () => {
     handleGoogleLogin().then(async res => {
-      await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(res.user));
-      navigation.navigate('RegistrationScreen', { userData: res.user });
-      // navigation.dispatch(StackActions.replace('AppStackScreens'));
+      handleLogiUserData(res);
     });
+  };
+
+  const handleLogiUserData = (userData: any) => {
+    // await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(res.user));
+    navigation.navigate('RegistrationScreen', { userData: userData.user });
+    // navigation.dispatch(StackActions.replace('AppStackScreens'));
   };
 
   return (
@@ -45,7 +51,11 @@ const LoginScreen = () => {
           onPress={() => onPressGoogleLogin()}
           activeOpacity={0.5}
           style={styles.loginButton}>
-          <Image source={AppImages.google} style={styles.googleLogo} />
+          <Image
+            source={AppImages.google}
+            style={styles.googleLogo}
+            resizeMode="contain"
+          />
           <Text>Login With Google</Text>
         </TouchableOpacity>
       </View>
@@ -56,19 +66,19 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: colors.secondary,
   },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white',
+    backgroundColor: colors.secondary,
   },
   loginButton: {
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    backgroundColor: 'white',
+    backgroundColor: colors.secondary,
     shadowColor: '#000',
     paddingHorizontal: 15,
     paddingVertical: 10,

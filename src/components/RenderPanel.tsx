@@ -16,6 +16,7 @@ type RenderPanelProps = {
   valueTextStyle?: TextStyle;
   titleStyle?: TextStyle;
   containerStyle?: ViewStyle;
+  mainContainerStyle?: ViewStyle;
   onPress?: () => void;
   disabled?: boolean;
 };
@@ -27,11 +28,12 @@ const RenderPanel = ({
   titleStyle,
   valueTextStyle,
   containerStyle,
+  mainContainerStyle,
   onPress,
   disabled,
 }: RenderPanelProps) => {
   return (
-    <View style={styles.mainContainer}>
+    <View style={[styles.mainContainer, mainContainerStyle]}>
       {panelTitle && <Text style={styles.panelTitleText}>{panelTitle}</Text>}
       {value && (
         <TouchableOpacity
@@ -47,7 +49,7 @@ const RenderPanel = ({
 };
 
 const styles = StyleSheet.create({
-  mainContainer: {},
+  mainContainer: { paddingVertical: 5 },
   container: {
     borderRadius: 10,
     flexDirection: 'row',
