@@ -36,6 +36,8 @@ const APP_CONSTANT = {
   MR: 'Mr.',
   MS: 'Ms.',
   MRS: 'Mrs.',
+  UPLOAD_OFFICER_ID: 'Upload Officer ID',
+  UPLOAD_LEAVING_CERTI: 'Upload Leaving Certificate',
 };
 
 const ASYNC_KEY = {

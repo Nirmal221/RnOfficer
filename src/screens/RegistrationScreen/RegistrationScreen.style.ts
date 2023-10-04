@@ -54,7 +54,8 @@ const styles = StyleSheet.create({
   },
   createBtnContainer: {
     marginHorizontal: 20,
-    borderRadius: 10,
+    borderRadius: 5,
+    paddingVertical: 15,
     backgroundColor: colors.green,
   },
   optionTitle: {
@@ -62,6 +63,24 @@ const styles = StyleSheet.create({
     paddingTop: 2,
     ...ApplicationStyle.f14w400,
   },
+  uploadIdContainer: {
+    height: 100,
+    width: 100,
+    borderWidth: 0.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 10,
+    borderRadius: 5,
+    borderStyle: 'dashed',
+  },
+  uploadIdTitle: {
+    textAlign: 'center',
+    color: colors.grey,
+    ...ApplicationStyle.f15w500,
+  },
+  officerImg: { height: 100, width: 100, borderRadius: 10, marginVertical: 10 },
+  otherUploadImgContainer: { alignSelf: 'flex-start' },
+  otherCameraIcon: { bottom: 15 },
 });
 
 export default styles;

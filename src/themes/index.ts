@@ -1,3 +1,6 @@
+import ApplicationStyle from './ApplicationStyle';
+import colors from './Colors';
+
 export * from './Matrix';
-export * from './Colors';
 export * from './Fonts';
+export { ApplicationStyle, colors };

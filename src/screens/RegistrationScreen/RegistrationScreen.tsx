@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -14,6 +15,7 @@ import {
 } from 'react-native-image-picker';
 import {
   APP_CONSTANT,
+  ASYNC_KEY,
   DESIGNATION,
   DISTRICT,
   GENDER,
@@ -31,12 +33,22 @@ import {
 import moment from 'moment';
 import { AppIcons } from '../../assets';
 import colors from '../../themes/Colors';
+import { phoneNumberRegex, setInAsync } from '../../utils';
 import styles from './RegistrationScreen.style';
 import { AuthStackParamList } from '../../navigation';
 import { showError } from '../../components/ToastAlert';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import {
+  get,
+  post,
+  postCheckUser,
+  postWithFormData,
+} from '../../services/ApiServices';
+import { UserDataObject } from './types';
+import { StackActions } from '@react-navigation/native';
+import { height, width } from '../../themes';
 
 type RegistrationScreenProps = NativeStackScreenProps<
   AuthStackParamList,
@@ -44,7 +56,8 @@ type RegistrationScreenProps = NativeStackScreenProps<
 >;
 
 type ListProps = {
-  title?: string;
+  id?: number;
+  name?: string;
 };
 
 const RegistrationScreen = (props: RegistrationScreenProps) => {
@@ -93,12 +106,9 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   const [status, setStatus] = useState('');
 
   const [officeAddress, setOfficeAddress] = useState('');
-  const [designationList, setDesignationList] = useState(DESIGNATION);
   const [selectedDesignation, setSelectedDesignation] = useState<ListProps>({});
-  const [ofcDistrictList, setOfcDistrictList] = useState(DISTRICT);
   const [selectedOfficeDistrict, setSelectedOfficeDistrict] =
     useState<ListProps>({});
-  const [nativeDistrictList, setNativeDistrictList] = useState(DISTRICT);
   const [selectedNativeDistrict, setSelectedNativeDistrict] =
     useState<ListProps>({});
   const [remarks, setRemarks] = useState('');
@@ -107,11 +117,39 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   const [showSelectionModal, setShowSelectionModal] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedModalType, setSelectedModalType] = useState('');
+  const [officerIdImg, setOfficerIdImg] = useState<string>('');
+  const [leavingCertiImg, setLeavingCertiImg] = useState<string>('');
+
+  const [designationList, setDesignationList] = useState([]);
+  const [ofcDistrictList, setOfcDistrictList] = useState([]);
+  const [nativeDistrictList, setNativeDistrictList] = useState(DISTRICT);
+
+  const [loader, setLoader] = useState(false);
 
   useEffect(() => {
+    getDistrict();
     getUserData();
+    getDesignation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const getDistrict = () => {
+    get('https://patidarkarmyogi.saranginfotech.in/api/districts')
+      .then(res => {
+        setOfcDistrictList(res?.data?.data);
+        setNativeDistrictList(res?.data?.data);
+        setNativeDistrictList(res?.data?.data);
+      })
+      .catch(() => null);
+  };
+
+  const getDesignation = () => {
+    get('https://patidarkarmyogi.saranginfotech.in/api/designations')
+      .then(res => {
+        setDesignationList(res?.data?.data);
+      })
+      .catch(() => null);
+  };
 
   const getUserData = async () => {
     setName(data.displayName.split(' ')[0] ?? '');
@@ -175,6 +213,39 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
     }
   };
 
+  const onPressUploadIdButton = () => {
+    launchImageLibrary(imageOptions, async function (image) {
+      if (!image || image.didCancel) {
+      } else if (image.assets) {
+        var uri = image.assets[0].uri;
+        setOfficerIdImg(uri);
+      }
+    });
+  };
+
+  const onPressLeavingCertiButton = () => {
+    launchImageLibrary(imageOptions, async function (image) {
+      if (!image || image.didCancel) {
+      } else if (image.assets) {
+        var uri = image.assets[0].uri;
+        setLeavingCertiImg(uri);
+      }
+    });
+  };
+
+  const checkPhoneNumberValid = () => {
+    const check = phoneNumberRegex.test(phoneNumber);
+    if (phoneNumber === '') {
+      showError('Error', 'Enter Phone Number');
+      return true;
+    } else if (!check) {
+      showError('Error', 'Enter Valid Phone Number');
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const checkValidation = () => {
     if (name === '') {
       showError('Error', 'Enter name');
@@ -185,8 +256,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
     } else if (sureName === '') {
       showError('Error', 'Enter SureName');
       return false;
-    } else if (phoneNumber === '') {
-      showError('Error', 'Enter Phone Number');
+    } else if (checkPhoneNumberValid()) {
       return false;
     } else if (officeAddress === '') {
       showError('Error', 'Enter OfficeAddress');
@@ -200,34 +270,70 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
     } else if (Object.keys(selectedNativeDistrict).length === 0) {
       showError('Error', 'Please Select Your Native District');
       return false;
-    } else if (remarks === '') {
-      showError('Error', 'Enter remarks');
-      return false;
-    } else {
+    }
+    //  else if (remarks === '') {
+    //   showError('Error', 'Enter remarks');
+    //   return false;
+    // }
+    else {
       return true;
     }
   };
 
   const onPressCreateAccount = () => {
     if (checkValidation()) {
-      const params = {
-        name: name,
-        middalName: middalName,
-        sureName: sureName,
+      const obj: UserDataObject = {
+        photo: profileImg,
+        google_id: data.uid,
         prefix: prefix,
-        gender: gender,
-        dateOfBirth: dob,
+        first_name: name,
+        middal_name: middalName,
+        last_name: sureName,
         email: email,
-        mobileNo: phoneNumber,
-        officeAddress: officeAddress,
-        designation: selectedDesignation,
-        selectedOfficeDistrict: selectedOfficeDistrict,
-        selectedNativeDistrict: selectedNativeDistrict,
+        mobile_number: Number(phoneNumber),
+        designation_id: Number(selectedDesignation.id),
+        job_status: status === STATUS.CURRENT ? 'Current' : 'Retired',
+        office_address: officeAddress,
+        office_district_id: Number(selectedOfficeDistrict.id),
+        native_district_id: Number(selectedNativeDistrict.id),
+        office_id_photo: officerIdImg,
+        leaving_certificate_photo: leavingCertiImg,
       };
-      console.log('params--->,', params);
+      console.log('obj---->', obj);
 
-      // navigation.navigate('AppStackScreens');
+      setLoader(true);
+      const url = 'https://patidarkarmyogi.saranginfotech.in/api/register';
+      postWithFormData(url, obj)
+        .then(async res => {
+          setTimeout(() => {
+            checkAlreadyUser(res.data.data.data);
+          }, 3000);
+          // await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(res.data.data.data));
+          // navigation.dispatch(StackActions.replace('AppStackScreens'));
+        })
+        .catch(err => {
+          showError('Error', 'SomeThing Went Wrong');
+          setLoader(false);
+        })
+        .finally(() => {});
     }
+  };
+
+  const checkAlreadyUser = data => {
+    const url = 'https://patidarkarmyogi.saranginfotech.in/api/login';
+    console.log(data);
+
+    postCheckUser(url, data.google_id, data.email)
+      .then(res => {
+        console.log('test----->res', res);
+      })
+      .catch(err => {
+        console.log('err--->', err.response.data);
+        navigation.goBack();
+      })
+      .finally(() => {
+        setLoader(false);
+      });
   };
 
   return (
@@ -413,8 +519,8 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
             <RenderPanel
               panelTitle={APP_CONSTANT.DESIGNATION}
               value={
-                selectedDesignation?.title
-                  ? selectedDesignation?.title
+                selectedDesignation?.name
+                  ? selectedDesignation?.name
                   : APP_CONSTANT.DESIGNATION_PLACEHOLDER
               }
               valueTextStyle={styles.panelValue}
@@ -427,8 +533,8 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
             <RenderPanel
               panelTitle={APP_CONSTANT.OFFICE_DISTRICT}
               value={
-                selectedOfficeDistrict?.title
-                  ? selectedOfficeDistrict?.title
+                selectedOfficeDistrict?.name
+                  ? selectedOfficeDistrict?.name
                   : APP_CONSTANT.OFFICE_DISTRICT_PLACEHOLDER
               }
               valueTextStyle={styles.panelValue}
@@ -441,8 +547,8 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
             <RenderPanel
               panelTitle={APP_CONSTANT.NATIVE_DISTRICT}
               value={
-                selectedNativeDistrict.title
-                  ? selectedNativeDistrict.title
+                selectedNativeDistrict.name
+                  ? selectedNativeDistrict.name
                   : APP_CONSTANT.NATIVE_DISTRICT_PLACEHOLDER
               }
               valueTextStyle={styles.panelValue}
@@ -460,6 +566,58 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               onChangeText={text => setRemarks(text)}
               textInputStyle={styles.ofcAddressTextInput}
             />
+            {officerIdImg.length === 0 ? (
+              <TouchableOpacity
+                style={styles.uploadIdContainer}
+                onPress={() => onPressUploadIdButton()}>
+                <Text style={styles.uploadIdTitle}>
+                  {APP_CONSTANT.UPLOAD_OFFICER_ID}
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.otherUploadImgContainer}>
+                <Image
+                  source={{ uri: officerIdImg }}
+                  style={styles.officerImg}
+                  resizeMode="cover"
+                />
+                <TouchableOpacity
+                  style={[styles.cameraIcon, styles.otherCameraIcon]}
+                  onPress={() => onPressUploadIdButton()}>
+                  <AppIcons.Camera
+                    color={colors.secondary}
+                    height={25}
+                    width={25}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+            {leavingCertiImg.length === 0 ? (
+              <TouchableOpacity
+                style={styles.uploadIdContainer}
+                onPress={() => onPressLeavingCertiButton()}>
+                <Text style={styles.uploadIdTitle}>
+                  {APP_CONSTANT.UPLOAD_LEAVING_CERTI}
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.otherUploadImgContainer}>
+                <Image
+                  source={{ uri: leavingCertiImg }}
+                  style={styles.officerImg}
+                  resizeMode="cover"
+                />
+                <TouchableOpacity
+                  style={[styles.cameraIcon, styles.otherCameraIcon]}
+                  onPress={() => onPressLeavingCertiButton()}>
+                  <AppIcons.Camera
+                    color={colors.secondary}
+                    height={25}
+                    width={25}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -519,6 +677,19 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
             }
           }}
         />
+      )}
+      {loader && (
+        <View
+          style={{
+            position: 'absolute',
+            height: height,
+            width: width,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+          }}>
+          <ActivityIndicator color={colors.secondary} size={'large'} />
+        </View>
       )}
     </SafeAreaView>
   );

@@ -1,8 +1,8 @@
 import React from 'react';
 import colors from '../themes/Colors';
 import { APP_CONSTANT } from '../constant';
+import { StyleSheet, Text, View } from 'react-native';
 import ApplicationStyle from '../themes/ApplicationStyle';
-import { Image, StyleSheet, Text, View } from 'react-native';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
 const RenderPanel = ({
@@ -41,11 +41,11 @@ const OfficerDetail = ({
   return (
     <BottomSheet
       ref={bottomSheetRef}
-      index={1}
+      index={0}
       snapPoints={snapPoints}
       handleStyle={{ backgroundColor: colors.secondaryLight }}>
       <BottomSheetScrollView style={styles.container}>
-        <View style={styles.imgContainer}>
+        {/* <View style={styles.imgContainer}>
           <Image
             source={{
               uri: selectedOfficer?.profileImg || selectedOfficer?.photoURL,
@@ -53,21 +53,21 @@ const OfficerDetail = ({
             style={styles.profileImg}
             resizeMode="cover"
           />
-        </View>
+        </View> */}
         <View style={styles.contentContainer}>
           <RenderPanel
             title={APP_CONSTANT.NAME}
-            value={selectedOfficer?.name || selectedOfficer?.displayName}
+            value={selectedOfficer?.first_name || selectedOfficer?.displayName}
             showSeprator={true}
           />
           <RenderPanel
             title={APP_CONSTANT.MIDDAL_NAME}
-            value={selectedOfficer?.middalName}
+            value={selectedOfficer?.middal_name}
             showSeprator={true}
           />
           <RenderPanel
             title={APP_CONSTANT.SURENAME}
-            value={selectedOfficer.sureName}
+            value={selectedOfficer.last_name}
             showSeprator={true}
           />
           <RenderPanel
@@ -78,7 +78,7 @@ const OfficerDetail = ({
           />
           <RenderPanel
             title={APP_CONSTANT.MOBILE_NO}
-            value={`${selectedOfficer?.phoneNumber}`}
+            value={`${selectedOfficer?.mobile_number}`}
             showSeprator={false}
           />
         </View>

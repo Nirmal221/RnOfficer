@@ -4,6 +4,8 @@ import FillRadioBtn from './icons/FillRadioBtn.svg';
 import RadioBtn from './icons/RadioBtn.svg';
 import Setting from './icons/Setting.svg';
 import Avatar from './icons/Avatar.svg';
+import Profile from './icons/Profile.svg';
+import Home from './icons/Home.svg';
 
 const AppImages = {
   google: require('./images/google.png'),
@@ -17,6 +19,8 @@ const AppIcons = {
   RadioBtn: RadioBtn,
   Setting: Setting,
   Avatar: Avatar,
+  Profile: Profile,
+  Home: Home,
 };
 
 export { AppIcons, AppImages };

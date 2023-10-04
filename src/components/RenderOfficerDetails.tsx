@@ -23,32 +23,23 @@ const RenderOfficerDetails = ({
         <RenderPanel
           title="Name"
           disabled={false}
-          value="Akshay Sonani"
+          value={item.first_name}
           containerStyle={styles.containerStyle}
+          mainContainerStyle={styles.valuePanelMainContainer}
         />
         <RenderPanel
           title="Status "
           value="Current"
           disabled={false}
           titleStyle={styles.panelTitle}
+          mainContainerStyle={styles.valuePanelMainContainer}
         />
         <RenderPanel
           title="Designation "
           value="Junior Clerk"
           disabled={false}
           titleStyle={styles.panelTitle}
-        />
-        <RenderPanel
-          title="Office District "
-          value="Current"
-          disabled={false}
-          titleStyle={styles.panelTitle}
-        />
-        <RenderPanel
-          title="Office ID Card "
-          value="Current"
-          disabled={false}
-          titleStyle={styles.panelTitle}
+          mainContainerStyle={styles.valuePanelMainContainer}
         />
       </View>
     </TouchableOpacity>
@@ -76,6 +67,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   panelTitle: { flex: 1 },
+  valuePanelMainContainer: { paddingVertical: 0 },
 });
 
 export default RenderOfficerDetails;

@@ -1,33 +1,24 @@
 import React from 'react';
+import {
+  AppStackParamList,
+  AuthStackParamList,
+  RootStackParamList,
+} from './types';
+import { AppIcons } from '../assets';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import LoginScreen from '../screens/LoginScreen/LoginScreen';
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
 import SplashScreen from '../screens/SplashScreen/SplashScreen';
+import ProfileScreen from '../screens/ProfileScreen/ProfileScreen';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import OfficerListScreen from '../screens/OfficerListScreen/OfficerListScreen';
 import RegistrationScreen from '../screens/RegistrationScreen/RegistrationScreen';
-import ProfileScreen from '../screens/ProfileScreen/ProfileScreen';
-
-export type AppStackParamList = {
-  HomeScreen: undefined;
-  OfficerListScreen: { cityObj: { name: string } };
-  ProfileScreen: undefined;
-};
-
-export type AuthStackParamList = {
-  LoginScreen: undefined;
-  RegistrationScreen: { userData: any };
-};
-
-export type RootStackParamList = {
-  AuthStack: undefined;
-  SplashScreen: undefined;
-  AppStackScreens: undefined;
-};
 
 const Stack = createStackNavigator<AuthStackParamList>();
 const RootStack = createStackNavigator<RootStackParamList>();
 const AppStack = createStackNavigator<AppStackParamList>();
+const Tab = createBottomTabNavigator<AppStackParamList>();
 
 const AuthStack = () => {
   return (
@@ -41,15 +32,41 @@ const AuthStack = () => {
   );
 };
 
+function TabStack() {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarShowLabel: false,
+      }}>
+      <Tab.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+        options={{
+          tabBarIcon: () => <AppIcons.Home height={30} width={30} />,
+        }}
+      />
+      <Tab.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: () => {
+            return <AppIcons.Profile />;
+          },
+        }}
+      />
+    </Tab.Navigator>
+  );
+}
+
 const AppStackScreens = () => {
   return (
     <AppStack.Navigator
       screenOptions={{
         headerShown: false,
       }}>
-      <AppStack.Screen name="HomeScreen" component={HomeScreen} />
+      <AppStack.Screen name="TabStack" component={TabStack} />
       <AppStack.Screen name="OfficerListScreen" component={OfficerListScreen} />
-      <AppStack.Screen name="ProfileScreen" component={ProfileScreen} />
     </AppStack.Navigator>
   );
 };

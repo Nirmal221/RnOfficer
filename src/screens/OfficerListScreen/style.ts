@@ -1,7 +1,5 @@
 import { Platform, StyleSheet } from 'react-native';
-import { statusBarHeight, width } from '../../themes';
-import colors from '../../themes/Colors';
-import ApplicationStyle from '../../themes/ApplicationStyle';
+import { colors, statusBarHeight, ApplicationStyle } from '../../themes';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -42,6 +40,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     ...ApplicationStyle.f14w400,
   },
+  loaderContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 });
 
 export default styles;

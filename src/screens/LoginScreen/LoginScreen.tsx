@@ -1,19 +1,21 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import {
   GOOGLE_WEB_CLIENT,
   handleGoogleLogin,
 } from '../../services/GoogleLoginService';
-import { setInAsync } from '../../utils';
+import styles from './style';
 import { AppImages } from '../../assets';
+import { setInAsync } from '../../utils';
 import { ASYNC_KEY } from '../../constant';
 import { height, width } from '../../themes';
 import { AuthStackParamList } from '../../navigation';
+import { showError } from '../../components/ToastAlert';
+import { postCheckUser } from '../../services/ApiServices';
+import { StackActions } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { FirebaseAuthTypes } from '@react-native-firebase/auth';
-import colors from '../../themes/Colors';
 
 GoogleSignin.configure({
   webClientId: GOOGLE_WEB_CLIENT,
@@ -26,17 +28,32 @@ type LoginScreenProps = NativeStackScreenProps<
 
 const LoginScreen = (props: LoginScreenProps) => {
   const { navigation } = props;
-  // const navigation = useNavigation();
   const onPressGoogleLogin = () => {
     handleGoogleLogin().then(async res => {
-      handleLogiUserData(res);
+      checkAlreadyUser(res);
     });
   };
 
-  const handleLogiUserData = (userData: any) => {
-    // await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(res.user));
-    navigation.navigate('RegistrationScreen', { userData: userData.user });
-    // navigation.dispatch(StackActions.replace('AppStackScreens'));
+  const checkAlreadyUser = (data: any) => {
+    const url = 'https://patidarkarmyogi.saranginfotech.in/api/login';
+    console.log(data);
+
+    postCheckUser(url, data.user.uid, data.user.email)
+      .then(async (res: any) => {
+        await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(res.data.data.data));
+        navigation.dispatch(StackActions.replace('AppStackScreens'));
+      })
+      .catch(err => {
+        const msg = err.response.data.message.error;
+        if (msg === 'Unauthorised') {
+          navigation.navigate('RegistrationScreen', {
+            userData: data.user,
+          });
+        } else {
+          showError('Warning', msg);
+        }
+      })
+      .finally(() => {});
   };
 
   return (
@@ -62,37 +79,5 @@ const LoginScreen = (props: LoginScreenProps) => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    backgroundColor: colors.secondary,
-  },
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.secondary,
-  },
-  loginButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    backgroundColor: colors.secondary,
-    shadowColor: '#000',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 5,
-    borderRadius: 10,
-  },
-  googleLogo: {
-    marginRight: 5,
-    height: 30,
-    width: 30,
-  },
-});
 
 export default LoginScreen;

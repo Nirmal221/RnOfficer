@@ -32,7 +32,6 @@ const SelectionModal = ({
   onSearch,
 }: SelectionModalProp) => {
   const [search, setSearch] = useState('');
-
   const renderHeader = () => {
     return (
       <View style={styles.headerContainer}>
@@ -55,7 +54,7 @@ const SelectionModal = ({
       animationType="slide">
       <SafeAreaView style={styles.container}>
         {renderHeader()}
-        <TextInputField
+        {/* <TextInputField
           value={search}
           placeholder={`Search Yout ${title}`}
           onChangeText={(text: string) => {
@@ -64,20 +63,27 @@ const SelectionModal = ({
           }}
           textInputStyle={{ borderColor: colors.grey }}
           containerStyle={styles.searchBarContainer}
-        />
+        /> */}
         <FlatList
           data={data}
           style={styles.mainContainer}
           showsVerticalScrollIndicator={false}
           keyboardDismissMode="on-drag"
           ItemSeparatorComponent={() => <Separator />}
-          renderItem={({ item, index }: { item: { title: string } }) => {
+          renderItem={({
+            item,
+            index,
+          }: {
+            item: { name: string };
+            index: number;
+          }) => {
+            const itemTitle = item?.name;
             return (
               <TouchableOpacity
                 style={styles.listItemContainer}
                 onPress={() => onSelect(item)}>
                 <Text style={styles.itemTitle}>{`${index + 1}.  `}</Text>
-                <Text style={styles.itemTitle}>{item.title}</Text>
+                <Text style={styles.itemTitle}>{itemTitle}</Text>
               </TouchableOpacity>
             );
           }}

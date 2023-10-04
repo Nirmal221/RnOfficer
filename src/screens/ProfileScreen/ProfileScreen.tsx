@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { AppIcons } from '../../assets';
-import colors from '../../themes/Colors';
-import { APP_CONSTANT } from '../../constant';
-import { AppStackParamList } from '../../navigation';
-import { ICON_SIZE, statusBarHeight } from '../../themes';
-import ApplicationStyle from '../../themes/ApplicationStyle';
+import { Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import styles from './style';
+import { getFromAsync } from '../../utils';
+import { StackActions } from '@react-navigation/native';
+import { APP_CONSTANT, ASYNC_KEY } from '../../constant';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AppStackParamList, UserData } from '../../navigation/types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 type ProfileScreenProps = NativeStackScreenProps<
@@ -27,8 +19,8 @@ const RenderPanel = ({
   value,
   showSeprator,
 }: {
-  title: string;
-  value: string;
+  title?: string;
+  value?: string;
   showSeprator: boolean;
 }) => {
   return (
@@ -42,69 +34,79 @@ const RenderPanel = ({
   );
 };
 
-const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
-  const [profileImg, setProfileImg] = useState('');
+const ProfileScreen = (props: ProfileScreenProps) => {
+  const { navigation } = props;
+  // const [profileImg, setProfileImg] = useState('');
   const [name, setName] = useState('');
   const [middalName, setMiddalName] = useState('');
   const [sureName, setSureName] = useState('');
+  const [data, setData] = useState<UserData>({});
 
-  const data = {
-    multiFactor: {
-      enrolledFactors: [],
-    },
-    metadata: {
-      lastSignInTime: 1689352746741,
-      creationTime: 1689352746740,
-    },
-    photoURL:
-      'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
-    phoneNumber: null,
-    tenantId: null,
-    displayName: 'Gunjan Rupapara',
-    emailVerified: true,
-    isAnonymous: false,
-    uid: 'xdRahuUqtFQNPfL5gJjfLqIVkHq2',
-    email: 'gunjan87800@gmail.com',
-    providerData: [
-      {
-        email: 'gunjan87800@gmail.com',
-        providerId: 'google.com',
-        photoURL:
-          'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
-        phoneNumber: null,
-        displayName: 'Gunjan Rupapara',
-        uid: '108759649820766826984',
-      },
-    ],
-    providerId: 'firebase',
-  };
+  // const data = {
+  //   multiFactor: {
+  //     enrolledFactors: [],
+  //   },
+  //   metadata: {
+  //     lastSignInTime: 1689352746741,
+  //     creationTime: 1689352746740,
+  //   },
+  //   photoURL:
+  //     'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
+  //   phoneNumber: null,
+  //   tenantId: null,
+  //   displayName: 'Gunjan Rupapara',
+  //   emailVerified: true,
+  //   isAnonymous: false,
+  //   uid: 'xdRahuUqtFQNPfL5gJjfLqIVkHq2',
+  //   email: 'gunjan87800@gmail.com',
+  //   providerData: [
+  //     {
+  //       email: 'gunjan87800@gmail.com',
+  //       providerId: 'google.com',
+  //       photoURL:
+  //         'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
+  //       phoneNumber: null,
+  //       displayName: 'Gunjan Rupapara',
+  //       uid: '108759649820766826984',
+  //     },
+  //   ],
+  //   providerId: 'firebase',
+  // };
 
   useEffect(() => {
-    setName(data.displayName.split(' ')[0] ?? '');
-    setSureName(data.displayName.split(' ')[1] ?? '');
-    setProfileImg(data.photoURL);
+    getUserData();
   }, []);
 
+  const getUserData = async () => {
+    const userData = await getFromAsync(ASYNC_KEY.AUTH);
+    if (userData) {
+      const jsonData = JSON.parse(userData);
+      setName(jsonData.first_name);
+      setMiddalName(jsonData.middal_name);
+      setSureName(jsonData.last_name);
+      setData(jsonData);
+      // setProfileImg(userData.photoURL);
+    }
+  };
+
+  const onPressSignOut = async () => {
+    await AsyncStorage.clear();
+    navigation.dispatch(StackActions.replace('AuthStack'));
+  };
+
   return (
-    <SafeAreaView style={styles.mainContainer} edges={['bottom']}>
+    <SafeAreaView style={styles.mainContainer} edges={['top']}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <AppIcons.BackArrow
-            height={ICON_SIZE.I_25}
-            width={ICON_SIZE.I_25}
-            color={colors.secondary}
-          />
-        </TouchableOpacity>
         <Text style={styles.headerTitle}>{APP_CONSTANT.PROFILE}</Text>
       </View>
       <ScrollView style={styles.container}>
-        <View style={styles.imgContainer}>
+        {/* <View style={styles.imgContainer}>
           <Image
             source={{ uri: profileImg }}
             style={styles.profileImg}
             resizeMode="cover"
           />
-        </View>
+        </View> */}
         <View style={styles.contentContainer}>
           <RenderPanel
             title={APP_CONSTANT.NAME}
@@ -123,80 +125,23 @@ const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           />
           <RenderPanel
             title={APP_CONSTANT.EMAIL}
-            value={data.email}
+            value={data?.email}
             showSeprator={true}
           />
           <RenderPanel
             title={APP_CONSTANT.MOBILE_NO}
-            value={`${data?.phoneNumber}`}
+            value={`${data?.mobile_number}`}
             showSeprator={false}
           />
         </View>
+        <TouchableOpacity
+          style={styles.signOutButton}
+          onPress={() => onPressSignOut()}>
+          <Text style={styles.signOutTitle}>Sign Out</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    backgroundColor: colors.secondary,
-  },
-  container: {
-    flex: 1,
-    padding: 12,
-    backgroundColor: colors.background,
-  },
-  headerContainer: {
-    paddingBottom: 5,
-    flexDirection: 'row',
-    paddingHorizontal: 15,
-    alignItems: 'center',
-    paddingTop: Platform.OS === 'ios' ? statusBarHeight : statusBarHeight * 0.3,
-  },
-  headerTitle: {
-    paddingLeft: 10,
-    color: colors.black,
-    ...ApplicationStyle.f17w500,
-  },
-  imgContainer: {
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
-  profileImg: { height: 100, width: 100, borderRadius: 50 },
-  contentContainer: {
-    backgroundColor: colors.secondary,
-    paddingVertical: 5,
-    paddingHorizontal: 15,
-    borderRadius: 10,
-  },
-  panelContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    paddingHorizontal: 5,
-  },
-  panelTitle: {
-    ...ApplicationStyle.f16w400,
-    color: colors.black,
-  },
-  valueContainer: {
-    paddingLeft: 10,
-    borderLeftWidth: 2,
-    borderRadius: 1,
-    borderLeftColor: colors.grey,
-  },
-  valueText: {
-    ...ApplicationStyle.f16w400,
-    color: colors.blue,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: colors.grey,
-    borderRadius: 10,
-    opacity: 0.5,
-  },
-});
 
 export default ProfileScreen;
