@@ -2,8 +2,13 @@ import React from 'react';
 import colors from '../themes/Colors';
 import RenderPanel from './RenderPanel';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { UserData } from '../navigation/types';
 
-type RenderOfficerDetailsProps = { item: any; index: number; onPress: any };
+type RenderOfficerDetailsProps = {
+  item: UserData;
+  index: number;
+  onPress: any;
+};
 
 const RenderOfficerDetails = ({
   item,
@@ -23,13 +28,13 @@ const RenderOfficerDetails = ({
         <RenderPanel
           title="Name"
           disabled={false}
-          value={item.first_name}
+          value={`${item.first_name} ${item.middal_name} ${item.last_name}`}
           containerStyle={styles.containerStyle}
           mainContainerStyle={styles.valuePanelMainContainer}
         />
         <RenderPanel
-          title="Status "
-          value="Current"
+          title="Job Status "
+          value={item.job_status}
           disabled={false}
           titleStyle={styles.panelTitle}
           mainContainerStyle={styles.valuePanelMainContainer}

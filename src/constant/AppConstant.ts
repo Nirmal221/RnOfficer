@@ -8,17 +8,19 @@ const APP_CONSTANT = {
   EMAIL: 'Email',
   ENTER_EMAIL: 'Enter Email',
   MOBILE_NO: 'Mobile No.',
-  ENTER_MOBILE_NO: '+91 987654321',
+  ENTER_MOBILE_NO: '9876543210',
   DOB: 'Date of Birth ',
   CREATE_ACCOUNT: 'Create Account',
   MALE: 'Male',
   FEMALE: 'Female',
   OFFICE_ADDRESS: 'Office Address',
   ENTER_OFFICE_ADDRESS: 'Please Enter Your Office Address',
+  REFERENCE_BY: 'Reference By',
   REMARKS: 'Remarks',
   PLEASE_ENTER_REMARKS: 'Please Enter Remarks',
   CURRENT: 'Current',
   RETIRED: 'Retired',
+  VRS: 'VRS',
   DISTRICT: 'District',
   DESIGNATION: 'Designation',
   DESIGNATION_PLACEHOLDER: 'Please Select Your Designation*',
@@ -27,17 +29,28 @@ const APP_CONSTANT = {
   NATIVE_DISTRICT: 'Native District',
   NATIVE_DISTRICT_PLACEHOLDER: 'Please Select Native District*',
   PREFIX: 'Prefix',
-  STATUS: 'Status',
+  JOB_STATUS: 'Job Status',
   CLOSE: 'Close',
   PROFILE: 'Profile',
   SEARCH: 'Search',
   GENDER: 'Gender',
+  MARITAL_STATUS: 'Marital Status',
+  MARRIED: 'Married',
+  UN_MARRIED: 'Unmarried',
+  WIDOW: 'Widow',
   DR: 'Dr.',
   MR: 'Mr.',
   MS: 'Ms.',
-  MRS: 'Mrs.',
-  UPLOAD_OFFICER_ID: 'Upload Officer ID',
+  MISS: 'Miss',
+  UPLOAD_OFFICE_ID: 'Upload Office ID',
   UPLOAD_LEAVING_CERTI: 'Upload Leaving Certificate',
+  CLASS: 'Class',
+  ONE: 'I',
+  TWO: 'II',
+  THREE: 'III',
+  FOUR: 'IV',
+  NATIVE_DISTRICT_ADDRESS: 'Native District Address',
+  SPECELIZATOIN: 'Specelization',
 };
 
 const ASYNC_KEY = {
@@ -50,14 +63,27 @@ const GENDER = {
 };
 
 const USER_PREFIX = {
-  DR: 'DR',
-  MR: 'MR',
-  MS: 'MS',
-  MRS: 'MRS',
+  DR: 'Dr.',
+  MR: 'Mr.',
+  MS: 'Ms.',
+  MISS: 'Miss',
 };
 const STATUS = {
   CURRENT: 'CURRENT',
   RETIRED: 'RETIRED',
+  VRS: 'VRS',
+};
+const MARITAL_STATUS = {
+  MARRIED: 'Married',
+  UN_MARRIED: 'Unmarried',
+  WIDOW: 'Widow',
+};
+
+const OFFICER_CLASS = {
+  ONE: 'I',
+  TWO: 'II',
+  THREE: 'III',
+  FOUR: 'IV',
 };
 
 const MODAL_TYPE = {
@@ -196,4 +222,6 @@ export {
   DISTRICT,
   DESIGNATION,
   USER_PREFIX,
+  MARITAL_STATUS,
+  OFFICER_CLASS,
 };

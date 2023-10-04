@@ -5,6 +5,7 @@ import ActionButton from './ActionButton';
 import SelectionModal from './SelectionModal';
 import Separator from './Separator';
 import Header from './Header';
+import Loader from './Loader';
 
 export {
   RenderPanel,
@@ -14,4 +15,5 @@ export {
   SelectionModal,
   Separator,
   Header,
+  Loader,
 };

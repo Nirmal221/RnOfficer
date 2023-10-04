@@ -1,54 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
   Image,
-  KeyboardAvoidingView,
+  Text,
+  View,
   Platform,
   ScrollView,
-  Text,
   TouchableOpacity,
-  View,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {
-  ImageLibraryOptions,
-  launchImageLibrary,
-} from 'react-native-image-picker';
-import {
-  APP_CONSTANT,
-  ASYNC_KEY,
-  DESIGNATION,
-  DISTRICT,
+  STATUS,
   GENDER,
   MODAL_TYPE,
-  STATUS,
   USER_PREFIX,
+  DESIGNATION,
+  APP_CONSTANT,
+  MARITAL_STATUS,
+  OFFICER_CLASS,
 } from '../../constant';
 import {
-  ActionButton,
   Header,
+  Loader,
   RenderPanel,
+  ActionButton,
   SelectionModal,
   TextInputField,
 } from '../../components';
+import {
+  ImageLibraryOptions,
+  ImagePickerResponse,
+  launchImageLibrary,
+} from 'react-native-image-picker';
+import {
+  AuthStackParamList,
+  DistrictsObject,
+  UserData,
+} from '../../navigation/types';
 import moment from 'moment';
+import styles from './styles';
 import { AppIcons } from '../../assets';
 import colors from '../../themes/Colors';
-import { phoneNumberRegex, setInAsync } from '../../utils';
-import styles from './RegistrationScreen.style';
-import { AuthStackParamList } from '../../navigation';
+import { phoneNumberRegex } from '../../utils';
 import { showError } from '../../components/ToastAlert';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import {
-  get,
-  post,
-  postCheckUser,
-  postWithFormData,
-} from '../../services/ApiServices';
-import { UserDataObject } from './types';
-import { StackActions } from '@react-navigation/native';
-import { height, width } from '../../themes';
+import { ApiConstant, get, postWithFormData } from '../../services/ApiServices';
 
 type RegistrationScreenProps = NativeStackScreenProps<
   AuthStackParamList,
@@ -64,51 +61,29 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   const { navigation, route } = props;
   const data = route.params?.userData;
 
-  // const data = {
-  //   multiFactor: {
-  //     enrolledFactors: [],
-  //   },
-  //   metadata: {
-  //     lastSignInTime: 1689352746741,
-  //     creationTime: 1689352746740,
-  //   },
-  //   photoURL:
-  //     'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
-  //   phoneNumber: null,
-  //   tenantId: null,
-  //   displayName: 'Gunjan Rupapara',
-  //   emailVerified: true,
-  //   isAnonymous: false,
-  //   uid: 'xdRahuUqtFQNPfL5gJjfLqIVkHq2',
-  //   email: 'gunjan87800@gmail.com',
-  //   providerData: [
-  //     {
-  //       email: 'gunjan87800@gmail.com',
-  //       providerId: 'google.com',
-  //       photoURL:
-  //         'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
-  //       phoneNumber: null,
-  //       displayName: 'Gunjan Rupapara',
-  //       uid: '108759649820766826984',
-  //     },
-  //   ],
-  //   providerId: 'firebase',
-  // };
   const [profileImg, setProfileImg] = useState('');
   const [name, setName] = useState('');
   const [middalName, setMiddalName] = useState('');
   const [sureName, setSureName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [alterPhoneNumber, setAlterPhoneNumber] = useState('');
   const [dob, setDob] = useState(new Date());
   const [prefix, setPrefix] = useState(USER_PREFIX.MR);
-  const [gender, setGender] = useState('');
-  const [status, setStatus] = useState('');
+  const [gender, setGender] = useState(GENDER.MALE);
+  const [status, setStatus] = useState(STATUS.CURRENT);
+  const [marritalStatus, setMarritalStatus] = useState(
+    MARITAL_STATUS.UN_MARRIED,
+  );
 
   const [officeAddress, setOfficeAddress] = useState('');
   const [selectedDesignation, setSelectedDesignation] = useState<ListProps>({});
+  const [officerClass, setofficerClass] = useState(OFFICER_CLASS.ONE);
   const [selectedOfficeDistrict, setSelectedOfficeDistrict] =
     useState<ListProps>({});
+  const [specelization, setSpecelization] = useState('');
+  const [nativeAddress, setNativeAddress] = useState('');
+  const [referenceBy, setReferenceBy] = useState('');
   const [selectedNativeDistrict, setSelectedNativeDistrict] =
     useState<ListProps>({});
   const [remarks, setRemarks] = useState('');
@@ -120,9 +95,8 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   const [officerIdImg, setOfficerIdImg] = useState<string>('');
   const [leavingCertiImg, setLeavingCertiImg] = useState<string>('');
 
-  const [designationList, setDesignationList] = useState([]);
-  const [ofcDistrictList, setOfcDistrictList] = useState([]);
-  const [nativeDistrictList, setNativeDistrictList] = useState(DISTRICT);
+  const [designationList, setDesignationList] = useState<Array<object>>([]);
+  const [districtList, setDistrictList] = useState<Array<DistrictsObject>>([]);
 
   const [loader, setLoader] = useState(false);
 
@@ -134,19 +108,26 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   }, []);
 
   const getDistrict = () => {
-    get('https://patidarkarmyogi.saranginfotech.in/api/districts')
-      .then(res => {
-        setOfcDistrictList(res?.data?.data);
-        setNativeDistrictList(res?.data?.data);
-        setNativeDistrictList(res?.data?.data);
+    get(ApiConstant.DISTRICTS)
+      .then((res: any) => {
+        const arr = res?.data?.data.sort(
+          (a: DistrictsObject, b: DistrictsObject) =>
+            a.name.localeCompare(b.name),
+        );
+        setDistrictList(arr);
       })
       .catch(() => null);
   };
 
   const getDesignation = () => {
-    get('https://patidarkarmyogi.saranginfotech.in/api/designations')
-      .then(res => {
-        setDesignationList(res?.data?.data);
+    get(ApiConstant.DESIGNATIONS)
+      .then((res: any) => {
+        const arr = res?.data?.data.sort(
+          (a: DistrictsObject, b: DistrictsObject) =>
+            a.name.localeCompare(b.name),
+        );
+
+        setDesignationList(arr);
       })
       .catch(() => null);
   };
@@ -214,13 +195,18 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   };
 
   const onPressUploadIdButton = () => {
-    launchImageLibrary(imageOptions, async function (image) {
-      if (!image || image.didCancel) {
-      } else if (image.assets) {
-        var uri = image.assets[0].uri;
-        setOfficerIdImg(uri);
-      }
-    });
+    launchImageLibrary(
+      imageOptions,
+      async function (image: ImagePickerResponse) {
+        if (!image || image.didCancel) {
+        } else if (image.assets) {
+          var uri = image?.assets[0]?.uri;
+          if (uri) {
+            setOfficerIdImg(uri);
+          }
+        }
+      },
+    );
   };
 
   const onPressLeavingCertiButton = () => {
@@ -228,7 +214,9 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
       if (!image || image.didCancel) {
       } else if (image.assets) {
         var uri = image.assets[0].uri;
-        setLeavingCertiImg(uri);
+        if (uri) {
+          setLeavingCertiImg(uri);
+        }
       }
     });
   };
@@ -270,19 +258,14 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
     } else if (Object.keys(selectedNativeDistrict).length === 0) {
       showError('Error', 'Please Select Your Native District');
       return false;
-    }
-    //  else if (remarks === '') {
-    //   showError('Error', 'Enter remarks');
-    //   return false;
-    // }
-    else {
+    } else {
       return true;
     }
   };
 
   const onPressCreateAccount = () => {
     if (checkValidation()) {
-      const obj: UserDataObject = {
+      const obj: UserData = {
         photo: profileImg,
         google_id: data.uid,
         prefix: prefix,
@@ -299,41 +282,20 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
         office_id_photo: officerIdImg,
         leaving_certificate_photo: leavingCertiImg,
       };
-      console.log('obj---->', obj);
-
       setLoader(true);
-      const url = 'https://patidarkarmyogi.saranginfotech.in/api/register';
-      postWithFormData(url, obj)
-        .then(async res => {
+      postWithFormData(ApiConstant.REGISTER, obj)
+        .then(() => {
           setTimeout(() => {
-            checkAlreadyUser(res.data.data.data);
+            setLoader(false);
+            navigation.goBack();
           }, 3000);
-          // await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(res.data.data.data));
-          // navigation.dispatch(StackActions.replace('AppStackScreens'));
         })
-        .catch(err => {
+        .catch(() => {
           showError('Error', 'SomeThing Went Wrong');
           setLoader(false);
         })
         .finally(() => {});
     }
-  };
-
-  const checkAlreadyUser = data => {
-    const url = 'https://patidarkarmyogi.saranginfotech.in/api/login';
-    console.log(data);
-
-    postCheckUser(url, data.google_id, data.email)
-      .then(res => {
-        console.log('test----->res', res);
-      })
-      .catch(err => {
-        console.log('err--->', err.response.data);
-        navigation.goBack();
-      })
-      .finally(() => {
-        setLoader(false);
-      });
   };
 
   return (
@@ -421,13 +383,13 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.optionTouchableContainer}
-                onPress={() => setPrefix(USER_PREFIX.MRS)}>
-                {prefix === USER_PREFIX.MRS ? (
+                onPress={() => setPrefix(USER_PREFIX.MISS)}>
+                {prefix === USER_PREFIX.MISS ? (
                   <AppIcons.FillRadioBtn color={colors.green} />
                 ) : (
                   <AppIcons.RadioBtn />
                 )}
-                <Text style={styles.optionTitle}>{APP_CONSTANT.MRS}</Text>
+                <Text style={styles.optionTitle}>{APP_CONSTANT.MISS}</Text>
               </TouchableOpacity>
             </View>
 
@@ -458,15 +420,66 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
                 <Text style={styles.optionTitle}>{APP_CONSTANT.FEMALE}</Text>
               </TouchableOpacity>
             </View>
+            <RenderPanel
+              panelTitle={APP_CONSTANT.MARITAL_STATUS}
+              valueTextStyle={{ ...styles.panelValue }}
+              mainContainerStyle={styles.pT50}
+            />
+            <View style={styles.selectionContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.optionTouchableContainer,
+                  styles.threeSmallOptionList,
+                ]}
+                onPress={() => setMarritalStatus(MARITAL_STATUS.MARRIED)}>
+                {marritalStatus === MARITAL_STATUS.MARRIED ? (
+                  <AppIcons.FillRadioBtn color={colors.green} />
+                ) : (
+                  <AppIcons.RadioBtn />
+                )}
+                <Text style={styles.optionTitle}>{APP_CONSTANT.MARRIED}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.optionTouchableContainer,
+                  styles.threeSmallOptionList,
+                ]}
+                onPress={() => setMarritalStatus(MARITAL_STATUS.UN_MARRIED)}>
+                {marritalStatus === MARITAL_STATUS.UN_MARRIED ? (
+                  <AppIcons.FillRadioBtn color={colors.green} />
+                ) : (
+                  <AppIcons.RadioBtn />
+                )}
+                <Text style={styles.optionTitle}>
+                  {APP_CONSTANT.UN_MARRIED}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.optionTouchableContainer,
+                  styles.threeSmallOptionList,
+                ]}
+                onPress={() => setMarritalStatus(MARITAL_STATUS.WIDOW)}>
+                {marritalStatus === MARITAL_STATUS.WIDOW ? (
+                  <AppIcons.FillRadioBtn color={colors.green} />
+                ) : (
+                  <AppIcons.RadioBtn />
+                )}
+                <Text style={styles.optionTitle}>{APP_CONSTANT.WIDOW}</Text>
+              </TouchableOpacity>
+            </View>
 
             <RenderPanel
-              panelTitle={APP_CONSTANT.STATUS}
+              panelTitle={APP_CONSTANT.JOB_STATUS}
               valueTextStyle={styles.panelValue}
               mainContainerStyle={styles.pT50}
             />
             <View style={styles.selectionContainer}>
               <TouchableOpacity
-                style={styles.optionTouchableContainer}
+                style={[
+                  styles.optionTouchableContainer,
+                  styles.threeSmallOptionList,
+                ]}
                 onPress={() => statusSelection(STATUS.CURRENT)}>
                 {status === STATUS.CURRENT ? (
                   <AppIcons.FillRadioBtn color={colors.green} />
@@ -476,7 +489,10 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
                 <Text style={styles.optionTitle}>{APP_CONSTANT.CURRENT}</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.optionTouchableContainer}
+                style={[
+                  styles.optionTouchableContainer,
+                  styles.threeSmallOptionList,
+                ]}
                 onPress={() => statusSelection(STATUS.RETIRED)}>
                 {status === STATUS.RETIRED ? (
                   <AppIcons.FillRadioBtn color={colors.green} />
@@ -484,6 +500,19 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
                   <AppIcons.RadioBtn />
                 )}
                 <Text style={styles.optionTitle}>{APP_CONSTANT.RETIRED}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.optionTouchableContainer,
+                  styles.threeSmallOptionList,
+                ]}
+                onPress={() => statusSelection(STATUS.VRS)}>
+                {status === STATUS.VRS ? (
+                  <AppIcons.FillRadioBtn color={colors.green} />
+                ) : (
+                  <AppIcons.RadioBtn />
+                )}
+                <Text style={styles.optionTitle}>{APP_CONSTANT.VRS}</Text>
               </TouchableOpacity>
             </View>
 
@@ -508,13 +537,14 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               placeholder={APP_CONSTANT.ENTER_MOBILE_NO}
               onChangeText={text => setPhoneNumber(text)}
             />
+
             <TextInputField
-              multiline
-              value={officeAddress}
-              title={APP_CONSTANT.OFFICE_ADDRESS}
-              placeholder={APP_CONSTANT.ENTER_OFFICE_ADDRESS}
-              onChangeText={text => setOfficeAddress(text)}
-              textInputStyle={styles.ofcAddressTextInput}
+              value={alterPhoneNumber}
+              title={APP_CONSTANT.MOBILE_NO}
+              maxLength={10}
+              keyboardType={'number-pad'}
+              placeholder={APP_CONSTANT.ENTER_MOBILE_NO}
+              onChangeText={text => setAlterPhoneNumber(text)}
             />
             <RenderPanel
               panelTitle={APP_CONSTANT.DESIGNATION}
@@ -530,6 +560,73 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
                 setSelectedModalType(MODAL_TYPE.DESIGNATION);
               }}
             />
+            <TextInputField
+              multiline
+              value={officeAddress}
+              title={APP_CONSTANT.OFFICE_ADDRESS}
+              placeholder={APP_CONSTANT.ENTER_OFFICE_ADDRESS}
+              onChangeText={text => setOfficeAddress(text)}
+              textInputStyle={styles.ofcAddressTextInput}
+            />
+            <RenderPanel
+              panelTitle={APP_CONSTANT.CLASS}
+              valueTextStyle={styles.panelValue}
+              mainContainerStyle={styles.pT50}
+            />
+            <View style={styles.selectionContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.optionTouchableContainer,
+                  styles.fourSmallOptionList,
+                ]}
+                onPress={() => setofficerClass(OFFICER_CLASS.ONE)}>
+                {officerClass === OFFICER_CLASS.ONE ? (
+                  <AppIcons.FillRadioBtn color={colors.green} />
+                ) : (
+                  <AppIcons.RadioBtn />
+                )}
+                <Text style={styles.optionTitle}>{APP_CONSTANT.ONE}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.optionTouchableContainer,
+                  styles.fourSmallOptionList,
+                ]}
+                onPress={() => setofficerClass(OFFICER_CLASS.TWO)}>
+                {officerClass === OFFICER_CLASS.TWO ? (
+                  <AppIcons.FillRadioBtn color={colors.green} />
+                ) : (
+                  <AppIcons.RadioBtn />
+                )}
+                <Text style={styles.optionTitle}>{APP_CONSTANT.TWO}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.optionTouchableContainer,
+                  styles.fourSmallOptionList,
+                ]}
+                onPress={() => setofficerClass(OFFICER_CLASS.THREE)}>
+                {officerClass === OFFICER_CLASS.THREE ? (
+                  <AppIcons.FillRadioBtn color={colors.green} />
+                ) : (
+                  <AppIcons.RadioBtn />
+                )}
+                <Text style={styles.optionTitle}>{APP_CONSTANT.THREE}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.optionTouchableContainer,
+                  styles.fourSmallOptionList,
+                ]}
+                onPress={() => setofficerClass(OFFICER_CLASS.FOUR)}>
+                {officerClass === OFFICER_CLASS.FOUR ? (
+                  <AppIcons.FillRadioBtn color={colors.green} />
+                ) : (
+                  <AppIcons.RadioBtn />
+                )}
+                <Text style={styles.optionTitle}>{APP_CONSTANT.FOUR}</Text>
+              </TouchableOpacity>
+            </View>
             <RenderPanel
               panelTitle={APP_CONSTANT.OFFICE_DISTRICT}
               value={
@@ -543,6 +640,14 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
                 setSelectionTitle(APP_CONSTANT.OFFICE_DISTRICT);
                 setSelectedModalType(MODAL_TYPE.OFFICE_DISTRICT);
               }}
+            />
+            <TextInputField
+              multiline
+              value={nativeAddress}
+              title={APP_CONSTANT.NATIVE_DISTRICT_ADDRESS}
+              placeholder={APP_CONSTANT.PLEASE_ENTER_REMARKS}
+              onChangeText={text => setNativeAddress(text)}
+              textInputStyle={styles.ofcAddressTextInput}
             />
             <RenderPanel
               panelTitle={APP_CONSTANT.NATIVE_DISTRICT}
@@ -560,6 +665,22 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
             />
             <TextInputField
               multiline
+              value={specelization}
+              title={APP_CONSTANT.SPECELIZATOIN}
+              placeholder={APP_CONSTANT.PLEASE_ENTER_REMARKS}
+              onChangeText={text => setSpecelization(text)}
+              textInputStyle={styles.ofcAddressTextInput}
+            />
+            <TextInputField
+              multiline
+              value={referenceBy}
+              title={APP_CONSTANT.REFERENCE_BY}
+              placeholder={APP_CONSTANT.NATIVE_DISTRICT_ADDRESS}
+              onChangeText={text => setReferenceBy(text)}
+              textInputStyle={styles.ofcAddressTextInput}
+            />
+            <TextInputField
+              multiline
               value={remarks}
               title={APP_CONSTANT.REMARKS}
               placeholder={APP_CONSTANT.PLEASE_ENTER_REMARKS}
@@ -571,7 +692,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
                 style={styles.uploadIdContainer}
                 onPress={() => onPressUploadIdButton()}>
                 <Text style={styles.uploadIdTitle}>
-                  {APP_CONSTANT.UPLOAD_OFFICER_ID}
+                  {APP_CONSTANT.UPLOAD_OFFICE_ID}
                 </Text>
               </TouchableOpacity>
             ) : (
@@ -642,9 +763,9 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
             selectedModalType === MODAL_TYPE.DESIGNATION
               ? designationList
               : selectedModalType === MODAL_TYPE.NATIVE_DISTRICT
-              ? nativeDistrictList
+              ? districtList
               : selectedModalType === MODAL_TYPE.OFFICE_DISTRICT
-              ? ofcDistrictList
+              ? districtList
               : []
           }
           onClose={() => setShowSelectionModal(false)}
@@ -661,36 +782,24 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               );
               setDesignationList(filter);
             } else if (selectedModalType === MODAL_TYPE.NATIVE_DISTRICT) {
-              const filter = DISTRICT.filter(e =>
-                e.title
+              const filter = districtList.filter(e =>
+                e.name
                   .toLocaleLowerCase()
                   .includes(searchText.toLocaleLowerCase()),
               );
-              setNativeDistrictList(filter);
+              setDistrictList(filter);
             } else if (selectedModalType === MODAL_TYPE.OFFICE_DISTRICT) {
-              const filter = DISTRICT.filter(e =>
-                e.title
+              const filter = districtList.filter(e =>
+                e.name
                   .toLocaleLowerCase()
                   .includes(searchText.toLocaleLowerCase()),
               );
-              setOfcDistrictList(filter);
+              setDistrictList(filter);
             }
           }}
         />
       )}
-      {loader && (
-        <View
-          style={{
-            position: 'absolute',
-            height: height,
-            width: width,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-          }}>
-          <ActivityIndicator color={colors.secondary} size={'large'} />
-        </View>
-      )}
+      {loader && <Loader />}
     </SafeAreaView>
   );
 };

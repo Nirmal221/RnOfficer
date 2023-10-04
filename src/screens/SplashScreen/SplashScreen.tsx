@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
+import styles from './styles';
 import { getFromAsync } from '../../utils';
 import { ASYNC_KEY } from '../../constant';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../navigation';
 import { StackActions } from '@react-navigation/routers';
+import { RootStackParamList } from '../../navigation/types';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 type RegistrationScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -31,13 +32,5 @@ const SplashScreen = ({ navigation }: RegistrationScreenProps) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 export default SplashScreen;

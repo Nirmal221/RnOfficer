@@ -1,5 +1,5 @@
 import { Platform, StyleSheet } from 'react-native';
-import { colors, ApplicationStyle, width } from '../../themes';
+import { colors, ApplicationStyle, width, height } from '../../themes';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -49,6 +49,13 @@ const styles = StyleSheet.create({
     borderColor: colors.grey,
   },
   columnWrapperStyle: { justifyContent: 'space-between' },
+  loaderContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  emptyListContainer: {
+    height: height * 0.8,
+    width: width * 0.9,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default styles;

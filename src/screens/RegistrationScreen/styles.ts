@@ -40,12 +40,21 @@ const styles = StyleSheet.create({
   },
   selectionContainer: {
     marginTop: 5,
+    borderWidth: 0.5,
+    borderRadius: 10,
+    padding: 10,
     ...ApplicationStyle.rowAlignCenter,
     justifyContent: 'space-between',
   },
   optionTouchableContainer: {
     width: '50%',
     ...ApplicationStyle.rowAlignCenter,
+  },
+  threeSmallOptionList: {
+    width: '33%',
+  },
+  fourSmallOptionList: {
+    width: '25%',
   },
   ofcAddressTextInput: {
     maxHeight: 250,

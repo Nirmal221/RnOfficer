@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: Platform.OS === 'ios' ? statusBarHeight : statusBarHeight * 0.3,
+    paddingTop: Platform.OS === 'ios' ? 0 : statusBarHeight * 0.3,
     paddingBottom: 5,
     backgroundColor: colors.secondary,
   },

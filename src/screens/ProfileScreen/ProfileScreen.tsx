@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import styles from './style';
+import { Loader } from '../../components';
 import { getFromAsync } from '../../utils';
+import auth from '@react-native-firebase/auth';
 import { StackActions } from '@react-navigation/native';
 import { APP_CONSTANT, ASYNC_KEY } from '../../constant';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -41,37 +43,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
   const [middalName, setMiddalName] = useState('');
   const [sureName, setSureName] = useState('');
   const [data, setData] = useState<UserData>({});
-
-  // const data = {
-  //   multiFactor: {
-  //     enrolledFactors: [],
-  //   },
-  //   metadata: {
-  //     lastSignInTime: 1689352746741,
-  //     creationTime: 1689352746740,
-  //   },
-  //   photoURL:
-  //     'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
-  //   phoneNumber: null,
-  //   tenantId: null,
-  //   displayName: 'Gunjan Rupapara',
-  //   emailVerified: true,
-  //   isAnonymous: false,
-  //   uid: 'xdRahuUqtFQNPfL5gJjfLqIVkHq2',
-  //   email: 'gunjan87800@gmail.com',
-  //   providerData: [
-  //     {
-  //       email: 'gunjan87800@gmail.com',
-  //       providerId: 'google.com',
-  //       photoURL:
-  //         'https://lh3.googleusercontent.com/a/AAcHTtcSGzfWIh34UewkzkJW6SDYSb7p9WQ93psdjsnIRKg7Kska=s96-c',
-  //       phoneNumber: null,
-  //       displayName: 'Gunjan Rupapara',
-  //       uid: '108759649820766826984',
-  //     },
-  //   ],
-  //   providerId: 'firebase',
-  // };
+  const [loader, setLoader] = useState(false);
 
   useEffect(() => {
     getUserData();
@@ -90,8 +62,14 @@ const ProfileScreen = (props: ProfileScreenProps) => {
   };
 
   const onPressSignOut = async () => {
-    await AsyncStorage.clear();
-    navigation.dispatch(StackActions.replace('AuthStack'));
+    setLoader(true);
+    auth()
+      .signOut()
+      .then(async () => {
+        await AsyncStorage.clear();
+        setLoader(false);
+        navigation.dispatch(StackActions.replace('AuthStack'));
+      });
   };
 
   return (
@@ -140,6 +118,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
           <Text style={styles.signOutTitle}>Sign Out</Text>
         </TouchableOpacity>
       </ScrollView>
+      {loader && <Loader />}
     </SafeAreaView>
   );
 };

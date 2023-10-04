@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
+import styles from './styles';
 import { AppIcons } from '../../assets';
 import colors from '../../themes/Colors';
-import styles from './style';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { RenderOfficerDetails } from '../../components';
 import OfficerDetail from '../../components/OfficerDetail';
@@ -55,7 +55,7 @@ const OfficerListScreen = (props: OfficerListScreenProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.mainContainer} edges={['']}>
+    <SafeAreaView style={styles.mainContainer}>
       <View style={[ApplicationStyle.headerShadow, styles.headerContainer]}>
         <TouchableOpacity
           style={styles.headerLeftContainer}

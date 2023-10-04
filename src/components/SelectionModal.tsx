@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -10,13 +10,13 @@ import {
 import Separator from './Separator';
 import colors from '../themes/Colors';
 import { APP_CONSTANT } from '../constant';
-import TextInputField from './TextInputField';
 import ApplicationStyle from '../themes/ApplicationStyle';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type SelectionModalProp = {
   title: string;
   visible: boolean;
+  showIndex?: boolean;
   data: Array<object>;
   onClose: () => void;
   onSelect: (selected: {}) => undefined;
@@ -29,9 +29,10 @@ const SelectionModal = ({
   onClose,
   data,
   onSelect,
-  onSearch,
-}: SelectionModalProp) => {
-  const [search, setSearch] = useState('');
+  showIndex,
+}: // onSearch,
+SelectionModalProp) => {
+  // const [search, setSearch] = useState('');
   const renderHeader = () => {
     return (
       <View style={styles.headerContainer}>
@@ -82,7 +83,9 @@ const SelectionModal = ({
               <TouchableOpacity
                 style={styles.listItemContainer}
                 onPress={() => onSelect(item)}>
-                <Text style={styles.itemTitle}>{`${index + 1}.  `}</Text>
+                {showIndex && (
+                  <Text style={styles.itemTitle}>{`${index + 1}.  `}</Text>
+                )}
                 <Text style={styles.itemTitle}>{itemTitle}</Text>
               </TouchableOpacity>
             );
