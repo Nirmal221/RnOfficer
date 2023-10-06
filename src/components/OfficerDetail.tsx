@@ -1,7 +1,7 @@
 import React from 'react';
 import colors from '../themes/Colors';
 import { APP_CONSTANT } from '../constant';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import ApplicationStyle from '../themes/ApplicationStyle';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
@@ -45,15 +45,15 @@ const OfficerDetail = ({
       snapPoints={snapPoints}
       handleStyle={{ backgroundColor: colors.secondaryLight }}>
       <BottomSheetScrollView style={styles.container}>
-        {/* <View style={styles.imgContainer}>
+        <View style={styles.imgContainer}>
           <Image
             source={{
-              uri: selectedOfficer?.profileImg || selectedOfficer?.photoURL,
+              uri: selectedOfficer?.photo,
             }}
             style={styles.profileImg}
             resizeMode="cover"
           />
-        </View> */}
+        </View>
         <View style={styles.contentContainer}>
           <RenderPanel
             title={APP_CONSTANT.NAME}
@@ -79,6 +79,12 @@ const OfficerDetail = ({
           <RenderPanel
             title={APP_CONSTANT.MOBILE_NO}
             value={`${selectedOfficer?.mobile_number}`}
+            showSeprator={true}
+          />
+
+          <RenderPanel
+            title={APP_CONSTANT.MOBILE_NO}
+            value={`${selectedOfficer?.alt_mobile_number}`}
             showSeprator={false}
           />
         </View>

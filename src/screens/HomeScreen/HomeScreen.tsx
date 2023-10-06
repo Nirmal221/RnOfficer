@@ -45,14 +45,19 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
   };
 
   const getData = () => {
-    const destrictId = 1;
+    const destrictId = 0;
     // const destrictId = route.params.cityObj?.id;
+    console.log('res?.data?.data');
     setLoader(true);
-    get(`${ApiConstant.OFFICER_LIST}${destrictId}`)
+    get(`${ApiConstant.OFFICER_LIST}/${destrictId}`)
       .then((res: any) => {
+        console.log('res?.data?.data------>', res?.data?.data);
+
         setList(res?.data?.data);
       })
-      .catch(() => null)
+      .catch(err => {
+        console.log('err---->', err);
+      })
       .finally(() => {
         setLoader(false);
         setRefreshing(false);

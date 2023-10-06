@@ -1,8 +1,14 @@
 import React from 'react';
 import colors from '../themes/Colors';
 import RenderPanel from './RenderPanel';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { UserData } from '../navigation/types';
+import {
+  Image,
+  Linking,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 type RenderOfficerDetailsProps = {
   item: UserData;
@@ -17,34 +23,53 @@ const RenderOfficerDetails = ({
 }: RenderOfficerDetailsProps) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
-      <Image
-        style={styles.officerImage}
-        resizeMode="contain"
-        source={{
-          uri: `https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2008px-Google_%22G%22_Logo.svg.png`,
-        }}
-      />
+      <View style={styles.profileImgContainer}>
+        <Image
+          style={styles.officerImage}
+          resizeMode="cover"
+          source={{
+            uri: item.photo,
+          }}
+        />
+      </View>
       <View style={{ flex: 1 }}>
         <RenderPanel
-          title="Name"
+          // title="Name"
           disabled={false}
-          value={`${item.first_name} ${item.middal_name} ${item.last_name}`}
+          value={`${item.prefix}. ${item.first_name} ${item.middal_name} ${item.last_name}`}
           containerStyle={styles.containerStyle}
           mainContainerStyle={styles.valuePanelMainContainer}
         />
         <RenderPanel
-          title="Job Status "
+          // title="Job Status "
           value={item.job_status}
           disabled={false}
           titleStyle={styles.panelTitle}
           mainContainerStyle={styles.valuePanelMainContainer}
         />
         <RenderPanel
-          title="Designation "
-          value="Junior Clerk"
+          // title="Designation "
+          value={item?.designation_id?.toString()}
           disabled={false}
           titleStyle={styles.panelTitle}
           mainContainerStyle={styles.valuePanelMainContainer}
+        />
+        <RenderPanel
+          // title="Mobile "
+          value={item?.mobile_number}
+          disabled={false}
+          titleStyle={styles.panelTitle}
+          mainContainerStyle={styles.valuePanelMainContainer}
+          onPress={() => Linking.openURL(`tel:${item?.mobile_number}`)}
+        />
+
+        <RenderPanel
+          // title="Mobile "
+          value={item?.alt_mobile_number}
+          disabled={false}
+          titleStyle={styles.panelTitle}
+          mainContainerStyle={styles.valuePanelMainContainer}
+          onPress={() => Linking.openURL(`tel:${item?.alt_mobile_number}`)}
         />
       </View>
     </TouchableOpacity>
@@ -63,16 +88,19 @@ const styles = StyleSheet.create({
     borderColor: colors.grey,
   },
   officerImage: {
-    width: 80,
-    height: 80,
-    marginRight: 10,
-    alignSelf: 'center',
+    width: 100,
+    height: 100,
   },
   containerStyle: {
     justifyContent: 'space-between',
   },
   panelTitle: { flex: 1 },
   valuePanelMainContainer: { paddingVertical: 0 },
+  profileImgContainer: {
+    borderRadius: 10,
+    marginRight: 10,
+    overflow: 'hidden',
+  },
 });
 
 export default RenderOfficerDetails;

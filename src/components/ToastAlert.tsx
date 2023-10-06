@@ -37,7 +37,7 @@ const ToastAlert: ToastConfig = {
   ),
   tomatoToast: (props): React.JSX.Element => (
     <View style={{ height: 60, width: '100%', backgroundColor: 'tomato' }}>
-      <Text>{props.text1}</Text>
+      <Text numberOfLines={2}>{props.text1}</Text>
     </View>
   ),
 };
