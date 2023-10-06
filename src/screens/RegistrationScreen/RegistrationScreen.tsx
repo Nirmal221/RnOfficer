@@ -17,6 +17,7 @@ import {
   APP_CONSTANT,
   MARITAL_STATUS,
   OFFICER_CLASS,
+  ERROR,
 } from '../../constant';
 import {
   Header,
@@ -25,8 +26,14 @@ import {
   ActionButton,
   SelectionModal,
   TextInputField,
+  PrefixOption,
+  GenderOption,
+  MaritalStatusOption,
+  StatusOption,
+  ClassOption,
 } from '../../components';
 import {
+  Asset,
   ImageLibraryOptions,
   ImagePickerResponse,
   launchImageLibrary,
@@ -92,7 +99,9 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   const [showSelectionModal, setShowSelectionModal] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedModalType, setSelectedModalType] = useState('');
+  const [officerIdImgObj, setOfficerIdImgObj] = useState<Asset>({});
   const [officerIdImg, setOfficerIdImg] = useState<string>('');
+  const [leavingCertiImgObj, setLeavingCertiImgObj] = useState<Asset>({});
   const [leavingCertiImg, setLeavingCertiImg] = useState<string>('');
 
   const [designationList, setDesignationList] = useState<Array<object>>([]);
@@ -156,7 +165,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
     mediaType: 'photo',
     quality: 0.2,
     presentationStyle: 'currentContext',
-    includeBase64: true,
+    includeBase64: false,
   };
 
   const onPressCameraIcon = () => {
@@ -200,9 +209,10 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
       async function (image: ImagePickerResponse) {
         if (!image || image.didCancel) {
         } else if (image.assets) {
-          var uri = image?.assets[0]?.uri;
+          var uri = image.assets[0].uri;
           if (uri) {
             setOfficerIdImg(uri);
+            setOfficerIdImgObj(image?.assets[0]);
           }
         }
       },
@@ -216,6 +226,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
         var uri = image.assets[0].uri;
         if (uri) {
           setLeavingCertiImg(uri);
+          setLeavingCertiImgObj(image?.assets[0]);
         }
       }
     });
@@ -224,10 +235,10 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   const checkPhoneNumberValid = () => {
     const check = phoneNumberRegex.test(phoneNumber);
     if (phoneNumber === '') {
-      showError('Error', 'Enter Phone Number');
+      showError(ERROR.PLEASE_ENTER_PHONE_NUMBER);
       return true;
     } else if (!check) {
-      showError('Error', 'Enter Valid Phone Number');
+      showError(ERROR.PLEASE_ENTER_VALID_PHONE_NUMBER);
       return true;
     } else {
       return false;
@@ -236,27 +247,27 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
 
   const checkValidation = () => {
     if (name === '') {
-      showError('Error', 'Enter name');
+      showError(ERROR.PLEASE_ENTER_NAME);
       return false;
     } else if (middalName === '') {
-      showError('Error', 'Enter MiddalName');
+      showError(ERROR.PLEASE_ENTER_MIDDAL_NAME);
       return false;
     } else if (sureName === '') {
-      showError('Error', 'Enter SureName');
+      showError(ERROR.PLEASE_ENTER_SURE_NAME);
       return false;
     } else if (checkPhoneNumberValid()) {
       return false;
     } else if (officeAddress === '') {
-      showError('Error', 'Enter OfficeAddress');
+      showError(ERROR.PLEASE_ENTER_OFFICE_ADDRESS);
       return false;
     } else if (Object.keys(selectedDesignation).length === 0) {
-      showError('Error', 'Please Select Your Designation');
+      showError(ERROR.PLEASE_SELECT_YOUR_DESIGNATION);
       return false;
     } else if (Object.keys(officeAddress).length === 0) {
-      showError('Error', 'Please Select Your Office Address');
+      showError(ERROR.PLEASE_SELECT_YOUR_OFFICE_ADDREDSS);
       return false;
     } else if (Object.keys(selectedNativeDistrict).length === 0) {
-      showError('Error', 'Please Select Your Native District');
+      showError(ERROR.PLEASE_SELECT_YOUR_NATIVE_DISTRICT);
       return false;
     } else {
       return true;
@@ -272,16 +283,26 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
         first_name: name,
         middal_name: middalName,
         last_name: sureName,
+        gender: gender,
+        marital_status: marritalStatus,
+        job_status: status,
+        dob: moment(dob).format('YYYY-MM-DD'),
         email: email,
-        mobile_number: Number(phoneNumber),
+        mobile_number: phoneNumber,
+        alt_mobile_number: alterPhoneNumber,
         designation_id: Number(selectedDesignation.id),
-        job_status: status === STATUS.CURRENT ? 'Current' : 'Retired',
         office_address: officeAddress,
-        office_district_id: Number(selectedOfficeDistrict.id),
-        native_district_id: Number(selectedNativeDistrict.id),
-        office_id_photo: officerIdImg,
-        leaving_certificate_photo: leavingCertiImg,
+        class: officerClass,
+        office_district_id: selectedOfficeDistrict?.id,
+        native_district_id: selectedNativeDistrict.id,
+        native_address: nativeAddress,
+        specialization: specelization,
+        reference_by: referenceBy,
+        remarks: remarks,
+        office_id_photo: officerIdImgObj,
+        leaving_certificate_photo: leavingCertiImgObj,
       };
+
       setLoader(true);
       postWithFormData(ApiConstant.REGISTER, obj)
         .then(() => {
@@ -291,7 +312,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
           }, 3000);
         })
         .catch(() => {
-          showError('Error', 'SomeThing Went Wrong');
+          showError(ERROR.SOME_THING_WRONG);
           setLoader(false);
         })
         .finally(() => {});
@@ -300,7 +321,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
 
   return (
     <SafeAreaView style={styles.mainContainer} edges={['bottom']}>
-      <Header title="Registration" />
+      <Header title={APP_CONSTANT.REGISTRATION} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}>
@@ -342,179 +363,24 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               placeholder={APP_CONSTANT.ENTER_SURENAME}
               onChangeText={text => setSureName(text)}
             />
+            <PrefixOption
+              selectedPrefix={prefix}
+              setPrefix={text => setPrefix(text)}
+            />
 
-            <RenderPanel
-              panelTitle={APP_CONSTANT.PREFIX}
-              valueTextStyle={styles.panelValue}
-              mainContainerStyle={styles.pT50}
+            <GenderOption
+              selectedGender={gender}
+              genderSelection={text => genderSelection(text)}
             />
-            <View style={styles.selectionContainer}>
-              <TouchableOpacity
-                style={styles.optionTouchableContainer}
-                onPress={() => setPrefix(USER_PREFIX.DR)}>
-                {prefix === USER_PREFIX.DR ? (
-                  <AppIcons.FillRadioBtn color={colors.green} />
-                ) : (
-                  <AppIcons.RadioBtn />
-                )}
-                <Text style={styles.optionTitle}>{APP_CONSTANT.DR}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.optionTouchableContainer}
-                onPress={() => setPrefix(USER_PREFIX.MR)}>
-                {prefix === USER_PREFIX.MR ? (
-                  <AppIcons.FillRadioBtn color={colors.green} />
-                ) : (
-                  <AppIcons.RadioBtn />
-                )}
-                <Text style={styles.optionTitle}>{APP_CONSTANT.MR}</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.selectionContainer}>
-              <TouchableOpacity
-                style={styles.optionTouchableContainer}
-                onPress={() => setPrefix(USER_PREFIX.MS)}>
-                {prefix === USER_PREFIX.MS ? (
-                  <AppIcons.FillRadioBtn color={colors.green} />
-                ) : (
-                  <AppIcons.RadioBtn />
-                )}
-                <Text style={styles.optionTitle}>{APP_CONSTANT.MS}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.optionTouchableContainer}
-                onPress={() => setPrefix(USER_PREFIX.MISS)}>
-                {prefix === USER_PREFIX.MISS ? (
-                  <AppIcons.FillRadioBtn color={colors.green} />
-                ) : (
-                  <AppIcons.RadioBtn />
-                )}
-                <Text style={styles.optionTitle}>{APP_CONSTANT.MISS}</Text>
-              </TouchableOpacity>
-            </View>
+            <MaritalStatusOption
+              selectedMarritalStatus={marritalStatus}
+              setMarritalStatus={text => setMarritalStatus(text)}
+            />
 
-            <RenderPanel
-              panelTitle={APP_CONSTANT.GENDER}
-              valueTextStyle={{ ...styles.panelValue }}
-              mainContainerStyle={styles.pT50}
+            <StatusOption
+              selectedStatus={status}
+              statusSelection={text => statusSelection(text)}
             />
-            <View style={styles.selectionContainer}>
-              <TouchableOpacity
-                style={styles.optionTouchableContainer}
-                onPress={() => genderSelection(GENDER.MALE)}>
-                {gender === GENDER.MALE ? (
-                  <AppIcons.FillRadioBtn color={colors.green} />
-                ) : (
-                  <AppIcons.RadioBtn />
-                )}
-                <Text style={styles.optionTitle}>{APP_CONSTANT.MALE}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.optionTouchableContainer}
-                onPress={() => genderSelection(GENDER.FEMALE)}>
-                {gender === GENDER.FEMALE ? (
-                  <AppIcons.FillRadioBtn color={colors.green} />
-                ) : (
-                  <AppIcons.RadioBtn />
-                )}
-                <Text style={styles.optionTitle}>{APP_CONSTANT.FEMALE}</Text>
-              </TouchableOpacity>
-            </View>
-            <RenderPanel
-              panelTitle={APP_CONSTANT.MARITAL_STATUS}
-              valueTextStyle={{ ...styles.panelValue }}
-              mainContainerStyle={styles.pT50}
-            />
-            <View style={styles.selectionContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.optionTouchableContainer,
-                  styles.threeSmallOptionList,
-                ]}
-                onPress={() => setMarritalStatus(MARITAL_STATUS.MARRIED)}>
-                {marritalStatus === MARITAL_STATUS.MARRIED ? (
-                  <AppIcons.FillRadioBtn color={colors.green} />
-                ) : (
-                  <AppIcons.RadioBtn />
-                )}
-                <Text style={styles.optionTitle}>{APP_CONSTANT.MARRIED}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.optionTouchableContainer,
-                  styles.threeSmallOptionList,
-                ]}
-                onPress={() => setMarritalStatus(MARITAL_STATUS.UN_MARRIED)}>
-                {marritalStatus === MARITAL_STATUS.UN_MARRIED ? (
-                  <AppIcons.FillRadioBtn color={colors.green} />
-                ) : (
-                  <AppIcons.RadioBtn />
-                )}
-                <Text style={styles.optionTitle}>
-                  {APP_CONSTANT.UN_MARRIED}
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.optionTouchableContainer,
-                  styles.threeSmallOptionList,
-                ]}
-                onPress={() => setMarritalStatus(MARITAL_STATUS.WIDOW)}>
-                {marritalStatus === MARITAL_STATUS.WIDOW ? (
-                  <AppIcons.FillRadioBtn color={colors.green} />
-                ) : (
-                  <AppIcons.RadioBtn />
-                )}
-                <Text style={styles.optionTitle}>{APP_CONSTANT.WIDOW}</Text>
-              </TouchableOpacity>
-            </View>
-
-            <RenderPanel
-              panelTitle={APP_CONSTANT.JOB_STATUS}
-              valueTextStyle={styles.panelValue}
-              mainContainerStyle={styles.pT50}
-            />
-            <View style={styles.selectionContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.optionTouchableContainer,
-                  styles.threeSmallOptionList,
-                ]}
-                onPress={() => statusSelection(STATUS.CURRENT)}>
-                {status === STATUS.CURRENT ? (
-                  <AppIcons.FillRadioBtn color={colors.green} />
-                ) : (
-                  <AppIcons.RadioBtn />
-                )}
-                <Text style={styles.optionTitle}>{APP_CONSTANT.CURRENT}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.optionTouchableContainer,
-                  styles.threeSmallOptionList,
-                ]}
-                onPress={() => statusSelection(STATUS.RETIRED)}>
-                {status === STATUS.RETIRED ? (
-                  <AppIcons.FillRadioBtn color={colors.green} />
-                ) : (
-                  <AppIcons.RadioBtn />
-                )}
-                <Text style={styles.optionTitle}>{APP_CONSTANT.RETIRED}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.optionTouchableContainer,
-                  styles.threeSmallOptionList,
-                ]}
-                onPress={() => statusSelection(STATUS.VRS)}>
-                {status === STATUS.VRS ? (
-                  <AppIcons.FillRadioBtn color={colors.green} />
-                ) : (
-                  <AppIcons.RadioBtn />
-                )}
-                <Text style={styles.optionTitle}>{APP_CONSTANT.VRS}</Text>
-              </TouchableOpacity>
-            </View>
 
             <RenderPanel
               panelTitle={APP_CONSTANT.DOB}
@@ -568,65 +434,10 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               onChangeText={text => setOfficeAddress(text)}
               textInputStyle={styles.ofcAddressTextInput}
             />
-            <RenderPanel
-              panelTitle={APP_CONSTANT.CLASS}
-              valueTextStyle={styles.panelValue}
-              mainContainerStyle={styles.pT50}
+            <ClassOption
+              selectedOfficerClass={officerClass}
+              setofficerClass={text => setofficerClass(text)}
             />
-            <View style={styles.selectionContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.optionTouchableContainer,
-                  styles.fourSmallOptionList,
-                ]}
-                onPress={() => setofficerClass(OFFICER_CLASS.ONE)}>
-                {officerClass === OFFICER_CLASS.ONE ? (
-                  <AppIcons.FillRadioBtn color={colors.green} />
-                ) : (
-                  <AppIcons.RadioBtn />
-                )}
-                <Text style={styles.optionTitle}>{APP_CONSTANT.ONE}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.optionTouchableContainer,
-                  styles.fourSmallOptionList,
-                ]}
-                onPress={() => setofficerClass(OFFICER_CLASS.TWO)}>
-                {officerClass === OFFICER_CLASS.TWO ? (
-                  <AppIcons.FillRadioBtn color={colors.green} />
-                ) : (
-                  <AppIcons.RadioBtn />
-                )}
-                <Text style={styles.optionTitle}>{APP_CONSTANT.TWO}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.optionTouchableContainer,
-                  styles.fourSmallOptionList,
-                ]}
-                onPress={() => setofficerClass(OFFICER_CLASS.THREE)}>
-                {officerClass === OFFICER_CLASS.THREE ? (
-                  <AppIcons.FillRadioBtn color={colors.green} />
-                ) : (
-                  <AppIcons.RadioBtn />
-                )}
-                <Text style={styles.optionTitle}>{APP_CONSTANT.THREE}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.optionTouchableContainer,
-                  styles.fourSmallOptionList,
-                ]}
-                onPress={() => setofficerClass(OFFICER_CLASS.FOUR)}>
-                {officerClass === OFFICER_CLASS.FOUR ? (
-                  <AppIcons.FillRadioBtn color={colors.green} />
-                ) : (
-                  <AppIcons.RadioBtn />
-                )}
-                <Text style={styles.optionTitle}>{APP_CONSTANT.FOUR}</Text>
-              </TouchableOpacity>
-            </View>
             <RenderPanel
               panelTitle={APP_CONSTANT.OFFICE_DISTRICT}
               value={
@@ -645,7 +456,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               multiline
               value={nativeAddress}
               title={APP_CONSTANT.NATIVE_DISTRICT_ADDRESS}
-              placeholder={APP_CONSTANT.PLEASE_ENTER_REMARKS}
+              placeholder={APP_CONSTANT.PLEASE_ENTER_NATIVE_DISTRICT}
               onChangeText={text => setNativeAddress(text)}
               textInputStyle={styles.ofcAddressTextInput}
             />
@@ -667,15 +478,14 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               multiline
               value={specelization}
               title={APP_CONSTANT.SPECELIZATOIN}
-              placeholder={APP_CONSTANT.PLEASE_ENTER_REMARKS}
+              placeholder={APP_CONSTANT.PLEASE_ENTER_YOUR_SPECELIZATION}
               onChangeText={text => setSpecelization(text)}
               textInputStyle={styles.ofcAddressTextInput}
             />
             <TextInputField
-              multiline
               value={referenceBy}
               title={APP_CONSTANT.REFERENCE_BY}
-              placeholder={APP_CONSTANT.NATIVE_DISTRICT_ADDRESS}
+              placeholder={APP_CONSTANT.REFERENCE_BY}
               onChangeText={text => setReferenceBy(text)}
               textInputStyle={styles.ofcAddressTextInput}
             />

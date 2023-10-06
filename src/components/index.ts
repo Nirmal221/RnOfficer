@@ -6,6 +6,13 @@ import SelectionModal from './SelectionModal';
 import Separator from './Separator';
 import Header from './Header';
 import Loader from './Loader';
+import {
+  PrefixOption,
+  GenderOption,
+  MaritalStatusOption,
+  StatusOption,
+  ClassOption,
+} from './Registration/Option';
 
 export {
   RenderPanel,
@@ -16,4 +23,9 @@ export {
   Separator,
   Header,
   Loader,
+  PrefixOption,
+  GenderOption,
+  MaritalStatusOption,
+  StatusOption,
+  ClassOption,
 };

@@ -50,7 +50,7 @@ const LoginScreen = (props: LoginScreenProps) => {
             userData: data.user,
           });
         } else {
-          showError('Warning', msg);
+          showError(msg);
         }
       })
       .finally(() => {});

@@ -17,6 +17,8 @@ const APP_CONSTANT = {
   ENTER_OFFICE_ADDRESS: 'Please Enter Your Office Address',
   REFERENCE_BY: 'Reference By',
   REMARKS: 'Remarks',
+  PLEASE_ENTER_NATIVE_DISTRICT: 'Please Enter Native District',
+  PLEASE_ENTER_YOUR_SPECELIZATION: 'Please Enter Your Specelization',
   PLEASE_ENTER_REMARKS: 'Please Enter Remarks',
   CURRENT: 'Current',
   RETIRED: 'Retired',
@@ -51,6 +53,9 @@ const APP_CONSTANT = {
   FOUR: 'IV',
   NATIVE_DISTRICT_ADDRESS: 'Native District Address',
   SPECELIZATOIN: 'Specelization',
+  ERROR: 'Error',
+  WARNING: 'Warning',
+  REGISTRATION: 'Registration',
 };
 
 const ASYNC_KEY = {
@@ -58,19 +63,19 @@ const ASYNC_KEY = {
 };
 
 const GENDER = {
-  MALE: 'MALE',
-  FEMALE: 'FEMALE',
+  MALE: 'Male',
+  FEMALE: 'Female',
 };
 
 const USER_PREFIX = {
-  DR: 'Dr.',
-  MR: 'Mr.',
-  MS: 'Ms.',
+  DR: 'Dr',
+  MR: 'Mr',
+  MS: 'Ms',
   MISS: 'Miss',
 };
 const STATUS = {
-  CURRENT: 'CURRENT',
-  RETIRED: 'RETIRED',
+  CURRENT: 'Current',
+  RETIRED: 'Retired',
   VRS: 'VRS',
 };
 const MARITAL_STATUS = {
@@ -213,6 +218,19 @@ const DESIGNATION = [
   { title: 'Branch Manager ' },
 ];
 
+const ERROR = {
+  PLEASE_ENTER_NAME: 'Please Enter name',
+  PLEASE_ENTER_MIDDAL_NAME: 'Enter Middal Name',
+  PLEASE_ENTER_SURE_NAME: 'Enter SureName',
+  PLEASE_ENTER_PHONE_NUMBER: 'Enter Phone Number',
+  PLEASE_ENTER_VALID_PHONE_NUMBER: 'Please Enter Valid Phone Number',
+  PLEASE_ENTER_OFFICE_ADDRESS: 'Please Enter OfficeAddress',
+  PLEASE_SELECT_YOUR_DESIGNATION: 'Please Select Your Designation',
+  PLEASE_SELECT_YOUR_OFFICE_ADDREDSS: 'Please Select Your Office Address',
+  PLEASE_SELECT_YOUR_NATIVE_DISTRICT: 'Please Select Your Native District',
+  SOME_THING_WRONG: 'SomeThing Went Wrong',
+};
+
 export {
   APP_CONSTANT,
   ASYNC_KEY,
@@ -224,4 +242,5 @@ export {
   USER_PREFIX,
   MARITAL_STATUS,
   OFFICER_CLASS,
+  ERROR,
 };

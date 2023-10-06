@@ -5,6 +5,7 @@ import Toast, {
   ToastConfig,
 } from 'react-native-toast-message';
 import { Text, View } from 'react-native';
+import { APP_CONSTANT } from '../constant';
 
 const TOAST_TYPE = {
   SUCCESS: 'success',
@@ -50,10 +51,10 @@ const showSuccess = (header: string, message: string) => {
   });
 };
 
-const showError = (header: string, message: string) => {
+const showError = (message: string) => {
   Toast.show({
     type: TOAST_TYPE.ERROR,
-    text1: header,
+    text1: APP_CONSTANT.WARNING,
     text2: message,
     position: 'bottom',
   });
