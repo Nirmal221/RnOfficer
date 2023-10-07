@@ -1,29 +1,40 @@
 import React from 'react';
 import colors from '../themes/Colors';
 import { APP_CONSTANT } from '../constant';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  Linking,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import ApplicationStyle from '../themes/ApplicationStyle';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { UserData } from '../navigation/types';
 
 const RenderPanel = ({
   title,
   value,
   showSeprator,
+  disabled = true,
   onPressValue = () => {},
 }: {
-  title: string;
-  value: string;
+  title?: string | undefined;
+  value?: string | undefined;
   showSeprator: boolean;
-  onPressValue?: () => undefined;
+  disabled?: boolean;
+  onPressValue?: () => void;
 }) => {
   return (
     <>
-      <View style={styles.panelContainer}>
+      <TouchableOpacity
+        disabled={disabled}
+        style={styles.panelContainer}
+        onPress={onPressValue}>
         <Text style={styles.panelTitle}>{title}</Text>
-        <Text style={styles.valueText} onPress={onPressValue}>
-          {value !== 'null' ? value : ''}
-        </Text>
-      </View>
+        <Text style={styles.valueText}>{value !== 'null' ? value : ''}</Text>
+      </TouchableOpacity>
       {showSeprator && <View style={styles.separator} />}
     </>
   );
@@ -36,7 +47,7 @@ const OfficerDetail = ({
 }: {
   bottomSheetRef: any;
   snapPoints: any;
-  selectedOfficer: any;
+  selectedOfficer: UserData;
 }) => {
   return (
     <BottomSheet
@@ -44,7 +55,10 @@ const OfficerDetail = ({
       index={0}
       snapPoints={snapPoints}
       handleStyle={{ backgroundColor: colors.secondaryLight }}>
-      <BottomSheetScrollView style={styles.container}>
+      <BottomSheetScrollView
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.contentContainerScrollView}>
         <View style={styles.imgContainer}>
           <Image
             source={{
@@ -57,34 +71,54 @@ const OfficerDetail = ({
         <View style={styles.contentContainer}>
           <RenderPanel
             title={APP_CONSTANT.NAME}
-            value={selectedOfficer?.first_name || selectedOfficer?.displayName}
-            showSeprator={true}
+            showSeprator
+            value={selectedOfficer?.first_name}
           />
           <RenderPanel
+            showSeprator
             title={APP_CONSTANT.MIDDAL_NAME}
             value={selectedOfficer?.middal_name}
-            showSeprator={true}
           />
           <RenderPanel
+            showSeprator
             title={APP_CONSTANT.SURENAME}
-            value={selectedOfficer.last_name}
-            showSeprator={true}
+            value={selectedOfficer?.last_name}
           />
           <RenderPanel
+            showSeprator
+            disabled={false}
             title={APP_CONSTANT.EMAIL}
             value={selectedOfficer?.email}
-            showSeprator={true}
-            onPressValue={() => {}}
+            onPressValue={() => {
+              Linking.openURL(`mailto:${selectedOfficer?.email}`);
+            }}
           />
           <RenderPanel
+            showSeprator
+            disabled={false}
             title={APP_CONSTANT.MOBILE_NO}
             value={`${selectedOfficer?.mobile_number}`}
-            showSeprator={true}
+            onPressValue={() =>
+              Linking.openURL(`tel:${selectedOfficer?.mobile_number}`)
+            }
           />
-
           <RenderPanel
+            showSeprator
+            disabled={false}
             title={APP_CONSTANT.MOBILE_NO}
             value={`${selectedOfficer?.alt_mobile_number}`}
+            onPressValue={() =>
+              Linking.openURL(`tel:${selectedOfficer?.alt_mobile_number}`)
+            }
+          />
+          <RenderPanel
+            showSeprator
+            title={APP_CONSTANT.DESIGNATION}
+            value={`${selectedOfficer.designation_id}`}
+          />
+          <RenderPanel
+            title={APP_CONSTANT.NATIVE_DISTRICT_ADDRESS}
+            value={`${selectedOfficer.native_address}`}
             showSeprator={false}
           />
         </View>
@@ -118,6 +152,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   panelTitle: {
+    flex: 0.5,
     ...ApplicationStyle.f16w400,
     color: colors.black,
   },
@@ -128,6 +163,8 @@ const styles = StyleSheet.create({
     borderLeftColor: colors.grey,
   },
   valueText: {
+    flex: 1,
+    textAlign: 'right',
     ...ApplicationStyle.f16w400,
     color: colors.blue,
   },
@@ -137,6 +174,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     opacity: 0.5,
   },
+  contentContainerScrollView: { paddingBottom: 100 },
 });
 
 export default OfficerDetail;

@@ -20,7 +20,7 @@ import { AppStackParamList, DistrictsObject } from '../../navigation/types';
 type HomeScreenProps = NativeStackScreenProps<AppStackParamList, 'HomeScreen'>;
 
 const HomeScreen: React.FC<HomeScreenProps> = () => {
-  const snapPoints = useMemo(() => ['1%', '75%'], []);
+  const snapPoints = useMemo(() => ['1%', '85%'], []);
 
   // const [search, setSearch] = useState('');
   const [districtList, setDistrictList] = useState<Array<DistrictsObject>>([]);
@@ -33,7 +33,8 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
 
   useEffect(() => {
     getDistrict();
-    getData();
+    const destrictId = 0;
+    getData(destrictId);
   }, []);
 
   const getDistrict = () => {
@@ -44,43 +45,35 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
       .catch(() => null);
   };
 
-  const getData = () => {
-    const destrictId = 0;
-    // const destrictId = route.params.cityObj?.id;
-    console.log('res?.data?.data');
+  const getData = (destrictId: number) => {
     setLoader(true);
     get(`${ApiConstant.OFFICER_LIST}/${destrictId}`)
       .then((res: any) => {
-        console.log('res?.data?.data------>', res?.data?.data);
-
         setList(res?.data?.data);
       })
-      .catch(err => {
-        console.log('err---->', err);
-      })
+      .catch(() => null)
       .finally(() => {
         setLoader(false);
         setRefreshing(false);
       });
   };
 
-  // const onSearch = (text: string) => {
-  //   setSearch(text);
-  //   const filtered = districtList.filter((e: DistrictsObject) =>
-  //     e?.name.toLocaleLowerCase().includes(text.toLocaleLowerCase()),
-  //   );
-  //   if (filtered.length > 0) {
-  //     setSearchList(filtered);
-  //   } else {
-  //     setSearchList([]);
-  //   }
-  // };
-
   const onRefresh = () => {
     setRefreshing(true);
     setTimeout(() => {
-      setRefreshing(false);
+      const destrictId = 0;
+      getData(destrictId);
     }, 1500);
+  };
+
+  const renderEmptyList = () => {
+    return (
+      <View style={styles.emptyListContainer}>
+        <Text style={{ color: colors.grey, ...ApplicationStyle.f16w400 }}>
+          No Data Found
+        </Text>
+      </View>
+    );
   };
 
   return (
@@ -108,24 +101,10 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
                 refreshing={refreshing}
                 colors={[colors.green, colors.green]}
                 tintColor={'#9Bd35A'}
-                onRefresh={() => {
-                  setRefreshing(true);
-                  setTimeout(() => {
-                    getData();
-                  }, 1500);
-                }}
+                onRefresh={() => onRefresh()}
               />
             }
-            ListEmptyComponent={() => {
-              return (
-                <View style={styles.emptyListContainer}>
-                  <Text
-                    style={{ color: colors.grey, ...ApplicationStyle.f16w400 }}>
-                    No Data Found
-                  </Text>
-                </View>
-              );
-            }}
+            ListEmptyComponent={renderEmptyList}
             renderItem={({ item, index }) => (
               <RenderOfficerDetails
                 item={item}
@@ -140,48 +119,6 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
             )}
           />
         )}
-        {/* <FlatList
-          data={districtList}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              colors={['#9Bd35A', '#689F38']}
-              tintColor={'#9Bd35A'}
-              onRefresh={() => onRefresh()}
-            />
-          }
-          numColumns={2}
-          columnWrapperStyle={styles.columnWrapperStyle}
-          keyboardDismissMode="on-drag"
-          // ListHeaderComponent={
-          //   <TextInput
-          //     value={search}
-          //     placeholder={APP_CONSTANT.SEARCH}
-          //     placeholderTextColor={colors.grey}
-          //     style={styles.searchTextInput}
-          //     onChangeText={(text: string) => onSearch(text)}
-          //   />
-          // }
-          renderItem={({ item }: { item: DistrictsObject }) => {
-            const itemTitle = item?.name;
-            return (
-              <View style={styles.linearGradient}>
-                <TouchableOpacity
-                  style={styles.cityContainer}
-                  onPress={() => {
-                    navigation.navigate('OfficerListScreen', {
-                      cityObj: item,
-                    });
-                  }}>
-                  <Text style={styles.cityLabel} numberOfLines={1}>
-                    {itemTitle}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            );
-          }}
-        /> */}
         <OfficerDetail
           bottomSheetRef={bottomSheetRef}
           snapPoints={snapPoints}

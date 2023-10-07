@@ -9,12 +9,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { AppIcons, AppImages } from '../assets';
+import { ApplicationStyle } from '../themes';
 
 type RenderOfficerDetailsProps = {
   item: UserData;
   index: number;
   onPress: any;
 };
+
+const ICON_SIZE = 30;
 
 const RenderOfficerDetails = ({
   item,
@@ -27,44 +31,47 @@ const RenderOfficerDetails = ({
         <Image
           style={styles.officerImage}
           resizeMode="cover"
-          source={{
-            uri: item.photo,
-          }}
+          source={
+            item.photo?.includes('https')
+              ? {
+                  uri: item.photo,
+                }
+              : AppImages.Dummy
+          }
         />
       </View>
       <View style={{ flex: 1 }}>
         <RenderPanel
-          // title="Name"
-          disabled={false}
+          disabled
           value={`${item.prefix}. ${item.first_name} ${item.middal_name} ${item.last_name}`}
           containerStyle={styles.containerStyle}
           mainContainerStyle={styles.valuePanelMainContainer}
         />
         <RenderPanel
-          // title="Job Status "
+          disabled
           value={item.job_status}
-          disabled={false}
           titleStyle={styles.panelTitle}
           mainContainerStyle={styles.valuePanelMainContainer}
         />
         <RenderPanel
-          // title="Designation "
+          disabled
           value={item?.designation_id?.toString()}
-          disabled={false}
           titleStyle={styles.panelTitle}
           mainContainerStyle={styles.valuePanelMainContainer}
         />
-        <RenderPanel
-          // title="Mobile "
-          value={item?.mobile_number}
-          disabled={false}
-          titleStyle={styles.panelTitle}
-          mainContainerStyle={styles.valuePanelMainContainer}
-          onPress={() => Linking.openURL(`tel:${item?.mobile_number}`)}
-        />
+        <TouchableOpacity
+          style={ApplicationStyle.rowAlignCenterJustifyBetween}
+          onPress={() => Linking.openURL(`tel:${item?.mobile_number}`)}>
+          <RenderPanel
+            disabled
+            value={item?.mobile_number}
+            titleStyle={styles.panelTitle}
+            mainContainerStyle={styles.valuePanelMainContainer}
+          />
+          <AppIcons.WhatsApp width={ICON_SIZE} height={ICON_SIZE} />
+        </TouchableOpacity>
 
         <RenderPanel
-          // title="Mobile "
           value={item?.alt_mobile_number}
           disabled={false}
           titleStyle={styles.panelTitle}

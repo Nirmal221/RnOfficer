@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 20,
   },
-  profileImg: { height: 100, width: 100, borderRadius: 50 },
+  profileImg: { height: 150, width: 150, borderRadius: 10 },
   contentContainer: {
     backgroundColor: colors.secondary,
     paddingVertical: 5,

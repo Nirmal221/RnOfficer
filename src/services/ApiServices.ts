@@ -7,6 +7,7 @@ const ApiConstant = {
   DISTRICTS: 'districts',
   DESIGNATIONS: 'designations',
   OFFICER_LIST: 'officer-list',
+  LOGIN: 'login',
 };
 
 export type EndPointProps = '';
@@ -38,7 +39,7 @@ const post = (endPoint: string, params: any) => {
   });
 };
 
-const postCheckUser = (url: string, id: any, gmail: string) => {
+const postCheckUser = (endPoint: string, id: any, gmail: string) => {
   const FormData = require('form-data');
   let formData = new FormData();
   formData.append('google_id', id);
@@ -53,13 +54,13 @@ const postCheckUser = (url: string, id: any, gmail: string) => {
   };
 
   return new Promise((resolve, reject) => {
-    axios
-      .request(config)
-      .then(response => {
-        resolve(response);
+    api
+      .post(`${endPoint}`, params)
+      .then(res => {
+        resolve(res);
       })
-      .catch(error => {
-        reject(error);
+      .catch(err => {
+        reject(err);
       });
   });
 };

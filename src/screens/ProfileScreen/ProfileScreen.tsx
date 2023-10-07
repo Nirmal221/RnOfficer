@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Text, View, ScrollView, TouchableOpacity, Image } from 'react-native';
 import styles from './style';
 import { Loader } from '../../components';
 import { getFromAsync } from '../../utils';
@@ -38,10 +38,6 @@ const RenderPanel = ({
 
 const ProfileScreen = (props: ProfileScreenProps) => {
   const { navigation } = props;
-  // const [profileImg, setProfileImg] = useState('');
-  const [name, setName] = useState('');
-  const [middalName, setMiddalName] = useState('');
-  const [sureName, setSureName] = useState('');
   const [data, setData] = useState<UserData>({});
   const [loader, setLoader] = useState(false);
 
@@ -53,11 +49,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
     const userData = await getFromAsync(ASYNC_KEY.AUTH);
     if (userData) {
       const jsonData = JSON.parse(userData);
-      setName(jsonData.first_name);
-      setMiddalName(jsonData.middal_name);
-      setSureName(jsonData.last_name);
       setData(jsonData);
-      // setProfileImg(userData.photoURL);
     }
   };
 
@@ -78,27 +70,27 @@ const ProfileScreen = (props: ProfileScreenProps) => {
         <Text style={styles.headerTitle}>{APP_CONSTANT.PROFILE}</Text>
       </View>
       <ScrollView style={styles.container}>
-        {/* <View style={styles.imgContainer}>
+        <View style={styles.imgContainer}>
           <Image
-            source={{ uri: profileImg }}
+            source={{ uri: data?.photo }}
             style={styles.profileImg}
             resizeMode="cover"
           />
-        </View> */}
+        </View>
         <View style={styles.contentContainer}>
           <RenderPanel
             title={APP_CONSTANT.NAME}
-            value={name}
+            value={data.first_name}
             showSeprator={true}
           />
           <RenderPanel
             title={APP_CONSTANT.MIDDAL_NAME}
-            value={middalName}
+            value={data.middal_name}
             showSeprator={true}
           />
           <RenderPanel
             title={APP_CONSTANT.SURENAME}
-            value={sureName}
+            value={data.last_name}
             showSeprator={true}
           />
           <RenderPanel

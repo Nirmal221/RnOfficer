@@ -11,7 +11,7 @@ import { ASYNC_KEY } from '../../constant';
 import { height, width } from '../../themes';
 import { AuthStackParamList } from '../../navigation';
 import { showError } from '../../components/ToastAlert';
-import { postCheckUser } from '../../services/ApiServices';
+import { ApiConstant, postCheckUser } from '../../services/ApiServices';
 import { StackActions } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -35,10 +35,9 @@ const LoginScreen = (props: LoginScreenProps) => {
   };
 
   const checkAlreadyUser = (data: any) => {
-    const url = 'https://patidarkarmyogi.saranginfotech.in/api/login';
-    console.log(data);
-
-    postCheckUser(url, data.user.uid, data.user.email)
+    const googleId = data.user.uid;
+    const emailId = data.user.email;
+    postCheckUser(ApiConstant.LOGIN, googleId, emailId)
       .then(async (res: any) => {
         await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(res.data.data.data));
         navigation.dispatch(StackActions.replace('AppStackScreens'));
