@@ -44,18 +44,9 @@ const postCheckUser = (endPoint: string, id: any, gmail: string) => {
   let formData = new FormData();
   formData.append('google_id', id);
   formData.append('email', gmail);
-
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    url: url,
-    headers: {},
-    data: formData,
-  };
-
   return new Promise((resolve, reject) => {
     api
-      .post(`${endPoint}`, params)
+      .post(`${endPoint}`, formData)
       .then(res => {
         resolve(res);
       })
