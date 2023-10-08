@@ -84,13 +84,14 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
       <View style={styles.container}>
         {loader ? (
           <View style={styles.loaderContainer}>
-            <ActivityIndicator />
+            <ActivityIndicator size={'large'} color={colors.green} />
           </View>
         ) : (
           <FlatList
             data={list}
             showsVerticalScrollIndicator={false}
             keyboardDismissMode="on-drag"
+            contentContainerStyle={styles.contentContainerStyle}
             onScroll={() => {
               if (bottomSheetRef?.current) {
                 bottomSheetRef?.current.close();

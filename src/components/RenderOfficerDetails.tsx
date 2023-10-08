@@ -25,12 +25,37 @@ const RenderOfficerDetails = ({
   index,
   onPress,
 }: RenderOfficerDetailsProps) => {
+  const renderIcons = (phoneNumber?: string) => {
+    return (
+      <View style={ApplicationStyle.rowAlignCenterJustifyBetween}>
+        <View style={styles.iconContainer}>
+          <AppIcons.WhatsApp
+            width={ICON_SIZE}
+            height={ICON_SIZE}
+            onPress={() => {
+              Linking.openURL(
+                `https://api.whatsapp.com/send?phone=${phoneNumber}`,
+              );
+            }}
+          />
+        </View>
+        <View style={styles.iconContainer}>
+          <AppIcons.Phone
+            width={ICON_SIZE}
+            height={ICON_SIZE}
+            onPress={() => Linking.openURL(`tel:${phoneNumber}`)}
+          />
+        </View>
+      </View>
+    );
+  };
+
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.profileImgContainer}>
         <Image
           style={styles.officerImage}
-          resizeMode="cover"
+          resizeMode="contain"
           source={
             item.photo?.includes('https')
               ? {
@@ -59,25 +84,25 @@ const RenderOfficerDetails = ({
           titleStyle={styles.panelTitle}
           mainContainerStyle={styles.valuePanelMainContainer}
         />
-        <TouchableOpacity
-          style={ApplicationStyle.rowAlignCenterJustifyBetween}
-          onPress={() => Linking.openURL(`tel:${item?.mobile_number}`)}>
+        <View style={ApplicationStyle.rowAlignCenterJustifyBetween}>
           <RenderPanel
             disabled
             value={item?.mobile_number}
             titleStyle={styles.panelTitle}
             mainContainerStyle={styles.valuePanelMainContainer}
           />
-          <AppIcons.WhatsApp width={ICON_SIZE} height={ICON_SIZE} />
-        </TouchableOpacity>
-
-        <RenderPanel
-          value={item?.alt_mobile_number}
-          disabled={false}
-          titleStyle={styles.panelTitle}
-          mainContainerStyle={styles.valuePanelMainContainer}
-          onPress={() => Linking.openURL(`tel:${item?.alt_mobile_number}`)}
-        />
+          {renderIcons(item?.mobile_number)}
+        </View>
+        <View style={ApplicationStyle.rowAlignCenterJustifyBetween}>
+          <RenderPanel
+            value={item?.alt_mobile_number}
+            disabled={false}
+            titleStyle={styles.panelTitle}
+            mainContainerStyle={styles.valuePanelMainContainer}
+            onPress={() => Linking.openURL(`tel:${item?.alt_mobile_number}`)}
+          />
+          {renderIcons(item?.alt_mobile_number)}
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -107,6 +132,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginRight: 10,
     overflow: 'hidden',
+  },
+  iconContainer: {
+    padding: 1.5,
+    borderRadius: 10,
+    borderWidth: 0.5,
   },
 });
 

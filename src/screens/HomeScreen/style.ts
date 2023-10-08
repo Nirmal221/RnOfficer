@@ -12,7 +12,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.secondary,
   },
   headerContainer: {
-    paddingBottom: 15,
+    paddingTop: Platform.OS === 'ios' ? 0 : 10,
+    paddingBottom: Platform.OS === 'ios' ? 15 : 5,
     flexDirection: 'row',
     paddingHorizontal: 15,
     marginBottom: 10,
@@ -34,21 +35,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginBottom: 10,
   },
-  cityContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+  contentContainerStyle: {
+    paddingBottom: 100,
   },
-  cityLabel: { ...ApplicationStyle.f15w600, color: colors.black },
-  linearGradient: {
-    width: width * 0.45,
-    height: width * 0.1,
-    marginBottom: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.grey,
-  },
-  columnWrapperStyle: { justifyContent: 'space-between' },
   loaderContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   emptyListContainer: {
     height: height * 0.8,
