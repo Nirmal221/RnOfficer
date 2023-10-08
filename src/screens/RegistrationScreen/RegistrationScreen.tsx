@@ -455,7 +455,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
             <TextInputField
               multiline
               value={nativeAddress}
-              title={APP_CONSTANT.NATIVE_DISTRICT_ADDRESS}
+              title={APP_CONSTANT.NATIVE_ADDRESS}
               placeholder={APP_CONSTANT.PLEASE_ENTER_NATIVE_DISTRICT}
               onChangeText={text => setNativeAddress(text)}
               textInputStyle={styles.ofcAddressTextInput}

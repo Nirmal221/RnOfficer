@@ -1,19 +1,25 @@
 import React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+  useColorScheme,
+} from 'react-native';
 import {
   GOOGLE_WEB_CLIENT,
   handleGoogleLogin,
 } from '../../services/GoogleLoginService';
 import styles from './style';
-import { AppImages } from '../../assets';
+import { AppIcons, AppImages } from '../../assets';
 import { setInAsync } from '../../utils';
 import { ASYNC_KEY } from '../../constant';
-import { height, width } from '../../themes';
-import { AuthStackParamList } from '../../navigation';
+import { colors, height, width } from '../../themes';
 import { showError } from '../../components/ToastAlert';
-import { ApiConstant, postCheckUser } from '../../services/ApiServices';
 import { StackActions } from '@react-navigation/native';
+import { AuthStackParamList } from '../../navigation/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ApiConstant, postCheckUser } from '../../services/ApiServices';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -28,6 +34,8 @@ type LoginScreenProps = NativeStackScreenProps<
 
 const LoginScreen = (props: LoginScreenProps) => {
   const { navigation } = props;
+  const theme = useColorScheme();
+  const isDark = theme === 'dark';
   const onPressGoogleLogin = () => {
     handleGoogleLogin().then(async res => {
       checkAlreadyUser(res);
@@ -58,10 +66,10 @@ const LoginScreen = (props: LoginScreenProps) => {
   return (
     <SafeAreaView style={styles.mainContainer}>
       <View style={styles.container}>
-        <Image
-          source={AppImages.onBoard}
-          style={{ width: width, height: height * 0.5 }}
-          resizeMode="contain"
+        <AppIcons.AppLogo
+          height={height * 0.5}
+          width={width}
+          color={isDark ? colors.grey : colors.black}
         />
         <TouchableOpacity
           onPress={() => onPressGoogleLogin()}
@@ -72,7 +80,7 @@ const LoginScreen = (props: LoginScreenProps) => {
             style={styles.googleLogo}
             resizeMode="contain"
           />
-          <Text>Login With Google</Text>
+          <Text style={styles.loginTitle}>Login With Google</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

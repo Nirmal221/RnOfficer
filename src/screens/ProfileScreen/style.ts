@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   signOutTitle: {
+    color: colors.black,
     ...ApplicationStyle.f17w500,
   },
 });

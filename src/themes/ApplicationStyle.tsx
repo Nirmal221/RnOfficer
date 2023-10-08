@@ -49,6 +49,11 @@ const ApplicationStyle = StyleSheet.create({
     fontWeight: '500',
     fontFamily: Fonts.type.POPPINS_SEMI_BOLD,
   },
+  f20w400: {
+    fontSize: 20,
+    fontWeight: '400',
+    fontFamily: Fonts.type.POPPINS_BOLD,
+  },
   f20w600: {
     fontSize: 20,
     fontWeight: '600',

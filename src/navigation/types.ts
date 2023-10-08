@@ -19,10 +19,10 @@ export type RootStackParamList = {
 };
 
 export type DistrictsObject = {
-  created_at: string;
-  id: number;
-  name: string;
-  updated_at: string;
+  created_at?: string;
+  id?: number;
+  name?: string;
+  updated_at?: string;
 };
 
 export type UserData = {

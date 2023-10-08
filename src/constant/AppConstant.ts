@@ -51,11 +51,12 @@ const APP_CONSTANT = {
   TWO: 'II',
   THREE: 'III',
   FOUR: 'IV',
-  NATIVE_DISTRICT_ADDRESS: 'Native District Address',
+  NATIVE_ADDRESS: 'Native Address',
   SPECELIZATOIN: 'Specelization',
   ERROR: 'Error',
   WARNING: 'Warning',
   REGISTRATION: 'Registration',
+  SIGN_OUT: 'Sign Out',
 };
 
 const ASYNC_KEY = {

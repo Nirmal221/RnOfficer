@@ -12,15 +12,17 @@ import colors from '../themes/Colors';
 import { APP_CONSTANT } from '../constant';
 import ApplicationStyle from '../themes/ApplicationStyle';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AppIcons } from '../assets';
 
 type SelectionModalProp = {
   title: string;
+  selected: object;
   visible: boolean;
   showIndex?: boolean;
   data: Array<object>;
   onClose: () => void;
-  onSelect: (selected: {}) => undefined;
-  onSearch: (text: string) => undefined;
+  onSelect?: (selected: {}) => undefined;
+  onSearch?: (text: string) => undefined;
 };
 
 const SelectionModal = ({
@@ -30,6 +32,7 @@ const SelectionModal = ({
   data,
   onSelect,
   showIndex,
+  selected,
 }: // onSearch,
 SelectionModalProp) => {
   // const [search, setSearch] = useState('');
@@ -75,7 +78,7 @@ SelectionModalProp) => {
             item,
             index,
           }: {
-            item: { name: string };
+            item: { name: string; id: number };
             index: number;
           }) => {
             const itemTitle = item?.name;
@@ -87,6 +90,9 @@ SelectionModalProp) => {
                   <Text style={styles.itemTitle}>{`${index + 1}.  `}</Text>
                 )}
                 <Text style={styles.itemTitle}>{itemTitle}</Text>
+                {selected?.id === item?.id && (
+                  <AppIcons.CheckMark height={20} width={20} />
+                )}
               </TouchableOpacity>
             );
           }}
@@ -116,6 +122,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 10,
     paddingHorizontal: 10,
+    justifyContent: 'space-between',
   },
   itemTitle: {
     color: colors.black,

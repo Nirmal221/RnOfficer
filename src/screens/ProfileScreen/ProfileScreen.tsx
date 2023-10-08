@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppStackParamList, UserData } from '../../navigation/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 
 type ProfileScreenProps = NativeStackScreenProps<
   AppStackParamList,
@@ -69,7 +70,10 @@ const ProfileScreen = (props: ProfileScreenProps) => {
       <View style={styles.headerContainer}>
         <Text style={styles.headerTitle}>{APP_CONSTANT.PROFILE}</Text>
       </View>
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100 }}>
         <View style={styles.imgContainer}>
           <Image
             source={{ uri: data?.photo }}
@@ -99,15 +103,65 @@ const ProfileScreen = (props: ProfileScreenProps) => {
             showSeprator={true}
           />
           <RenderPanel
+            showSeprator
             title={APP_CONSTANT.MOBILE_NO}
             value={`${data?.mobile_number}`}
+          />
+          <RenderPanel
+            showSeprator
+            title={APP_CONSTANT.GENDER}
+            value={`${data?.gender}`}
+          />
+          <RenderPanel
+            title={APP_CONSTANT.DOB}
+            value={`${moment(data.dob).format('DD-MMM-YYYY')}`}
             showSeprator={false}
+          />
+          <RenderPanel
+            showSeprator
+            title={APP_CONSTANT.DESIGNATION}
+            value={`${data.designation_id}`}
+          />
+          <RenderPanel
+            showSeprator
+            title={APP_CONSTANT.CLASS}
+            value={`${data.class}`}
+          />
+          <RenderPanel
+            showSeprator
+            title={APP_CONSTANT.OFFICE_ADDRESS}
+            value={`${data?.office_address}`}
+          />
+          <RenderPanel
+            showSeprator
+            title={APP_CONSTANT.OFFICE_DISTRICT}
+            value={`${data?.office_district_id}`}
+          />
+          <RenderPanel
+            showSeprator
+            title={APP_CONSTANT.NATIVE_ADDRESS}
+            value={`${data.native_address}`}
+          />
+          <RenderPanel
+            showSeprator
+            title={APP_CONSTANT.NATIVE_DISTRICT}
+            value={`${data?.native_district_id}`}
+          />
+          <RenderPanel
+            showSeprator
+            title={APP_CONSTANT.SPECELIZATOIN}
+            value={`${data?.specialization}`}
+          />
+          <RenderPanel
+            showSeprator={false}
+            title={APP_CONSTANT.REMARKS}
+            value={`${data?.remarks}`}
           />
         </View>
         <TouchableOpacity
           style={styles.signOutButton}
           onPress={() => onPressSignOut()}>
-          <Text style={styles.signOutTitle}>Sign Out</Text>
+          <Text style={styles.signOutTitle}>{APP_CONSTANT.SIGN_OUT}</Text>
         </TouchableOpacity>
       </ScrollView>
       {loader && <Loader />}

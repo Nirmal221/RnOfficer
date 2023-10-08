@@ -6,6 +6,7 @@ import SelectionModal from './SelectionModal';
 import Separator from './Separator';
 import Header from './Header';
 import Loader from './Loader';
+import OfficerDetail from './OfficerDetail';
 import {
   PrefixOption,
   GenderOption,
@@ -28,4 +29,5 @@ export {
   MaritalStatusOption,
   StatusOption,
   ClassOption,
+  OfficerDetail,
 };

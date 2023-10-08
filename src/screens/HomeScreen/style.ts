@@ -8,7 +8,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: 12,
     backgroundColor: colors.secondary,
   },
   headerContainer: {
@@ -26,22 +25,32 @@ const styles = StyleSheet.create({
     color: colors.black,
     ...ApplicationStyle.f17w500,
   },
+  searchContainer: {
+    marginBottom: 10,
+    paddingHorizontal: 12,
+    ...ApplicationStyle.rowAlignCenterJustifyBetween,
+  },
   searchTextInput: {
+    flex: 0.98,
     borderWidth: 1,
     borderColor: colors.grey,
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: Platform.OS === 'ios' ? 10 : 5,
     fontSize: 15,
-    marginBottom: 10,
+  },
+  filterIconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   contentContainerStyle: {
     paddingBottom: 100,
+    marginTop: 10,
   },
   loaderContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   emptyListContainer: {
-    height: height * 0.8,
-    width: width * 0.9,
+    height: height * 0.75,
+    width: width,
     justifyContent: 'center',
     alignItems: 'center',
   },

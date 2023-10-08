@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import ApplicationStyle from '../themes/ApplicationStyle';
+import { colors } from '../themes';
 
 type RenderPanelProps = {
   title?: string;
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   titleText: { width: 100, lineHeight: 30, ...ApplicationStyle.f15w600 },
-  valueText: { ...ApplicationStyle.f15w400 },
+  valueText: { ...ApplicationStyle.f15w400, color: colors.black },
   panelTitleText: { ...ApplicationStyle.f15w500, lineHeight: 30 },
 });
 

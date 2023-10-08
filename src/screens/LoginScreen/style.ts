@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import colors from '../../themes/Colors';
+import { colors, ApplicationStyle } from '../../themes';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -30,6 +30,10 @@ const styles = StyleSheet.create({
     marginRight: 5,
     height: 30,
     width: 30,
+  },
+  loginTitle: {
+    ...ApplicationStyle.f15w400,
+    color: colors.black,
   },
 });
 
