@@ -5,11 +5,12 @@ export type AppStackParamList = {
   HomeScreen: undefined;
   OfficerListScreen: { cityObj: DistrictsObject };
   ProfileScreen: undefined;
+  RegistrationScreen: undefined;
 };
 
 export type AuthStackParamList = {
   LoginScreen: undefined;
-  RegistrationScreen: { userData: any };
+  RegistrationScreen: { userData: any; isEdit?: boolean };
 };
 
 export type RootStackParamList = {
@@ -19,6 +20,13 @@ export type RootStackParamList = {
 };
 
 export type DistrictsObject = {
+  created_at?: string;
+  id?: number;
+  name?: string;
+  updated_at?: string;
+};
+
+export type DesignationObject = {
   created_at?: string;
   id?: number;
   name?: string;

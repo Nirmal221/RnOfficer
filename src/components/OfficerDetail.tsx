@@ -59,7 +59,9 @@ const OfficerDetail = ({
       ref={bottomSheetRef}
       index={0}
       snapPoints={snapPoints}
-      handleStyle={{ backgroundColor: colors.grey }}>
+      handleComponent={() => null}
+      // handleStyle={{ backgroundColor: colors.grey }}
+    >
       <View style={styles.imgContainer}>
         <Image
           style={styles.profileImg}
@@ -72,12 +74,11 @@ const OfficerDetail = ({
               : AppImages.Dummy
           }
         />
-        <Text style={styles.name}>
+        <Text style={[styles.name, { paddingBottom: 10 }]}>
           {`${selectedOfficer?.prefix}. ${selectedOfficer?.first_name} ${selectedOfficer?.middal_name} ${selectedOfficer?.last_name} `}
-          <Text
-            style={
-              ApplicationStyle.f20w400
-            }>{`(${selectedOfficer?.job_status})`}</Text>
+        </Text>
+        <Text style={[ApplicationStyle.f20w400, styles.name]}>
+          {`(${selectedOfficer?.job_status})`}
         </Text>
       </View>
       <BottomSheetScrollView
@@ -220,7 +221,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   panelTitle: {
-    flex: 1,
+    flex: 0.6,
     ...ApplicationStyle.f16w400,
     color: colors.black,
   },
@@ -237,7 +238,7 @@ const styles = StyleSheet.create({
     color: colors.blue,
   },
   name: {
-    paddingTop: 10,
+    textAlign: 'center',
     ...ApplicationStyle.f20w600,
     color: colors.blue,
   },

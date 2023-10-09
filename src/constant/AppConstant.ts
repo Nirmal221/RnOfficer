@@ -1,4 +1,5 @@
 const APP_CONSTANT = {
+  APP_NAME: 'Patidar Karmyogi',
   NAME: 'Name',
   ENTER_NAME: 'Enter Name',
   MIDDAL_NAME: 'Middal Name',
@@ -57,6 +58,7 @@ const APP_CONSTANT = {
   WARNING: 'Warning',
   REGISTRATION: 'Registration',
   SIGN_OUT: 'Sign Out',
+  EDIT: 'Edit',
 };
 
 const ASYNC_KEY = {

@@ -8,22 +8,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: colors.secondary,
-  },
-  headerContainer: {
     paddingTop: Platform.OS === 'ios' ? 0 : 10,
-    paddingBottom: Platform.OS === 'ios' ? 15 : 5,
-    flexDirection: 'row',
-    paddingHorizontal: 15,
-    marginBottom: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: colors.secondary,
-    ...ApplicationStyle.headerShadow,
-  },
-  headerTitle: {
-    color: colors.black,
-    ...ApplicationStyle.f17w500,
   },
   searchContainer: {
     marginBottom: 10,

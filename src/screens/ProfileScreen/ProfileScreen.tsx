@@ -65,6 +65,13 @@ const ProfileScreen = (props: ProfileScreenProps) => {
       });
   };
 
+  const onPressEdit = () => {
+    navigation.navigate('RegistrationScreen', {
+      isEdit: true,
+      userData: data,
+    });
+  };
+
   return (
     <SafeAreaView style={styles.mainContainer} edges={['top']}>
       <View style={styles.headerContainer}>
@@ -158,6 +165,11 @@ const ProfileScreen = (props: ProfileScreenProps) => {
             value={`${data?.remarks}`}
           />
         </View>
+        <TouchableOpacity
+          style={styles.signOutButton}
+          onPress={() => onPressEdit()}>
+          <Text style={styles.signOutTitle}>{APP_CONSTANT.EDIT}</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.signOutButton}
           onPress={() => onPressSignOut()}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,21 +8,22 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Separator from './Separator';
+import { AppIcons } from '../assets';
 import colors from '../themes/Colors';
 import { APP_CONSTANT } from '../constant';
+import TextInputField from './TextInputField';
 import ApplicationStyle from '../themes/ApplicationStyle';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppIcons } from '../assets';
+import { DesignationObject, DistrictsObject } from '../navigation/types';
 
 type SelectionModalProp = {
   title: string;
-  selected: object;
+  selected: DistrictsObject;
   visible: boolean;
   showIndex?: boolean;
-  data: Array<object>;
+  data: Array<DistrictsObject | DesignationObject>;
   onClose: () => void;
-  onSelect?: (selected: {}) => undefined;
-  onSearch?: (text: string) => undefined;
+  onSelect: (selected: {}) => void;
 };
 
 const SelectionModal = ({
@@ -33,9 +34,12 @@ const SelectionModal = ({
   onSelect,
   showIndex,
   selected,
-}: // onSearch,
-SelectionModalProp) => {
-  // const [search, setSearch] = useState('');
+}: SelectionModalProp) => {
+  const [search, setSearch] = useState('');
+  const [searchList, setSearchList] = useState<
+    Array<DistrictsObject | DesignationObject>
+  >([]);
+
   const renderHeader = () => {
     return (
       <View style={styles.headerContainer}>
@@ -45,9 +49,17 @@ SelectionModalProp) => {
         <View style={styles.titleContainer}>
           <Text style={styles.headerTitle}>{title}</Text>
         </View>
-        <View style={{ flex: 1, paddingHorizontal: 5 }} />
+        <View style={styles.headerRightContainer} />
       </View>
     );
+  };
+
+  const onSearch = (text: string) => {
+    setSearch(text);
+    const filter = data.filter((x: DistrictsObject | DesignationObject) => {
+      return x?.name!.toLocaleLowerCase().includes(text.toLocaleLowerCase());
+    });
+    setSearchList(filter);
   };
 
   return (
@@ -58,18 +70,17 @@ SelectionModalProp) => {
       animationType="slide">
       <SafeAreaView style={styles.container}>
         {renderHeader()}
-        {/* <TextInputField
+        <TextInputField
           value={search}
           placeholder={`Search Yout ${title}`}
           onChangeText={(text: string) => {
-            setSearch(text);
             onSearch(text);
           }}
           textInputStyle={{ borderColor: colors.grey }}
           containerStyle={styles.searchBarContainer}
-        /> */}
+        />
         <FlatList
-          data={data}
+          data={searchList.length > 0 ? searchList : data}
           style={styles.mainContainer}
           showsVerticalScrollIndicator={false}
           keyboardDismissMode="on-drag"
@@ -78,7 +89,7 @@ SelectionModalProp) => {
             item,
             index,
           }: {
-            item: { name: string; id: number };
+            item: DistrictsObject | DesignationObject;
             index: number;
           }) => {
             const itemTitle = item?.name;
@@ -90,7 +101,7 @@ SelectionModalProp) => {
                   <Text style={styles.itemTitle}>{`${index + 1}.  `}</Text>
                 )}
                 <Text style={styles.itemTitle}>{itemTitle}</Text>
-                {selected?.id === item?.id && (
+                {`${selected?.id}` === `${item?.id}` && (
                   <AppIcons.CheckMark height={20} width={20} />
                 )}
               </TouchableOpacity>
@@ -124,6 +135,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     justifyContent: 'space-between',
   },
+  headerRightContainer: { flex: 1, paddingHorizontal: 5 },
   itemTitle: {
     color: colors.black,
     ...ApplicationStyle.f15w400,

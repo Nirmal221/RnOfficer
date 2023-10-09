@@ -5,19 +5,26 @@ import { StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native';
 
 type ActionButtonProps = {
   title: string;
+  disabled?: boolean;
   onPress: () => void;
   mainContainerStyle: ViewStyle;
 };
 
 const ActionButton = ({
   title,
+  disabled = false,
   onPress,
   mainContainerStyle,
 }: ActionButtonProps) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[styles.mainContainer, mainContainerStyle]}>
+      disabled={disabled}
+      style={[
+        styles.mainContainer,
+        mainContainerStyle,
+        disabled && styles.disableContainer,
+      ]}>
       <Text style={styles.titleText}>{title}</Text>
     </TouchableOpacity>
   );
@@ -29,6 +36,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 5,
     backgroundColor: colors.primary,
+  },
+  disableContainer: {
+    backgroundColor: colors.grey,
   },
   titleText: {
     color: colors.secondary,

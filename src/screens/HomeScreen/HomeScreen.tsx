@@ -3,9 +3,9 @@ import {
   View,
   Text,
   FlatList,
+  TextInput,
   RefreshControl,
   ActivityIndicator,
-  TextInput,
   TouchableOpacity,
 } from 'react-native';
 import {
@@ -13,6 +13,11 @@ import {
   SelectionModal,
   RenderOfficerDetails,
 } from '../../components';
+import {
+  DistrictsObject,
+  AppStackParamList,
+  DesignationObject,
+} from '../../navigation/types';
 import styles from './style';
 import { AppIcons } from '../../assets';
 import { APP_CONSTANT } from '../../constant';
@@ -21,26 +26,40 @@ import { colors, ApplicationStyle } from '../../themes';
 import { ApiConstant, get } from '../../services/ApiServices';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { AppStackParamList, DistrictsObject } from '../../navigation/types';
 
 type HomeScreenProps = NativeStackScreenProps<AppStackParamList, 'HomeScreen'>;
 
+const MODAL_TYPE = {
+  DESTRICT: 'DESTRICT',
+  DESIGNATION: 'DESIGNATION',
+};
+
 const HomeScreen: React.FC<HomeScreenProps> = () => {
-  const snapPoints = useMemo(() => ['1%', '93%'], []);
+  const snapPoints = useMemo(() => ['1%', '100%'], []);
 
   const [search, setSearch] = useState('');
 
   const [selectedDistrict, setSelectedDistrict] = useState<DistrictsObject>({});
   const [districtList, setDistrictList] = useState<Array<DistrictsObject>>([]);
+  const [designationList, setDesignationList] = useState<
+    Array<DesignationObject>
+  >([]);
+  const [selectedDesignation, setSelectedDesignation] =
+    useState<DistrictsObject>({});
   const [refreshing, setRefreshing] = useState(false);
   const [loader, setLoader] = useState(false);
   const [selectedOfficer, setSelectedOfficer] = useState({});
   const [list, setList] = useState([]);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [showSelectionModal, setShowSelectionModal] = useState(false);
+  const [modalType, setModalType] = useState('');
+
+  const [searchModal, setSearchModal] = useState('');
+  const [searchTypeList, setSearchTypeList] = useState([]);
 
   useEffect(() => {
     getDistrict();
+    getDesignationList();
     const destrictId = 0;
     getData(destrictId, '');
   }, []);
@@ -48,7 +67,22 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
   const getDistrict = () => {
     get(ApiConstant.DISTRICTS)
       .then((res: any) => {
-        setDistrictList(res?.data?.data);
+        const arr = res?.data?.data.sort(
+          (a: DistrictsObject, b: DistrictsObject) =>
+            a.name.localeCompare(b.name),
+        );
+        setDistrictList(arr);
+      })
+      .catch(() => null);
+  };
+  const getDesignationList = () => {
+    get(ApiConstant.DESIGNATIONS)
+      .then((res: any) => {
+        const arr = res?.data?.data.sort(
+          (a: DesignationObject, b: DesignationObject) =>
+            a?.name.localeCompare(b?.name),
+        );
+        setDesignationList(arr);
       })
       .catch(() => null);
   };
@@ -73,6 +107,8 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
 
   const onRefresh = () => {
     setRefreshing(true);
+    setSelectedDistrict({});
+    setSelectedDesignation({});
     setTimeout(() => {
       const destrictId = 0;
       getData(destrictId, '');
@@ -89,11 +125,17 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
     }
   };
 
-  const onModalSelection = (selected: DistrictsObject) => {
+  const onSelectDistrict = (selected: DistrictsObject) => {
     setSelectedDistrict(selected);
-    setShowSelectionModal(false);
     const destrictId = selected.id;
+    setShowSelectionModal(false);
     getData(Number(destrictId), search);
+  };
+  const onSelectDesignation = (selected: DesignationObject) => {
+    setSelectedDesignation(selected);
+    const designationId = selected.id;
+    setShowSelectionModal(false);
+    getData(Number(designationId), search);
   };
 
   const renderEmptyList = () => {
@@ -108,9 +150,6 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
 
   return (
     <SafeAreaView style={styles.mainContainer} edges={['top']}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerTitle}>{APP_CONSTANT.DISTRICT}</Text>
-      </View>
       <View style={styles.container}>
         <View style={styles.searchContainer}>
           <TextInput
@@ -123,6 +162,15 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
           <TouchableOpacity
             style={styles.filterIconContainer}
             onPress={() => {
+              setModalType(MODAL_TYPE.DESTRICT);
+              setShowSelectionModal(true);
+            }}>
+            <AppIcons.Filter width={35} height={35} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.filterIconContainer}
+            onPress={() => {
+              setModalType(MODAL_TYPE.DESIGNATION);
               setShowSelectionModal(true);
             }}>
             <AppIcons.Filter width={35} height={35} />
@@ -177,15 +225,25 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
         {showSelectionModal && (
           <SelectionModal
             visible={showSelectionModal}
-            selected={selectedDistrict}
+            selected={
+              modalType === MODAL_TYPE.DESIGNATION
+                ? selectedDesignation
+                : selectedDistrict
+            }
             title=""
-            data={districtList}
-            onSelect={(selecetd: any) => {
-              onModalSelection(selecetd);
+            data={
+              modalType === MODAL_TYPE.DESIGNATION
+                ? designationList
+                : districtList
+            }
+            onSelect={(selected: any) => {
+              if (modalType === MODAL_TYPE.DESTRICT) {
+                onSelectDistrict(selected);
+              } else if (modalType === MODAL_TYPE.DESIGNATION) {
+                onSelectDesignation(selected);
+              }
             }}
-            onClose={() => {
-              setShowSelectionModal(false);
-            }}
+            onClose={() => setShowSelectionModal(false)}
           />
         )}
       </View>

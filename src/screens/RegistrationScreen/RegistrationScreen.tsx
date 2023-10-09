@@ -66,6 +66,7 @@ type ListProps = {
 
 const RegistrationScreen = (props: RegistrationScreenProps) => {
   const { navigation, route } = props;
+  const isEdit = route.params?.isEdit;
   const data = route.params?.userData;
 
   const [profileImg, setProfileImg] = useState('');
@@ -111,8 +112,12 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
 
   useEffect(() => {
     getDistrict();
-    getUserData();
     getDesignation();
+    if (isEdit) {
+      handleEditData();
+    } else {
+      getUserData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -121,7 +126,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
       .then((res: any) => {
         const arr = res?.data?.data.sort(
           (a: DistrictsObject, b: DistrictsObject) =>
-            a.name.localeCompare(b.name),
+            a?.name.localeCompare(b?.name),
         );
         setDistrictList(arr);
       })
@@ -146,6 +151,27 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
     setSureName(data.displayName.split(' ')[1] ?? '');
     setEmail(data.email);
     setProfileImg(data.photoURL);
+  };
+
+  const handleEditData = () => {
+    setName(data.first_name);
+    setMiddalName(data.middal_name);
+    setSureName(data.last_name);
+    setEmail(data.email);
+    setDob(data.dob);
+    setProfileImg(data.photoURL);
+    setPrefix(data.prefix);
+    setGender(data.gender);
+    setProfileImg(data.photo);
+    setReferenceBy(data.reference_by);
+    setSpecelization(data.specialization);
+    setNativeAddress(data.native_address);
+    setMarritalStatus(data.marital_status);
+    setOfficeAddress(data.office_address);
+    setPhoneNumber(data.mobile_number);
+    setAlterPhoneNumber(data.alt_mobile_number);
+    setofficerClass(data.class);
+    setRemarks(data.remarks);
   };
 
   const showDatePicker = () => {
@@ -311,17 +337,33 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
             navigation.goBack();
           }, 3000);
         })
-        .catch(() => {
-          showError(ERROR.SOME_THING_WRONG);
-          setLoader(false);
+        .catch(err => {
+          const msgObj = err.response.data?.message;
+          const msg = Object.keys(msgObj)[0];
+          showError(msgObj[msg][0]);
         })
-        .finally(() => {});
+
+        .finally(() => {
+          setLoader(false);
+        });
     }
   };
 
+  const enableEditButton = () => {
+    return true;
+  };
+
+  const onPressEdit = () => {};
+
   return (
     <SafeAreaView style={styles.mainContainer} edges={['bottom']}>
-      <Header title={APP_CONSTANT.REGISTRATION} />
+      <Header
+        title={APP_CONSTANT.REGISTRATION}
+        showLeftArrow={isEdit}
+        onPressBackArrow={() => {
+          navigation.goBack();
+        }}
+      />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}>
@@ -552,11 +594,21 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-      <ActionButton
-        title={APP_CONSTANT.CREATE_ACCOUNT}
-        onPress={() => onPressCreateAccount()}
-        mainContainerStyle={styles.createBtnContainer}
-      />
+      {isEdit ? (
+        <ActionButton
+          disabled={enableEditButton()}
+          title={APP_CONSTANT.EDIT}
+          onPress={() => onPressEdit()}
+          mainContainerStyle={styles.createBtnContainer}
+        />
+      ) : (
+        <ActionButton
+          title={APP_CONSTANT.CREATE_ACCOUNT}
+          onPress={() => onPressCreateAccount()}
+          mainContainerStyle={styles.createBtnContainer}
+        />
+      )}
+
       {isDatePickerVisible && (
         <DateTimePickerModal
           isVisible={isDatePickerVisible}

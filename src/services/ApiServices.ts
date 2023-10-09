@@ -105,16 +105,37 @@ const postWithFormData = (endPoint: string, data: UserData) => {
   // });
 
   return new Promise((resolve, reject) => {
-    api
-      .post(endPoint, formData, {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'multipart/form-data',
-        },
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'https://patidarkarmyogi.saranginfotech.in/api/register',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+      },
+      data: data,
+    };
+
+    axios
+      .request(config)
+      .then(response => {
+        resolve(response);
       })
-      .then(response => resolve(response))
-      .catch(error => reject(error));
+      .catch(error => {
+        reject(error);
+      });
   });
+  // return new Promise((resolve, reject) => {
+  //   api
+  //     .post(endPoint, formData, {
+  //       headers: {
+  //         Accept: 'application/json',
+  //         'Content-Type': 'multipart/form-data',
+  //       },
+  //     })
+  //     .then(response => resolve(response))
+  //     .catch(error => reject(error));
+  // });
 };
 
 export { ApiConstant, api, get, post, postCheckUser, postWithFormData };

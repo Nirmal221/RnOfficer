@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 15,
     borderRadius: 10,
-    marginVertical: 10,
+    marginTop: 10,
   },
   signOutTitle: {
     color: colors.black,

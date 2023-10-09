@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderColor: colors.black,
     backgroundColor: colors.secondary,
+    color: colors.black,
     ...ApplicationStyle.f15w400,
   },
   titleText: { ...ApplicationStyle.f15w500, lineHeight: 30 },
