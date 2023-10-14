@@ -47,11 +47,11 @@ const LoginScreen = (props: LoginScreenProps) => {
     const emailId = data.user.email;
     postCheckUser(ApiConstant.LOGIN, googleId, emailId)
       .then(async (res: any) => {
-        await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(res.data.data.data));
+        await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(res?.data?.data?.data));
         navigation.dispatch(StackActions.replace('AppStackScreens'));
       })
       .catch(err => {
-        const msg = err.response.data.message.error;
+        const msg = err?.response?.data?.message?.error;
         if (msg === 'Unauthorised') {
           navigation.navigate('RegistrationScreen', {
             userData: data.user,

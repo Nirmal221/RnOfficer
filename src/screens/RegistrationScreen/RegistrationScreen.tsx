@@ -11,26 +11,26 @@ import {
 import {
   STATUS,
   GENDER,
+  ERROR,
   MODAL_TYPE,
   USER_PREFIX,
-  DESIGNATION,
   APP_CONSTANT,
   MARITAL_STATUS,
   OFFICER_CLASS,
-  ERROR,
+  ASYNC_KEY,
 } from '../../constant';
 import {
   Header,
   Loader,
+  ClassOption,
   RenderPanel,
   ActionButton,
+  GenderOption,
+  PrefixOption,
+  StatusOption,
   SelectionModal,
   TextInputField,
-  PrefixOption,
-  GenderOption,
   MaritalStatusOption,
-  StatusOption,
-  ClassOption,
 } from '../../components';
 import {
   Asset,
@@ -39,30 +39,31 @@ import {
   launchImageLibrary,
 } from 'react-native-image-picker';
 import {
-  AuthStackParamList,
-  DistrictsObject,
   UserData,
+  DistrictsObject,
+  DesignationObject,
+  AuthStackParamList,
 } from '../../navigation/types';
 import moment from 'moment';
 import styles from './styles';
 import { AppIcons } from '../../assets';
 import colors from '../../themes/Colors';
-import { phoneNumberRegex } from '../../utils';
+import { phoneNumberRegex, setInAsync } from '../../utils';
 import { showError } from '../../components/ToastAlert';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ApiConstant, get, postWithFormData } from '../../services/ApiServices';
+import {
+  ApiConstant,
+  get,
+  postUpdateRegistration,
+  postWithFormData,
+} from '../../services/ApiServices';
 
 type RegistrationScreenProps = NativeStackScreenProps<
   AuthStackParamList,
   'RegistrationScreen'
 >;
-
-type ListProps = {
-  id?: number;
-  name?: string;
-};
 
 const RegistrationScreen = (props: RegistrationScreenProps) => {
   const { navigation, route } = props;
@@ -70,6 +71,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   const data = route.params?.userData;
 
   const [profileImg, setProfileImg] = useState('');
+  const [profileImgObj, setProfileImgObj] = useState<Asset>({});
   const [name, setName] = useState('');
   const [middalName, setMiddalName] = useState('');
   const [sureName, setSureName] = useState('');
@@ -85,15 +87,16 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   );
 
   const [officeAddress, setOfficeAddress] = useState('');
-  const [selectedDesignation, setSelectedDesignation] = useState<ListProps>({});
+  const [selectedDesignation, setSelectedDesignation] =
+    useState<DesignationObject>({});
   const [officerClass, setofficerClass] = useState(OFFICER_CLASS.ONE);
   const [selectedOfficeDistrict, setSelectedOfficeDistrict] =
-    useState<ListProps>({});
+    useState<DistrictsObject>({});
   const [specelization, setSpecelization] = useState('');
   const [nativeAddress, setNativeAddress] = useState('');
   const [referenceBy, setReferenceBy] = useState('');
   const [selectedNativeDistrict, setSelectedNativeDistrict] =
-    useState<ListProps>({});
+    useState<DistrictsObject>({});
   const [remarks, setRemarks] = useState('');
 
   const [selectionTitle, setSelectionTitle] = useState('');
@@ -105,7 +108,9 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   const [leavingCertiImgObj, setLeavingCertiImgObj] = useState<Asset>({});
   const [leavingCertiImg, setLeavingCertiImg] = useState<string>('');
 
-  const [designationList, setDesignationList] = useState<Array<object>>([]);
+  const [designationList, setDesignationList] = useState<
+    Array<DesignationObject>
+  >([]);
   const [districtList, setDistrictList] = useState<Array<DistrictsObject>>([]);
 
   const [loader, setLoader] = useState(false);
@@ -125,9 +130,30 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
     get(ApiConstant.DISTRICTS)
       .then((res: any) => {
         const arr = res?.data?.data.sort(
-          (a: DistrictsObject, b: DistrictsObject) =>
-            a?.name.localeCompare(b?.name),
+          (a: DistrictsObject, b: DistrictsObject) => {
+            if (a?.name && b?.name) {
+              return a?.name.localeCompare(b?.name);
+            }
+          },
         );
+        if (isEdit) {
+          const findOfficeDistrictIndex = arr.findIndex(
+            (x: DistrictsObject) => {
+              return x.name === data.office_district_id;
+            },
+          );
+          if (findOfficeDistrictIndex !== -1) {
+            setSelectedOfficeDistrict(arr[findOfficeDistrictIndex]);
+          }
+          const findNativeDistrictIndex = arr.findIndex(
+            (x: DistrictsObject) => {
+              return x.name === data.native_district_id;
+            },
+          );
+          if (findNativeDistrictIndex !== -1) {
+            setSelectedNativeDistrict(arr[findNativeDistrictIndex]);
+          }
+        }
         setDistrictList(arr);
       })
       .catch(() => null);
@@ -137,41 +163,51 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
     get(ApiConstant.DESIGNATIONS)
       .then((res: any) => {
         const arr = res?.data?.data.sort(
-          (a: DistrictsObject, b: DistrictsObject) =>
-            a.name.localeCompare(b.name),
+          (a: DesignationObject, b: DesignationObject) => {
+            if (a?.name && b?.name) {
+              return a?.name.localeCompare(b?.name);
+            }
+          },
         );
-
+        if (isEdit) {
+          const findDesignationIndex = arr.findIndex((x: DesignationObject) => {
+            return x.name === data.designation_id;
+          });
+          if (findDesignationIndex !== -1) {
+            setSelectedDesignation(arr[findDesignationIndex]);
+          }
+        }
         setDesignationList(arr);
       })
       .catch(() => null);
   };
 
   const getUserData = async () => {
-    setName(data.displayName.split(' ')[0] ?? '');
-    setSureName(data.displayName.split(' ')[1] ?? '');
-    setEmail(data.email);
-    setProfileImg(data.photoURL);
+    setName(data?.displayName.split(' ')[0] ?? '');
+    setSureName(data?.displayName.split(' ')[1] ?? '');
+    setEmail(data?.email!);
+    setProfileImg(data?.photoURL);
   };
 
   const handleEditData = () => {
-    setName(data.first_name);
-    setMiddalName(data.middal_name);
-    setSureName(data.last_name);
-    setEmail(data.email);
-    setDob(data.dob);
-    setProfileImg(data.photoURL);
-    setPrefix(data.prefix);
-    setGender(data.gender);
-    setProfileImg(data.photo);
-    setReferenceBy(data.reference_by);
-    setSpecelization(data.specialization);
-    setNativeAddress(data.native_address);
-    setMarritalStatus(data.marital_status);
-    setOfficeAddress(data.office_address);
-    setPhoneNumber(data.mobile_number);
-    setAlterPhoneNumber(data.alt_mobile_number);
-    setofficerClass(data.class);
-    setRemarks(data.remarks);
+    setName(data.first_name!);
+    setMiddalName(data.middal_name!);
+    setSureName(data.last_name!);
+    setEmail(data.email!);
+    setDob(new Date(data?.dob!));
+    setPrefix(data?.prefix!);
+    setGender(data?.gender!);
+    setProfileImg(data?.photo!);
+    setStatus(data?.job_status!);
+    setReferenceBy(data?.reference_by!);
+    setSpecelization(data.specialization!);
+    setNativeAddress(data.native_address!);
+    setMarritalStatus(data.marital_status!);
+    setOfficeAddress(data.office_address!);
+    setPhoneNumber(data.mobile_number!);
+    setAlterPhoneNumber(data.alt_mobile_number!);
+    setofficerClass(data.class!);
+    setRemarks(data?.remarks!);
   };
 
   const showDatePicker = () => {
@@ -199,6 +235,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
       if (!image || image.didCancel) {
       } else if (image.assets) {
         setProfileImg(`${image.assets[0].uri}`);
+        setProfileImgObj(image?.assets[0]);
       }
     });
   };
@@ -295,6 +332,12 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
     } else if (Object.keys(selectedNativeDistrict).length === 0) {
       showError(ERROR.PLEASE_SELECT_YOUR_NATIVE_DISTRICT);
       return false;
+    } else if (!isEdit && officerIdImg === '') {
+      showError(ERROR.PLEASE_UPLOAD_OFFICE_ID);
+      return false;
+    } else if (!isEdit && leavingCertiImg === '') {
+      showError(ERROR.PLEASE_UPLOAD_LEAVING_CERTIFICATE);
+      return false;
     } else {
       return true;
     }
@@ -350,10 +393,73 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   };
 
   const enableEditButton = () => {
-    return true;
+    if (
+      profileImg === data.photo &&
+      name === data.first_name &&
+      middalName === data.middal_name &&
+      sureName === data.last_name &&
+      prefix === data.prefix &&
+      gender === data.gender &&
+      marritalStatus === data.marital_status &&
+      status === data.job_status &&
+      phoneNumber === data.mobile_number &&
+      alterPhoneNumber === data.alt_mobile_number &&
+      officeAddress === data.office_address &&
+      officerClass === data.class &&
+      nativeAddress === data.native_address &&
+      specelization === data.specialization &&
+      referenceBy === data.reference_by &&
+      remarks === data.remarks
+    ) {
+      return true;
+    } else {
+      return false;
+    }
   };
 
-  const onPressEdit = () => {};
+  const onPressEdit = () => {
+    if (checkValidation()) {
+      const obj: UserData = {
+        google_id: data.uid,
+        prefix: prefix,
+        first_name: name,
+        middal_name: middalName,
+        last_name: sureName,
+        gender: gender,
+        marital_status: marritalStatus,
+        job_status: status,
+        dob: moment(dob).format('YYYY-MM-DD'),
+        email: email,
+        mobile_number: phoneNumber,
+        alt_mobile_number: alterPhoneNumber,
+        designation_id: Number(selectedDesignation.id),
+        office_address: officeAddress,
+        class: officerClass,
+        office_district_id: selectedOfficeDistrict?.id,
+        native_district_id: selectedNativeDistrict.id,
+        native_address: nativeAddress,
+        specialization: specelization,
+        reference_by: referenceBy,
+        remarks: remarks,
+      };
+
+      if (profileImg !== data.photo) {
+        obj.photoObj = profileImgObj;
+      }
+      setLoader(true);
+      postUpdateRegistration(`${ApiConstant.EDIT_PROFILE}/${data.id}`, obj)
+        .then(async (res: any) => {
+          await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(res.data.data.data));
+          navigation.goBack();
+        })
+        .catch(err => {
+          const msgObj = err.response.data?.message;
+          const msg = Object.keys(msgObj)[0];
+          showError(msgObj[msg][0]);
+        })
+        .finally(() => setLoader(false));
+    }
+  };
 
   return (
     <SafeAreaView style={styles.mainContainer} edges={['bottom']}>
@@ -376,15 +482,17 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               style={styles.profileImg}
               resizeMode="cover"
             />
-            <TouchableOpacity
-              style={styles.cameraIcon}
-              onPress={() => onPressCameraIcon()}>
-              <AppIcons.Camera
-                color={colors.secondary}
-                height={25}
-                width={25}
-              />
-            </TouchableOpacity>
+            {isEdit && (
+              <TouchableOpacity
+                style={styles.cameraIcon}
+                onPress={() => onPressCameraIcon()}>
+                <AppIcons.Camera
+                  color={colors.secondary}
+                  height={25}
+                  width={25}
+                />
+              </TouchableOpacity>
+            )}
           </View>
           <View style={{ paddingBottom: 50 }}>
             <TextInputField
@@ -539,57 +647,61 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               onChangeText={text => setRemarks(text)}
               textInputStyle={styles.ofcAddressTextInput}
             />
-            {officerIdImg.length === 0 ? (
-              <TouchableOpacity
-                style={styles.uploadIdContainer}
-                onPress={() => onPressUploadIdButton()}>
-                <Text style={styles.uploadIdTitle}>
-                  {APP_CONSTANT.UPLOAD_OFFICE_ID}
-                </Text>
-              </TouchableOpacity>
-            ) : (
-              <View style={styles.otherUploadImgContainer}>
-                <Image
-                  source={{ uri: officerIdImg }}
-                  style={styles.officerImg}
-                  resizeMode="cover"
-                />
-                <TouchableOpacity
-                  style={[styles.cameraIcon, styles.otherCameraIcon]}
-                  onPress={() => onPressUploadIdButton()}>
-                  <AppIcons.Camera
-                    color={colors.secondary}
-                    height={25}
-                    width={25}
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
-            {leavingCertiImg.length === 0 ? (
-              <TouchableOpacity
-                style={styles.uploadIdContainer}
-                onPress={() => onPressLeavingCertiButton()}>
-                <Text style={styles.uploadIdTitle}>
-                  {APP_CONSTANT.UPLOAD_LEAVING_CERTI}
-                </Text>
-              </TouchableOpacity>
-            ) : (
-              <View style={styles.otherUploadImgContainer}>
-                <Image
-                  source={{ uri: leavingCertiImg }}
-                  style={styles.officerImg}
-                  resizeMode="cover"
-                />
-                <TouchableOpacity
-                  style={[styles.cameraIcon, styles.otherCameraIcon]}
-                  onPress={() => onPressLeavingCertiButton()}>
-                  <AppIcons.Camera
-                    color={colors.secondary}
-                    height={25}
-                    width={25}
-                  />
-                </TouchableOpacity>
-              </View>
+            {!isEdit && (
+              <>
+                {officerIdImg.length === 0 ? (
+                  <TouchableOpacity
+                    style={styles.uploadIdContainer}
+                    onPress={() => onPressUploadIdButton()}>
+                    <Text style={styles.uploadIdTitle}>
+                      {APP_CONSTANT.UPLOAD_OFFICE_ID}
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.otherUploadImgContainer}>
+                    <Image
+                      source={{ uri: officerIdImg }}
+                      style={styles.officerImg}
+                      resizeMode="cover"
+                    />
+                    <TouchableOpacity
+                      style={[styles.cameraIcon, styles.otherCameraIcon]}
+                      onPress={() => onPressUploadIdButton()}>
+                      <AppIcons.Camera
+                        color={colors.secondary}
+                        height={25}
+                        width={25}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )}
+                {leavingCertiImg.length === 0 ? (
+                  <TouchableOpacity
+                    style={styles.uploadIdContainer}
+                    onPress={() => onPressLeavingCertiButton()}>
+                    <Text style={styles.uploadIdTitle}>
+                      {APP_CONSTANT.UPLOAD_LEAVING_CERTI}
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.otherUploadImgContainer}>
+                    <Image
+                      source={{ uri: leavingCertiImg }}
+                      style={styles.officerImg}
+                      resizeMode="cover"
+                    />
+                    <TouchableOpacity
+                      style={[styles.cameraIcon, styles.otherCameraIcon]}
+                      onPress={() => onPressLeavingCertiButton()}>
+                      <AppIcons.Camera
+                        color={colors.secondary}
+                        height={25}
+                        width={25}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </>
             )}
           </View>
         </ScrollView>
@@ -597,7 +709,7 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
       {isEdit ? (
         <ActionButton
           disabled={enableEditButton()}
-          title={APP_CONSTANT.EDIT}
+          title={APP_CONSTANT.UPDATE}
           onPress={() => onPressEdit()}
           mainContainerStyle={styles.createBtnContainer}
         />
@@ -619,8 +731,8 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
       )}
       {showSelectionModal && (
         <SelectionModal
-          title={selectionTitle}
           visible={showSelectionModal}
+          title={selectionTitle}
           data={
             selectedModalType === MODAL_TYPE.DESIGNATION
               ? designationList
@@ -630,34 +742,19 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
               ? districtList
               : []
           }
+          selected={
+            selectedModalType === MODAL_TYPE.DESIGNATION
+              ? selectedDesignation
+              : selectedModalType === MODAL_TYPE.NATIVE_DISTRICT
+              ? selectedNativeDistrict
+              : selectedModalType === MODAL_TYPE.OFFICE_DISTRICT
+              ? selectedOfficeDistrict
+              : {}
+          }
           onClose={() => setShowSelectionModal(false)}
           onSelect={selected => {
             setShowSelectionModal(false);
             handleSelection(selected);
-          }}
-          onSearch={searchText => {
-            if (selectedModalType === MODAL_TYPE.DESIGNATION) {
-              const filter = DESIGNATION.filter(e =>
-                e.title
-                  .toLocaleLowerCase()
-                  .includes(searchText.toLocaleLowerCase()),
-              );
-              setDesignationList(filter);
-            } else if (selectedModalType === MODAL_TYPE.NATIVE_DISTRICT) {
-              const filter = districtList.filter(e =>
-                e.name
-                  .toLocaleLowerCase()
-                  .includes(searchText.toLocaleLowerCase()),
-              );
-              setDistrictList(filter);
-            } else if (selectedModalType === MODAL_TYPE.OFFICE_DISTRICT) {
-              const filter = districtList.filter(e =>
-                e.name
-                  .toLocaleLowerCase()
-                  .includes(searchText.toLocaleLowerCase()),
-              );
-              setDistrictList(filter);
-            }
           }}
         />
       )}

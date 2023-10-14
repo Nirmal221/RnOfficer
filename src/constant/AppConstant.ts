@@ -58,7 +58,8 @@ const APP_CONSTANT = {
   WARNING: 'Warning',
   REGISTRATION: 'Registration',
   SIGN_OUT: 'Sign Out',
-  EDIT: 'Edit',
+  UPDATE: 'Update',
+  UPDATE_PROFILE: 'Update Profile',
 };
 
 const ASYNC_KEY = {
@@ -231,6 +232,8 @@ const ERROR = {
   PLEASE_SELECT_YOUR_DESIGNATION: 'Please Select Your Designation',
   PLEASE_SELECT_YOUR_OFFICE_ADDREDSS: 'Please Select Your Office Address',
   PLEASE_SELECT_YOUR_NATIVE_DISTRICT: 'Please Select Your Native District',
+  PLEASE_UPLOAD_OFFICE_ID: 'Please Upload Office ID',
+  PLEASE_UPLOAD_LEAVING_CERTIFICATE: 'Please Upload Leaving Certificate',
   SOME_THING_WRONG: 'SomeThing Went Wrong',
 };
 

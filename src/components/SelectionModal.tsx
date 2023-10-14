@@ -18,7 +18,7 @@ import { DesignationObject, DistrictsObject } from '../navigation/types';
 
 type SelectionModalProp = {
   title: string;
-  selected: DistrictsObject;
+  selected: DistrictsObject | DesignationObject;
   visible: boolean;
   showIndex?: boolean;
   data: Array<DistrictsObject | DesignationObject>;

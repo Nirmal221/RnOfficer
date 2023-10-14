@@ -30,6 +30,8 @@ const ToastAlert: ToastConfig = {
       text1Style={{
         fontSize: 17,
       }}
+      text1NumberOfLines={1}
+      text2NumberOfLines={2}
       text2Style={{
         fontSize: 15,
       }}

@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
   },
   imgContainer: {
     alignSelf: 'center',
+    alignItems: 'center',
     marginBottom: 20,
   },
   profileImg: { height: 150, width: 150, borderRadius: 10 },
@@ -31,7 +32,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.secondary,
     paddingVertical: 5,
     paddingHorizontal: 15,
-    borderRadius: 10,
+    borderBottomEndRadius: 10,
+    borderBottomStartRadius: 10,
   },
   panelContainer: {
     flexDirection: 'row',
@@ -60,6 +62,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     opacity: 0.5,
   },
+  profileButton: {
+    borderBottomEndRadius: 0,
+    borderBottomStartRadius: 0,
+    paddingTop: 15,
+    paddingHorizontal: 18,
+    paddingBottom: 0,
+  },
   signOutButton: {
     backgroundColor: colors.secondary,
     paddingVertical: 15,
@@ -70,6 +79,12 @@ const styles = StyleSheet.create({
   signOutTitle: {
     color: colors.black,
     ...ApplicationStyle.f17w500,
+  },
+  profileTitle: {
+    paddingTop: 10,
+    textAlign: 'center',
+    ...ApplicationStyle.f20w600,
+    color: colors.blue,
   },
 });
 

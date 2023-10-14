@@ -27,6 +27,7 @@ const AuthStack = () => {
         headerShown: false,
       }}>
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
+      <Stack.Screen name="RegistrationScreen" component={RegistrationScreen} />
     </Stack.Navigator>
   );
 };
@@ -66,7 +67,10 @@ const AppStackScreens = () => {
       }}>
       <AppStack.Screen name="TabStack" component={TabStack} />
       <AppStack.Screen name="OfficerListScreen" component={OfficerListScreen} />
-      <Stack.Screen name="RegistrationScreen" component={RegistrationScreen} />
+      <AppStack.Screen
+        name="RegistrationScreen"
+        component={RegistrationScreen}
+      />
     </AppStack.Navigator>
   );
 };

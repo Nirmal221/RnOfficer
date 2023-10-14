@@ -5,13 +5,15 @@ export type AppStackParamList = {
   HomeScreen: undefined;
   OfficerListScreen: { cityObj: DistrictsObject };
   ProfileScreen: undefined;
-  RegistrationScreen: undefined;
+  RegistrationScreen: RegistrationScreenProps;
 };
 
 export type AuthStackParamList = {
   LoginScreen: undefined;
-  RegistrationScreen: { userData: any; isEdit?: boolean };
+  RegistrationScreen: RegistrationScreenProps;
 };
+
+type RegistrationScreenProps = { userData: UserData; isEdit?: boolean };
 
 export type RootStackParamList = {
   AuthStack: undefined;
@@ -37,6 +39,7 @@ export type UserData = {
   id?: number;
   photo?: string;
   prefix?: string;
+  photoObj?: Asset;
   first_name?: string;
   middal_name?: string;
   last_name?: string;

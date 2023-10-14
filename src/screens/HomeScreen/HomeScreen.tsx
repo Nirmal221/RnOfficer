@@ -54,9 +54,6 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
   const [showSelectionModal, setShowSelectionModal] = useState(false);
   const [modalType, setModalType] = useState('');
 
-  const [searchModal, setSearchModal] = useState('');
-  const [searchTypeList, setSearchTypeList] = useState([]);
-
   useEffect(() => {
     getDistrict();
     getDesignationList();
@@ -68,8 +65,11 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
     get(ApiConstant.DISTRICTS)
       .then((res: any) => {
         const arr = res?.data?.data.sort(
-          (a: DistrictsObject, b: DistrictsObject) =>
-            a.name.localeCompare(b.name),
+          (a: DistrictsObject, b: DistrictsObject) => {
+            if (a?.name && b?.name) {
+              return a?.name.localeCompare(b?.name);
+            }
+          },
         );
         setDistrictList(arr);
       })
@@ -79,8 +79,11 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
     get(ApiConstant.DESIGNATIONS)
       .then((res: any) => {
         const arr = res?.data?.data.sort(
-          (a: DesignationObject, b: DesignationObject) =>
-            a?.name.localeCompare(b?.name),
+          (a: DesignationObject, b: DesignationObject) => {
+            if (a?.name && b?.name) {
+              return a?.name.localeCompare(b?.name);
+            }
+          },
         );
         setDesignationList(arr);
       })

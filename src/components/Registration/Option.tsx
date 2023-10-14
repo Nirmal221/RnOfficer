@@ -300,6 +300,7 @@ const styles = StyleSheet.create({
   optionTitle: {
     paddingLeft: 5,
     paddingTop: 2,
+    color: colors.black,
     ...ApplicationStyle.f14w400,
   },
   threeSmallOptionList: {
