@@ -11,9 +11,13 @@ export type AppStackParamList = {
 export type AuthStackParamList = {
   LoginScreen: undefined;
   RegistrationScreen: RegistrationScreenProps;
+  TalukaRegistrationScreen: RegistrationScreenProps;
 };
 
-type RegistrationScreenProps = { userData: UserData; isEdit?: boolean };
+type RegistrationScreenProps = {
+  userData: UserData;
+  isEdit?: boolean;
+};
 
 export type RootStackParamList = {
   AuthStack: undefined;
@@ -67,4 +71,6 @@ export type UserData = {
   class?: string;
   native_address?: string;
   reference_by?: string;
+  displayName?: string;
+  photoURL?: string;
 };

@@ -45,9 +45,12 @@ const ProfileScreen = (props: ProfileScreenProps) => {
   const [loader, setLoader] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const isFocused = useIsFocused();
+  const [showSupport, setShowSupport] = useState(false);
 
   useEffect(() => {
-    getUserData();
+    if (isFocused) {
+      getUserData();
+    }
   }, [isFocused]);
 
   const getUserData = async () => {
@@ -59,16 +62,27 @@ const ProfileScreen = (props: ProfileScreenProps) => {
   };
 
   const onPressSignOut = async () => {
-    setLoader(true);
-    await GoogleSignin.revokeAccess();
-    await GoogleSignin.signOut();
-    auth()
-      .signOut()
-      .then(async () => {
-        await AsyncStorage.clear();
-        setLoader(false);
-        navigation.dispatch(StackActions.replace('AuthStack'));
-      });
+    try {
+      setLoader(true);
+      await GoogleSignin.revokeAccess();
+      await GoogleSignin.signOut();
+      auth()
+        .signOut()
+        .then(async () => {
+          setLoader(false);
+          await AsyncStorage.clear();
+          navigation.dispatch(StackActions.replace('AuthStack'));
+        })
+        .catch(async () => {
+          setLoader(false);
+
+          await AsyncStorage.clear();
+          navigation.dispatch(StackActions.replace('AuthStack'));
+        });
+    } catch (error) {
+      await AsyncStorage.clear();
+      navigation.dispatch(StackActions.replace('AuthStack'));
+    }
   };
 
   const onPressEdit = () => {
@@ -76,6 +90,10 @@ const ProfileScreen = (props: ProfileScreenProps) => {
       isEdit: true,
       userData: data,
     });
+  };
+
+  const onPressContactSupport = () => {
+    setShowSupport(!showSupport);
   };
 
   return (
@@ -90,7 +108,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
         <View style={styles.imgContainer}>
           <Image
             source={{
-              uri: data?.photo?.includes(ApiConstant.BASE_URL_IMAGE)
+              uri: data?.photo?.includes('https')
                 ? data?.photo
                 : ApiConstant.BASE_URL_IMAGE + data?.photo,
             }}
@@ -103,9 +121,9 @@ const ProfileScreen = (props: ProfileScreenProps) => {
           <Text style={styles.profileTitle}>{`(${data.job_status})`}</Text>
         </View>
         <TouchableOpacity
-          style={[styles.signOutButton, showProfile && styles.profileButton]}
+          style={[styles.buttonContainer, showProfile && styles.profileButton]}
           onPress={() => setShowProfile(!showProfile)}>
-          <Text style={styles.signOutTitle}>{APP_CONSTANT.PROFILE}</Text>
+          <Text style={styles.buttonTitle}>{APP_CONSTANT.PROFILE}</Text>
         </TouchableOpacity>
         {showProfile && (
           <View style={styles.contentContainer}>
@@ -173,14 +191,33 @@ const ProfileScreen = (props: ProfileScreenProps) => {
         )}
 
         <TouchableOpacity
-          style={styles.signOutButton}
+          style={styles.buttonContainer}
           onPress={() => onPressEdit()}>
-          <Text style={styles.signOutTitle}>{APP_CONSTANT.UPDATE_PROFILE}</Text>
+          <Text style={styles.buttonTitle}>{APP_CONSTANT.UPDATE_PROFILE}</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.signOutButton}
+          style={[styles.buttonContainer, showSupport && styles.profileButton]}
+          onPress={() => onPressContactSupport()}>
+          <Text style={styles.buttonTitle}>{APP_CONSTANT.CONTACT_SUPPORT}</Text>
+        </TouchableOpacity>
+        {showSupport && (
+          <View style={styles.contentContainer}>
+            <RenderPanel
+              showSeprator={false}
+              title={APP_CONSTANT.NIRMAL_SORATHIYA}
+              value={APP_CONSTANT.NIRMAL_NUMBER}
+            />
+            <RenderPanel
+              showSeprator={false}
+              title={APP_CONSTANT.AKSHAY_SONANI}
+              value={APP_CONSTANT.AKSHAY_NUMBER}
+            />
+          </View>
+        )}
+        <TouchableOpacity
+          style={styles.buttonContainer}
           onPress={() => onPressSignOut()}>
-          <Text style={styles.signOutTitle}>{APP_CONSTANT.SIGN_OUT}</Text>
+          <Text style={styles.buttonTitle}>{APP_CONSTANT.SIGN_OUT}</Text>
         </TouchableOpacity>
       </ScrollView>
       {loader && <Loader />}

@@ -14,6 +14,7 @@ import ProfileScreen from '../screens/ProfileScreen/ProfileScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import OfficerListScreen from '../screens/OfficerListScreen/OfficerListScreen';
 import RegistrationScreen from '../screens/RegistrationScreen/RegistrationScreen';
+import TalukaRegistrationScreen from '../screens/RegistrationScreen/TalukaRegistrationScreen';
 
 const Stack = createStackNavigator<AuthStackParamList>();
 const RootStack = createStackNavigator<RootStackParamList>();
@@ -26,6 +27,10 @@ const AuthStack = () => {
       screenOptions={{
         headerShown: false,
       }}>
+      <Stack.Screen
+        name="TalukaRegistrationScreen"
+        component={TalukaRegistrationScreen}
+      />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="RegistrationScreen" component={RegistrationScreen} />
     </Stack.Navigator>

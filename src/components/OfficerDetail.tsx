@@ -3,16 +3,17 @@ import colors from '../themes/Colors';
 import { APP_CONSTANT } from '../constant';
 import {
   Image,
-  Linking,
-  StyleSheet,
   Text,
-  TouchableOpacity,
   View,
+  Linking,
   ViewStyle,
+  StyleSheet,
+  TouchableOpacity,
 } from 'react-native';
 import moment from 'moment';
 import { AppIcons, AppImages } from '../assets';
 import { UserData } from '../navigation/types';
+import { ApiConstant } from '../services/ApiServices';
 import ApplicationStyle from '../themes/ApplicationStyle';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
@@ -59,18 +60,18 @@ const OfficerDetail = ({
       ref={bottomSheetRef}
       index={0}
       snapPoints={snapPoints}
-      handleComponent={() => null}
-      // handleStyle={{ backgroundColor: colors.grey }}
-    >
+      handleComponent={() => null}>
       <View style={styles.imgContainer}>
         <Image
           style={styles.profileImg}
-          resizeMode="contain"
+          resizeMode="cover"
           source={
             selectedOfficer.photo?.includes('https')
               ? {
-                  uri: selectedOfficer?.photo,
+                  uri: selectedOfficer.photo,
                 }
+              : selectedOfficer.photo?.includes('jpg')
+              ? { uri: ApiConstant.BASE_URL_IMAGE + selectedOfficer.photo }
               : AppImages.Dummy
           }
         />

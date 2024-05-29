@@ -9,6 +9,7 @@ const APP_CONSTANT = {
   EMAIL: 'Email',
   ENTER_EMAIL: 'Enter Email',
   MOBILE_NO: 'Mobile No.',
+  VILLAGE: 'Gam',
   ENTER_MOBILE_NO: '9876543210',
   DOB: 'Date of Birth ',
   CREATE_ACCOUNT: 'Create Account',
@@ -58,8 +59,14 @@ const APP_CONSTANT = {
   WARNING: 'Warning',
   REGISTRATION: 'Registration',
   SIGN_OUT: 'Sign Out',
+  CONTACT_SUPPORT: 'Contact Support',
   UPDATE: 'Update',
   UPDATE_PROFILE: 'Update Profile',
+  NIRMAL_SORATHIYA: 'Nirmal Sorathiya',
+  NIRMAL_NUMBER: '7041353273',
+  AKSHAY_SONANI: 'Akshay Sonani',
+  AKSHAY_NUMBER: '8238238650',
+  ASHRAM_NAME: 'Ashram Name',
 };
 
 const ASYNC_KEY = {

@@ -69,14 +69,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingBottom: 0,
   },
-  signOutButton: {
+  buttonContainer: {
     backgroundColor: colors.secondary,
     paddingVertical: 15,
     paddingHorizontal: 15,
     borderRadius: 10,
     marginTop: 10,
   },
-  signOutTitle: {
+  buttonTitle: {
     color: colors.black,
     ...ApplicationStyle.f17w500,
   },

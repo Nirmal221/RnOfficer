@@ -183,10 +183,12 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
   };
 
   const getUserData = async () => {
-    setName(data?.displayName.split(' ')[0] ?? '');
-    setSureName(data?.displayName.split(' ')[1] ?? '');
+    setName(data?.displayName ? data?.displayName.split(' ')[0] ?? '' : '');
+    setSureName(data?.displayName ? data?.displayName.split(' ')[1] ?? '' : '');
     setEmail(data?.email!);
-    setProfileImg(data?.photoURL);
+    if (data?.photoURL) {
+      setProfileImg(data?.photoURL);
+    }
   };
 
   const handleEditData = () => {
@@ -478,7 +480,11 @@ const RegistrationScreen = (props: RegistrationScreenProps) => {
           showsVerticalScrollIndicator={false}>
           <View style={styles.imgContainer}>
             <Image
-              source={{ uri: profileImg }}
+              source={{
+                uri: profileImg?.includes('https')
+                  ? profileImg
+                  : ApiConstant.BASE_URL_IMAGE + profileImg,
+              }}
               style={styles.profileImg}
               resizeMode="cover"
             />

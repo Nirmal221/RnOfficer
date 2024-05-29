@@ -11,6 +11,7 @@ import { AppImages } from '../assets';
 import colors from '../themes/Colors';
 import RenderPanel from './RenderPanel';
 import { UserData } from '../navigation/types';
+import { ApiConstant } from '../services/ApiServices';
 
 type RenderOfficerDetailsProps = {
   item: UserData;
@@ -34,12 +35,14 @@ const RenderOfficerDetails = ({
       <View style={styles.profileImgContainer}>
         <Image
           style={styles.officerImage}
-          resizeMode="contain"
+          resizeMode="cover"
           source={
             item.photo?.includes('https')
               ? {
                   uri: item.photo,
                 }
+              : item.photo?.includes('jpg')
+              ? { uri: ApiConstant.BASE_URL_IMAGE + item.photo }
               : AppImages.Dummy
           }
         />

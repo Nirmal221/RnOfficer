@@ -14,7 +14,7 @@ import { AppIcons } from '../assets';
 type HeaderProps = {
   title: string;
   showLeftArrow?: boolean;
-  onPressBackArrow: () => void;
+  onPressBackArrow?: () => void;
 };
 
 const Header = ({ title, showLeftArrow, onPressBackArrow }: HeaderProps) => {

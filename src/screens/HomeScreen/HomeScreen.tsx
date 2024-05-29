@@ -35,7 +35,7 @@ const MODAL_TYPE = {
 };
 
 const HomeScreen: React.FC<HomeScreenProps> = () => {
-  const snapPoints = useMemo(() => ['1%', '100%'], []);
+  const snapPoints = useMemo(() => ['1%', '85%'], []);
 
   const [search, setSearch] = useState('');
 
@@ -90,13 +90,14 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
       .catch(() => null);
   };
 
-  const getData = (destrictId: number, searchText: string) => {
+  const getData = (
+    destrictId: number,
+    searchText: string,
+    designationId = 0,
+  ) => {
     setLoader(true);
 
-    let params = `${ApiConstant.OFFICER_LIST}/${destrictId}`;
-    if (searchText.length > 0) {
-      params += `?search=${searchText}`;
-    }
+    let params = `${ApiConstant.OFFICER_LIST}/${destrictId}?search=${searchText}&designation_id=${designationId}`;
     get(params)
       .then((res: any) => {
         setList(res?.data?.data);
@@ -110,6 +111,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
 
   const onRefresh = () => {
     setRefreshing(true);
+    setSearch('');
     setSelectedDistrict({});
     setSelectedDesignation({});
     setTimeout(() => {
@@ -138,7 +140,7 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
     setSelectedDesignation(selected);
     const designationId = selected.id;
     setShowSelectionModal(false);
-    getData(Number(designationId), search);
+    getData(Number(selectedDistrict.id), search, Number(designationId));
   };
 
   const renderEmptyList = () => {
@@ -233,7 +235,11 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
                 ? selectedDesignation
                 : selectedDistrict
             }
-            title=""
+            title={
+              modalType === MODAL_TYPE.DESIGNATION
+                ? APP_CONSTANT.DESIGNATION
+                : APP_CONSTANT.DISTRICT
+            }
             data={
               modalType === MODAL_TYPE.DESIGNATION
                 ? designationList
