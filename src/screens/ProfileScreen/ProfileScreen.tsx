@@ -190,11 +190,11 @@ const ProfileScreen = (props: ProfileScreenProps) => {
           </View>
         )}
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.buttonContainer}
           onPress={() => onPressEdit()}>
           <Text style={styles.buttonTitle}>{APP_CONSTANT.UPDATE_PROFILE}</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity
           style={[styles.buttonContainer, showSupport && styles.profileButton]}
           onPress={() => onPressContactSupport()}>

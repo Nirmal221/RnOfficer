@@ -12,6 +12,7 @@ import Menu from './icons/Menu.svg';
 import Filter from './icons/Filter.svg';
 import CheckMark from './icons/CheckMark.svg';
 import AppLogo from './icons/AppLogo.svg';
+import Plus from './icons/Plus.svg';
 
 const AppImages = {
   google: require('./images/google.png'),
@@ -34,6 +35,7 @@ const AppIcons = {
   Filter: Filter,
   CheckMark: CheckMark,
   AppLogo: AppLogo,
+  Plus: Plus,
 };
 
 export { AppIcons, AppImages };

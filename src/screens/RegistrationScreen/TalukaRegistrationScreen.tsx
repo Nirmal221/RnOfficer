@@ -20,15 +20,8 @@ import { ApplicationStyle } from '../../themes';
 import { ERROR, APP_CONSTANT } from '../../constant';
 import { showError } from '../../components/ToastAlert';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AuthStackParamList } from '../../navigation/types';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-type RegistrationScreenProps = NativeStackScreenProps<
-  AuthStackParamList,
-  'TalukaRegistrationScreen'
->;
-
-const TalukaRegistrationScreen = (props: RegistrationScreenProps) => {
+const TalukaRegistrationScreen = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ['1%', '85%'], []);
 
@@ -36,8 +29,6 @@ const TalukaRegistrationScreen = (props: RegistrationScreenProps) => {
   const [middalName, setMiddalName] = useState('');
   const [sureName, setSureName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [village, setVillage] = useState('');
-  const [district, setDistrict] = useState('');
 
   const [loader, setLoader] = useState(false);
 
@@ -139,18 +130,6 @@ const TalukaRegistrationScreen = (props: RegistrationScreenProps) => {
               placeholder={APP_CONSTANT.ENTER_MOBILE_NO}
               onChangeText={text => setPhoneNumber(text)}
             />
-            <TextInputField
-              value={village}
-              title={APP_CONSTANT.VILLAGE}
-              placeholder={APP_CONSTANT.VILLAGE}
-              onChangeText={text => setVillage(text)}
-            />
-            <TextInputField
-              value={district}
-              title={APP_CONSTANT.ASHRAM_NAME}
-              placeholder={APP_CONSTANT.ASHRAM_NAME}
-              onChangeText={text => setDistrict(text)}
-            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -236,7 +215,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     borderRadius: 5,
     paddingVertical: 15,
-    backgroundColor: colors.green,
+    backgroundColor: colors.black,
   },
   optionTitle: {
     paddingLeft: 5,

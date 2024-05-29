@@ -35,10 +35,20 @@ const styles = StyleSheet.create({
   },
   loaderContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   emptyListContainer: {
-    height: height * 0.75,
+    height: height * 0.9,
     width: width,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  plusButtonContainer: {
+    position: 'absolute',
+    height: 45,
+    width: 45,
+    bottom: 10,
+    alignSelf: 'center',
+    borderRadius: 50,
+    backgroundColor: colors.black,
+    ...ApplicationStyle.alignJustifyCenter,
   },
 });
 

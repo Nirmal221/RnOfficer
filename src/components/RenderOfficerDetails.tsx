@@ -1,17 +1,15 @@
 import React from 'react';
 import {
   View,
-  Image,
-  Linking,
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
 } from 'react-native';
-import { AppImages } from '../assets';
+import moment from 'moment';
 import colors from '../themes/Colors';
 import RenderPanel from './RenderPanel';
 import { UserData } from '../navigation/types';
-import { ApiConstant } from '../services/ApiServices';
+import ActionButton from './ActionButton';
 
 type RenderOfficerDetailsProps = {
   item: UserData;
@@ -19,11 +17,7 @@ type RenderOfficerDetailsProps = {
   onPress: any;
 };
 
-const RenderOfficerDetails = ({
-  item,
-  index,
-  onPress,
-}: RenderOfficerDetailsProps) => {
+const RenderOfficerDetails = ({ item, onPress }: RenderOfficerDetailsProps) => {
   const theme = useColorScheme();
   const isDark = theme === 'dark';
 
@@ -32,45 +26,27 @@ const RenderOfficerDetails = ({
       activeOpacity={0.5}
       style={[styles.container, isDark && styles.containerDark]}
       onPress={onPress}>
-      <View style={styles.profileImgContainer}>
-        <Image
-          style={styles.officerImage}
-          resizeMode="cover"
-          source={
-            item.photo?.includes('https')
-              ? {
-                  uri: item.photo,
-                }
-              : item.photo?.includes('jpg')
-              ? { uri: ApiConstant.BASE_URL_IMAGE + item.photo }
-              : AppImages.Dummy
-          }
-        />
-      </View>
       <View style={{ flex: 1 }}>
         <RenderPanel
           disabled
-          value={`${item.prefix}. ${item.first_name} ${item.middal_name} ${item.last_name}`}
+          title="Title"
+          value={item.title}
           containerStyle={styles.containerStyle}
           mainContainerStyle={styles.valuePanelMainContainer}
         />
         <RenderPanel
           disabled
-          value={item?.designation_id?.toString()}
-          valueTextStyle={styles.panelTitle}
+          title="Description"
+          value={item.description}
+          containerStyle={styles.containerStyle}
           mainContainerStyle={styles.valuePanelMainContainer}
         />
         <RenderPanel
           disabled
-          value={item?.mobile_number}
-          titleStyle={styles.panelTitle}
+          title="Time"
+          value={`${moment(item.date).format('DD-MM-YYYY')}`}
+          containerStyle={styles.containerStyle}
           mainContainerStyle={styles.valuePanelMainContainer}
-        />
-        <RenderPanel
-          disabled
-          value={item?.alt_mobile_number}
-          mainContainerStyle={styles.valuePanelMainContainer}
-          onPress={() => Linking.openURL(`tel:${item?.alt_mobile_number}`)}
         />
       </View>
     </TouchableOpacity>
@@ -83,12 +59,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderRadius: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
     marginHorizontal: 20,
     backgroundColor: colors.secondary,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.grey,
     shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 5 },
+    shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 1,
     elevation: 5,

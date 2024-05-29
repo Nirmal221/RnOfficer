@@ -4,6 +4,7 @@ import colors from './Colors';
 
 const ApplicationStyle = StyleSheet.create({
   rowAlignCenter: { flexDirection: 'row', alignItems: 'center' },
+  alignJustifyCenter: { alignItems: 'center', justifyContent: 'center' },
   rowAlignCenterJustifyBetween: {
     flexDirection: 'row',
     alignItems: 'center',

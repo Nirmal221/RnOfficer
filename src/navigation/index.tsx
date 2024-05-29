@@ -27,12 +27,12 @@ const AuthStack = () => {
       screenOptions={{
         headerShown: false,
       }}>
+      <Stack.Screen name="LoginScreen" component={LoginScreen} />
+      <Stack.Screen name="RegistrationScreen" component={RegistrationScreen} />
       <Stack.Screen
         name="TalukaRegistrationScreen"
         component={TalukaRegistrationScreen}
       />
-      <Stack.Screen name="LoginScreen" component={LoginScreen} />
-      <Stack.Screen name="RegistrationScreen" component={RegistrationScreen} />
     </Stack.Navigator>
   );
 };

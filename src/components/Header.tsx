@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     flex: 1,
-    paddingRight: 30,
     paddingBottom: 10,
     color: colors.black,
     textAlign: 'center',

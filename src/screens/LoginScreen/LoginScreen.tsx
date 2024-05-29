@@ -1,20 +1,13 @@
 import React from 'react';
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-  useColorScheme,
-} from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import {
   GOOGLE_WEB_CLIENT,
   handleGoogleLogin,
 } from '../../services/GoogleLoginService';
 import styles from './style';
-import { AppIcons, AppImages } from '../../assets';
+import { AppImages } from '../../assets';
 import { setInAsync } from '../../utils';
 import { ASYNC_KEY } from '../../constant';
-import { colors, height, width } from '../../themes';
 import { showError } from '../../components/ToastAlert';
 import { StackActions } from '@react-navigation/native';
 import { AuthStackParamList } from '../../navigation/types';
@@ -34,8 +27,6 @@ type LoginScreenProps = NativeStackScreenProps<
 
 const LoginScreen = (props: LoginScreenProps) => {
   const { navigation } = props;
-  const theme = useColorScheme();
-  const isDark = theme === 'dark';
   const onPressGoogleLogin = () => {
     handleGoogleLogin().then(async res => {
       checkAlreadyUser(res);
@@ -66,11 +57,6 @@ const LoginScreen = (props: LoginScreenProps) => {
   return (
     <SafeAreaView style={styles.mainContainer}>
       <View style={styles.container}>
-        <AppIcons.AppLogo
-          height={height * 0.5}
-          width={width}
-          color={isDark ? colors.grey : colors.black}
-        />
         <TouchableOpacity
           onPress={() => onPressGoogleLogin()}
           activeOpacity={0.5}

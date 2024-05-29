@@ -19,12 +19,13 @@ const SplashScreen = ({ navigation }: RegistrationScreenProps) => {
   }, []);
 
   const checkAuth = async () => {
-    const user = await getFromAsync(ASYNC_KEY.AUTH);
-    if (user) {
-      navigation.dispatch(StackActions.replace('AppStackScreens'));
-    } else {
-      navigation.dispatch(StackActions.replace('AuthStack'));
-    }
+    navigation.dispatch(StackActions.replace('AppStackScreens'));
+    // const user = await getFromAsync(ASYNC_KEY.AUTH);
+    // if (user) {
+    //   navigation.dispatch(StackActions.replace('AppStackScreens'));
+    // } else {
+    //   navigation.dispatch(StackActions.replace('AuthStack'));
+    // }
   };
   return (
     <View style={styles.mainContainer}>
