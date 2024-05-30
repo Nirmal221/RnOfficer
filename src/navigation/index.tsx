@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   AppStackParamList,
   AuthStackParamList,
   RootStackParamList,
 } from './types';
+import { colors } from '../themes';
 import { AppIcons } from '../assets';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import LoginScreen from '../screens/LoginScreen/LoginScreen';
@@ -12,9 +13,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import SplashScreen from '../screens/SplashScreen/SplashScreen';
 import ProfileScreen from '../screens/ProfileScreen/ProfileScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import OfficerListScreen from '../screens/OfficerListScreen/OfficerListScreen';
-import RegistrationScreen from '../screens/RegistrationScreen/RegistrationScreen';
 import TalukaRegistrationScreen from '../screens/RegistrationScreen/TalukaRegistrationScreen';
+import ForgotPassword from '../screens/ForgotPassword/ForgotPassword';
+import ResetPassword from '../screens/ResetPassword/ResetPassword';
+import { Context } from '../AppContext/AppContext';
 
 const Stack = createStackNavigator<AuthStackParamList>();
 const RootStack = createStackNavigator<RootStackParamList>();
@@ -28,7 +30,8 @@ const AuthStack = () => {
         headerShown: false,
       }}>
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
-      <Stack.Screen name="RegistrationScreen" component={RegistrationScreen} />
+      <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+      <Stack.Screen name="ResetPassword" component={ResetPassword} />
       <Stack.Screen
         name="TalukaRegistrationScreen"
         component={TalukaRegistrationScreen}
@@ -38,26 +41,46 @@ const AuthStack = () => {
 };
 
 function TabStack() {
+  const { theme } = useContext(Context);
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
+        tabBarStyle: {
+          backgroundColor: theme === 'light' ? colors.secondary : colors.black,
+        },
       }}>
       <Tab.Screen
         name="HomeScreen"
         component={HomeScreen}
         options={{
-          tabBarIcon: () => <AppIcons.Home height={30} width={30} />,
+          tabBarIcon: ({ focused }) => (
+            <AppIcons.Home
+              height={30}
+              width={30}
+              color={
+                focused
+                  ? theme === 'light'
+                    ? colors.black
+                    : colors.secondary
+                  : colors.grey
+              }
+            />
+          ),
         }}
       />
       <Tab.Screen
         name="ProfileScreen"
         component={ProfileScreen}
         options={{
-          tabBarIcon: () => {
-            return <AppIcons.Profile />;
-          },
+          tabBarIcon: ({ focused }) => (
+            <AppIcons.Profile
+              height={30}
+              width={30}
+              color={focused ? colors.black : colors.grey}
+            />
+          ),
         }}
       />
     </Tab.Navigator>
@@ -71,11 +94,6 @@ const AppStackScreens = () => {
         headerShown: false,
       }}>
       <AppStack.Screen name="TabStack" component={TabStack} />
-      <AppStack.Screen name="OfficerListScreen" component={OfficerListScreen} />
-      <AppStack.Screen
-        name="RegistrationScreen"
-        component={RegistrationScreen}
-      />
     </AppStack.Navigator>
   );
 };

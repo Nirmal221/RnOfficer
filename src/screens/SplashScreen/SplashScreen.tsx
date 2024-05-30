@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import styles from './styles';
-import { getFromAsync } from '../../utils';
-import { ASYNC_KEY } from '../../constant';
 import { StackActions } from '@react-navigation/routers';
 import { RootStackParamList } from '../../navigation/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { getFromAsync } from '../../utils';
+import { ASYNC_KEY } from '../../constant';
 
 type RegistrationScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -19,13 +19,12 @@ const SplashScreen = ({ navigation }: RegistrationScreenProps) => {
   }, []);
 
   const checkAuth = async () => {
-    navigation.dispatch(StackActions.replace('AppStackScreens'));
-    // const user = await getFromAsync(ASYNC_KEY.AUTH);
-    // if (user) {
-    //   navigation.dispatch(StackActions.replace('AppStackScreens'));
-    // } else {
-    //   navigation.dispatch(StackActions.replace('AuthStack'));
-    // }
+    const user = await getFromAsync(ASYNC_KEY.AUTH);
+    if (user) {
+      navigation.dispatch(StackActions.replace('AppStackScreens'));
+    } else {
+      navigation.dispatch(StackActions.replace('AuthStack'));
+    }
   };
   return (
     <View style={styles.mainContainer}>

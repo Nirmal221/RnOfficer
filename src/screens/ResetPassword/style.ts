@@ -35,7 +35,7 @@ const style = (theme: boolean) =>
     },
     loginTitle: {
       ...ApplicationStyle.f15w400,
-      color: theme ? colors.black : colors.secondary,
+      color: colors.black,
     },
   });
 

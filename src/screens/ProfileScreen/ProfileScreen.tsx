@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Text, View, ScrollView, TouchableOpacity, Image } from 'react-native';
-import styles from './style';
-import moment from 'moment';
+import React, { useContext, useEffect, useState } from 'react';
+import { Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import style from './style';
 import { Loader } from '../../components';
-import { getFromAsync } from '../../utils';
-import auth from '@react-native-firebase/auth';
-import { ApiConstant } from '../../services/ApiServices';
+import { getFromAsync, setInAsync } from '../../utils';
 import { APP_CONSTANT, ASYNC_KEY } from '../../constant';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppStackParamList, UserData } from '../../navigation/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackActions, useIsFocused } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { Context } from '../../AppContext/AppContext';
 
 type ProfileScreenProps = NativeStackScreenProps<
   AppStackParamList,
@@ -28,6 +25,8 @@ const RenderPanel = ({
   value?: string;
   showSeprator: boolean;
 }) => {
+  const { theme } = useContext(Context);
+  const styles = style(theme === 'light');
   return (
     <>
       <View style={styles.panelContainer}>
@@ -41,11 +40,13 @@ const RenderPanel = ({
 
 const ProfileScreen = (props: ProfileScreenProps) => {
   const { navigation } = props;
+  const { theme, setTheme } = useContext(Context);
   const [data, setData] = useState<UserData>({});
   const [loader, setLoader] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const isFocused = useIsFocused();
   const [showSupport, setShowSupport] = useState(false);
+  const styles = style(theme === 'light');
 
   useEffect(() => {
     if (isFocused) {
@@ -62,34 +63,8 @@ const ProfileScreen = (props: ProfileScreenProps) => {
   };
 
   const onPressSignOut = async () => {
-    try {
-      setLoader(true);
-      await GoogleSignin.revokeAccess();
-      await GoogleSignin.signOut();
-      auth()
-        .signOut()
-        .then(async () => {
-          setLoader(false);
-          await AsyncStorage.clear();
-          navigation.dispatch(StackActions.replace('AuthStack'));
-        })
-        .catch(async () => {
-          setLoader(false);
-
-          await AsyncStorage.clear();
-          navigation.dispatch(StackActions.replace('AuthStack'));
-        });
-    } catch (error) {
-      await AsyncStorage.clear();
-      navigation.dispatch(StackActions.replace('AuthStack'));
-    }
-  };
-
-  const onPressEdit = () => {
-    navigation.navigate('RegistrationScreen', {
-      isEdit: true,
-      userData: data,
-    });
+    await AsyncStorage.clear();
+    navigation.dispatch(StackActions.replace('AuthStack'));
   };
 
   const onPressContactSupport = () => {
@@ -106,96 +81,33 @@ const ProfileScreen = (props: ProfileScreenProps) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}>
         <View style={styles.imgContainer}>
-          <Image
-            source={{
-              uri: data?.photo?.includes('https')
-                ? data?.photo
-                : ApiConstant.BASE_URL_IMAGE + data?.photo,
-            }}
-            style={styles.profileImg}
-            resizeMode="cover"
-          />
-          <Text style={styles.profileTitle}>
-            {`${data.first_name} ${data.middal_name} ${data.last_name}`}
-          </Text>
-          <Text style={styles.profileTitle}>{`(${data.job_status})`}</Text>
+          <Text style={styles.profileTitle}>{`${data.username}`}</Text>
         </View>
         <TouchableOpacity
           style={[styles.buttonContainer, showProfile && styles.profileButton]}
           onPress={() => setShowProfile(!showProfile)}>
           <Text style={styles.buttonTitle}>{APP_CONSTANT.PROFILE}</Text>
         </TouchableOpacity>
+
         {showProfile && (
           <View style={styles.contentContainer}>
-            <RenderPanel
-              title={APP_CONSTANT.EMAIL}
-              value={data?.email}
-              showSeprator={true}
-            />
-            <RenderPanel
-              showSeprator
-              title={APP_CONSTANT.MOBILE_NO}
-              value={`${data?.mobile_number}`}
-            />
-            <RenderPanel
-              showSeprator
-              title={APP_CONSTANT.GENDER}
-              value={`${data?.gender}`}
-            />
-            <RenderPanel
-              showSeprator
-              title={APP_CONSTANT.DOB}
-              value={`${moment(data.dob).format('DD-MMM-YYYY')}`}
-            />
-            <RenderPanel
-              showSeprator
-              title={APP_CONSTANT.DESIGNATION}
-              value={`${data.designation_id}`}
-            />
-            <RenderPanel
-              showSeprator
-              title={APP_CONSTANT.CLASS}
-              value={`${data.class}`}
-            />
-            <RenderPanel
-              showSeprator
-              title={APP_CONSTANT.OFFICE_ADDRESS}
-              value={`${data?.office_address}`}
-            />
-            <RenderPanel
-              showSeprator
-              title={APP_CONSTANT.OFFICE_DISTRICT}
-              value={`${data?.office_district_id}`}
-            />
-            <RenderPanel
-              showSeprator
-              title={APP_CONSTANT.NATIVE_ADDRESS}
-              value={`${data.native_address}`}
-            />
-            <RenderPanel
-              showSeprator
-              title={APP_CONSTANT.NATIVE_DISTRICT}
-              value={`${data?.native_district_id}`}
-            />
-            <RenderPanel
-              showSeprator
-              title={APP_CONSTANT.SPECELIZATOIN}
-              value={`${data?.specialization}`}
-            />
-            <RenderPanel
-              showSeprator={false}
-              title={APP_CONSTANT.REMARKS}
-              value={`${data?.remarks}`}
-            />
+            <RenderPanel title={APP_CONSTANT.EMAIL} value={data?.username} />
           </View>
         )}
-
-        {/* <TouchableOpacity
-          style={styles.buttonContainer}
-          onPress={() => onPressEdit()}>
-          <Text style={styles.buttonTitle}>{APP_CONSTANT.UPDATE_PROFILE}</Text>
-        </TouchableOpacity> */}
         <TouchableOpacity
+          style={[styles.buttonContainer, showProfile && styles.profileButton]}
+          onPress={async () => {
+            if (theme === 'dark') {
+              await setInAsync(ASYNC_KEY.THEME, 'light');
+              setTheme('light');
+            } else {
+              await setInAsync(ASYNC_KEY.THEME, 'dark');
+              setTheme('dark');
+            }
+          }}>
+          <Text style={styles.buttonTitle}>Theme</Text>
+        </TouchableOpacity>
+        {/* <TouchableOpacity
           style={[styles.buttonContainer, showSupport && styles.profileButton]}
           onPress={() => onPressContactSupport()}>
           <Text style={styles.buttonTitle}>{APP_CONSTANT.CONTACT_SUPPORT}</Text>
@@ -204,16 +116,16 @@ const ProfileScreen = (props: ProfileScreenProps) => {
           <View style={styles.contentContainer}>
             <RenderPanel
               showSeprator={false}
-              title={APP_CONSTANT.NIRMAL_SORATHIYA}
-              value={APP_CONSTANT.NIRMAL_NUMBER}
+              title={''}
+              value={''}
             />
             <RenderPanel
               showSeprator={false}
-              title={APP_CONSTANT.AKSHAY_SONANI}
-              value={APP_CONSTANT.AKSHAY_NUMBER}
+              title={''}
+              value={''}
             />
           </View>
-        )}
+        )} */}
         <TouchableOpacity
           style={styles.buttonContainer}
           onPress={() => onPressSignOut()}>

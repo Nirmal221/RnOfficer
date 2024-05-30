@@ -3,14 +3,20 @@ import { Platform } from 'react-native';
 import { UserData } from '../navigation/types';
 
 const ApiConstant = {
-  BASE_URL: 'https://patidarkarmyogi.saranginfotech.in/api/',
-  BASE_URL_IMAGE: 'https://patidarkarmyogi.saranginfotech.in/users/',
-  REGISTER: 'register',
+  BASE_URL: 'http://localhost:3000',
+  BASE_URL_IMAGE: '',
+  REGISTER: '/auth/register',
   DISTRICTS: 'districts',
   DESIGNATIONS: 'designations',
   OFFICER_LIST: 'officer-list',
-  LOGIN: 'login',
+  LOGIN: '/auth/login',
   EDIT_PROFILE: 'edit-profile',
+  ADD_NOTES: '/notes/create',
+  UPDATE_NOTES: '/update/',
+  DELETE_NOTES: 'delete/:id',
+  VIEW: '/view',
+  FORGOT_PASSWORD: '/auth/forgot-password',
+  RESET_PASSWORD: 'reset-password',
 };
 
 const api = axios.create({

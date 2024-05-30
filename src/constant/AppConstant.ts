@@ -71,6 +71,7 @@ const APP_CONSTANT = {
 
 const ASYNC_KEY = {
   AUTH: 'AUTH',
+  THEME: 'THEME',
 };
 
 const GENDER = {

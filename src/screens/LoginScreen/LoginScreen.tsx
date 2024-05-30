@@ -1,20 +1,17 @@
-import React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
-import {
-  GOOGLE_WEB_CLIENT,
-  handleGoogleLogin,
-} from '../../services/GoogleLoginService';
-import styles from './style';
-import { AppImages } from '../../assets';
+import React, { useContext, useState } from 'react';
+import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import { GOOGLE_WEB_CLIENT } from '../../services/GoogleLoginService';
+import style from './style';
 import { setInAsync } from '../../utils';
 import { ASYNC_KEY } from '../../constant';
-import { showError } from '../../components/ToastAlert';
+import { TextInputField } from '../../components';
 import { StackActions } from '@react-navigation/native';
 import { AuthStackParamList } from '../../navigation/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ApiConstant, postCheckUser } from '../../services/ApiServices';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { ApiConstant, post } from '../../services/ApiServices';
+import { Context } from '../../AppContext/AppContext';
 
 GoogleSignin.configure({
   webClientId: GOOGLE_WEB_CLIENT,
@@ -26,47 +23,61 @@ type LoginScreenProps = NativeStackScreenProps<
 >;
 
 const LoginScreen = (props: LoginScreenProps) => {
+  const { theme } = useContext(Context);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const { navigation } = props;
-  const onPressGoogleLogin = () => {
-    handleGoogleLogin().then(async res => {
-      checkAlreadyUser(res);
-    });
-  };
+  const styles = style(theme === 'light');
 
-  const checkAlreadyUser = (data: any) => {
-    const googleId = data.user.uid;
-    const emailId = data.user.email;
-    postCheckUser(ApiConstant.LOGIN, googleId, emailId)
-      .then(async (res: any) => {
-        await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(res?.data?.data?.data));
+  const onPressLogin = async () => {
+    const obj = {
+      username: email,
+      password: password,
+    };
+    post(ApiConstant.LOGIN, obj)
+      .then(async () => {
+        await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(obj));
         navigation.dispatch(StackActions.replace('AppStackScreens'));
       })
-      .catch(err => {
-        const msg = err?.response?.data?.message?.error;
-        if (msg === 'Unauthorised') {
-          navigation.navigate('RegistrationScreen', {
-            userData: data.user,
-          });
-        } else {
-          showError(msg);
-        }
-      })
-      .finally(() => {});
+      .catch(() => {
+        Alert.alert('Something Went Wrong');
+      });
   };
 
   return (
     <SafeAreaView style={styles.mainContainer}>
       <View style={styles.container}>
+        <TextInputField
+          value={email}
+          title={'Email'}
+          placeholder="Please Enter Email id"
+          onChangeText={text => setEmail(text)}
+        />
+        <TextInputField
+          secureTextEntry
+          value={password}
+          title={'Password'}
+          placeholder="Please Enter Password"
+          onChangeText={text => setPassword(text)}
+        />
         <TouchableOpacity
-          onPress={() => onPressGoogleLogin()}
+          disabled={email.length === 0 || password.length === 0}
+          onPress={() => onPressLogin()}
           activeOpacity={0.5}
           style={styles.loginButton}>
-          <Image
-            source={AppImages.google}
-            style={styles.googleLogo}
-            resizeMode="contain"
-          />
-          <Text style={styles.loginTitle}>Login With Google</Text>
+          <Text style={styles.loginTitle}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ForgotPassword')}
+          activeOpacity={0.5}
+          style={styles.loginButton}>
+          <Text style={styles.loginTitle}>Forgot Password</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('TalukaRegistrationScreen', {})}
+          activeOpacity={0.5}
+          style={styles.loginButton}>
+          <Text style={styles.loginTitle}>Sign Up</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

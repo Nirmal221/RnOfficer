@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -7,68 +7,86 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import styles from './style';
+import style from './style';
 import { AppIcons } from '../../assets';
 import BottomSheet from '@gorhom/bottom-sheet';
+import { RenderOfficerDetails } from '../../components';
 import { colors, ApplicationStyle } from '../../themes';
-import { AppStackParamList } from '../../navigation/types';
 import AddNotesModal from '../../components/AddNotesModal';
+import { AppStackParamList } from '../../navigation/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { OfficerDetail, RenderOfficerDetails } from '../../components';
+import { ApiConstant, get, post } from '../../services/ApiServices';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Context } from '../../AppContext/AppContext';
 import moment from 'moment';
 
 type HomeScreenProps = NativeStackScreenProps<AppStackParamList, 'HomeScreen'>;
 
 const HomeScreen: React.FC<HomeScreenProps> = () => {
-  const snapPoints = useMemo(() => ['1%', '85%'], []);
-
+  const { theme } = useContext(Context);
+  const styles = style(theme === 'light');
   const [refreshing, setRefreshing] = useState(false);
   const [loader, setLoader] = useState(false);
-  const [selectedOfficer, setSelectedOfficer] = useState({});
   const [list, setList] = useState([
-    { id: 1, title: 'Test', description: 'Test', date: moment() },
-    { id: 2, title: 'TestDescription', description: 'Test', date: moment() },
-    { id: 3, title: 'Test', description: 'Test', date: moment() },
-    { id: 4, title: 'Test', description: 'Test', date: moment() },
-    { id: 5, title: 'Test', description: 'Test', date: moment() },
-    { id: 6, title: 'Test', description: 'Test', date: moment() },
+    // { id: 1, title: 'Test', description: 'Test', date: moment() },
+    // { id: 2, title: 'TestDescription', description: 'Test', date: moment() },
   ]);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [selectedNote, setSelectedNote] = useState({});
+  const [selectedNote, setSelectedNote] = useState<{ id?: number }>({});
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    getData();
+  }, []);
 
-  const getData = (
-    destrictId: number,
-    searchText: string,
-    designationId = 0,
-  ) => {
-    // setLoader(true);
-    // let params = `${ApiConstant.OFFICER_LIST}/${destrictId}?search=${searchText}&designation_id=${designationId}`;
-    // get(params)
-    //   .then((res: any) => {
-    //     setList(res?.data?.data);
-    //   })
-    //   .catch(() => null)
-    //   .finally(() => {
-    //     setLoader(false);
-    //     setRefreshing(false);
-    //   });
+  const getData = () => {
+    setLoader(true);
+    get(ApiConstant.VIEW)
+      .then((res: any) => {
+        setList(res?.data?.data);
+      })
+      .catch(() => null)
+      .finally(() => {
+        setLoader(false);
+        setRefreshing(false);
+      });
   };
 
   const onRefresh = () => {
     setRefreshing(true);
-    setTimeout(() => {
-      const destrictId = 0;
-      getData(destrictId, '');
-    }, 1500);
   };
 
   const onCloseModal = () => {
     setSelectedNote({});
     setShowAddModal(false);
+  };
+
+  const onPressAdd = (created: any) => {
+    post(ApiConstant.ADD_NOTES, created)
+      .then((res: any) => {
+        const responseNoteId = res.data.noteId;
+        const temp: any = [...list];
+        temp.push({
+          ...created,
+          id: responseNoteId,
+        });
+        setList(temp);
+      })
+      .catch(() => {});
+  };
+
+  const onPressUpdate = (created: any) => {
+    post(`${ApiConstant.UPDATE_NOTES}/:${selectedNote.id}`, created)
+      .then(() => getData())
+      .catch(() => {});
+  };
+
+  const onPressDelete = () => {
+    setSelectedNote({});
+    setShowAddModal(false);
+    post(`${ApiConstant.DELETE_NOTES}/:${selectedNote.id}`, {})
+      .then(() => getData())
+      .catch(() => {});
   };
 
   const renderEmptyList = () => {
@@ -86,7 +104,11 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
       <TouchableOpacity
         style={styles.plusButtonContainer}
         onPress={() => setShowAddModal(true)}>
-        <AppIcons.Plus height={30} width={30} color={colors.background} />
+        <AppIcons.Plus
+          height={30}
+          width={30}
+          color={theme === 'light' ? colors.background : colors.black}
+        />
       </TouchableOpacity>
     );
   };
@@ -132,18 +154,19 @@ const HomeScreen: React.FC<HomeScreenProps> = () => {
             />
           </>
         )}
-        <OfficerDetail
-          bottomSheetRef={bottomSheetRef}
-          snapPoints={snapPoints}
-          selectedOfficer={selectedOfficer}
-        />
         {showAddModal && (
           <AddNotesModal
             selected={selectedNote}
             isVisible={showAddModal}
-            onPressAdd={created => {}}
+            onPressAdd={created => {
+              if (Object.keys(selectedNote).length === 0) {
+                onPressAdd(created);
+              } else {
+                onPressUpdate(created);
+              }
+            }}
             closeModal={() => onCloseModal()}
-            onPressDelete={() => onCloseModal()}
+            onPressDelete={() => onPressDelete()}
           />
         )}
       </View>

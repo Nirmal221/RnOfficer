@@ -1,61 +1,39 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Platform,
   ScrollView,
   StyleSheet,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native';
-import {
-  Header,
-  Loader,
-  ActionButton,
-  TextInputField,
-  OfficerDetail,
-} from '../../components';
 import colors from '../../themes/Colors';
-import BottomSheet from '@gorhom/bottom-sheet';
-import { phoneNumberRegex } from '../../utils';
 import { ApplicationStyle } from '../../themes';
 import { ERROR, APP_CONSTANT } from '../../constant';
 import { showError } from '../../components/ToastAlert';
+import { AuthStackParamList } from '../../navigation/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ApiConstant, post } from '../../services/ApiServices';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Header, Loader, ActionButton, TextInputField } from '../../components';
 
-const TalukaRegistrationScreen = () => {
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['1%', '85%'], []);
+type TalukaRegistrationScreenProps = NativeStackScreenProps<
+  AuthStackParamList,
+  'TalukaRegistrationScreen'
+>;
+
+const TalukaRegistrationScreen = (props: TalukaRegistrationScreenProps) => {
+  const { navigation } = props;
 
   const [name, setName] = useState('');
-  const [middalName, setMiddalName] = useState('');
-  const [sureName, setSureName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const [loader, setLoader] = useState(false);
-
-  const checkPhoneNumberValid = () => {
-    const check = phoneNumberRegex.test(phoneNumber);
-    if (phoneNumber === '') {
-      showError(ERROR.PLEASE_ENTER_PHONE_NUMBER);
-      return true;
-    } else if (!check) {
-      showError(ERROR.PLEASE_ENTER_VALID_PHONE_NUMBER);
-      return true;
-    } else {
-      return false;
-    }
-  };
 
   const checkValidation = () => {
     if (name === '') {
       showError(ERROR.PLEASE_ENTER_NAME);
-      return false;
-    } else if (middalName === '') {
-      showError(ERROR.PLEASE_ENTER_MIDDAL_NAME);
-      return false;
-    } else if (sureName === '') {
-      showError(ERROR.PLEASE_ENTER_SURE_NAME);
-      return false;
-    } else if (checkPhoneNumberValid()) {
       return false;
     } else {
       return true;
@@ -64,33 +42,30 @@ const TalukaRegistrationScreen = () => {
 
   const onPressCreateAccount = () => {
     if (checkValidation()) {
-      if (bottomSheetRef.current) {
-        bottomSheetRef.current.expand();
-      }
       const obj = {
-        first_name: name,
-        middal_name: middalName,
-        last_name: sureName,
-        mobile_number: phoneNumber,
+        username: name,
+        email: email,
+        password: password,
       };
 
-      //   setLoader(true);
-      //   postWithFormData(ApiConstant.REGISTER, obj)
-      //     .then(() => {
-      //       setTimeout(() => {
-      //         setLoader(false);
-      //         navigation.goBack();
-      //       }, 3000);
-      //     })
-      //     .catch(err => {
-      //       const msgObj = err.response.data?.message;
-      //       const msg = Object.keys(msgObj)[0];
-      //       showError(msgObj[msg][0]);
-      //     })
+      // setLoader(true);
+      post(ApiConstant.REGISTER, obj)
+        .then(() => {
+          setTimeout(() => {
+            setLoader(false);
+            Alert.alert('Register Successfully');
+            navigation.goBack();
+          }, 3000);
+        })
+        .catch(err => {
+          const msgObj = err.response.data?.message;
+          const msg = Object.keys(msgObj)[0];
+          showError(msgObj[msg][0]);
+        })
 
-      //     .finally(() => {
-      //       setLoader(false);
-      //     });
+        .finally(() => {
+          setLoader(false);
+        });
     }
   };
 
@@ -107,28 +82,20 @@ const TalukaRegistrationScreen = () => {
             <TextInputField
               value={name}
               title={APP_CONSTANT.NAME}
-              placeholder={APP_CONSTANT.ENTER_NAME}
+              placeholder={'Please Enter Your Full Name'}
               onChangeText={text => setName(text)}
             />
             <TextInputField
-              value={middalName}
-              title={APP_CONSTANT.MIDDAL_NAME}
-              placeholder={APP_CONSTANT.ENTER_MIDDAL_NAME}
-              onChangeText={text => setMiddalName(text)}
+              value={email}
+              title={APP_CONSTANT.EMAIL}
+              placeholder={'Please Enter Your Email  '}
+              onChangeText={text => setEmail(text)}
             />
             <TextInputField
-              value={sureName}
-              title={APP_CONSTANT.SURENAME}
-              placeholder={APP_CONSTANT.ENTER_SURENAME}
-              onChangeText={text => setSureName(text)}
-            />
-            <TextInputField
-              value={phoneNumber}
-              title={APP_CONSTANT.MOBILE_NO}
-              maxLength={10}
-              keyboardType={'number-pad'}
-              placeholder={APP_CONSTANT.ENTER_MOBILE_NO}
-              onChangeText={text => setPhoneNumber(text)}
+              value={password}
+              title={'Password'}
+              placeholder={'Please Enter Your Password'}
+              onChangeText={text => setPassword(text)}
             />
           </View>
         </ScrollView>
@@ -140,11 +107,6 @@ const TalukaRegistrationScreen = () => {
         mainContainerStyle={styles.createBtnContainer}
       />
       {loader && <Loader />}
-      <OfficerDetail
-        bottomSheetRef={bottomSheetRef}
-        snapPoints={snapPoints}
-        selectedOfficer={{}}
-      />
     </SafeAreaView>
   );
 };

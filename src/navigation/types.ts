@@ -10,12 +10,14 @@ export type AppStackParamList = {
 
 export type AuthStackParamList = {
   LoginScreen: undefined;
+  ResetPassword: undefined;
+  ForgotPassword: undefined;
   RegistrationScreen: RegistrationScreenProps;
   TalukaRegistrationScreen: RegistrationScreenProps;
 };
 
 type RegistrationScreenProps = {
-  userData: UserData;
+  userData?: UserData;
   isEdit?: boolean;
 };
 
@@ -43,4 +45,5 @@ export type UserData = {
   title?: string;
   description?: string;
   date?: string;
+  username?: string;
 };
