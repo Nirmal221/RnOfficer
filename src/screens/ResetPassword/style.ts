@@ -10,7 +10,8 @@ const style = (theme: boolean) =>
     container: {
       flex: 1,
       paddingHorizontal: 30,
-      justifyContent: 'center',
+      justifyContent: 'flex-end',
+      paddingBottom: 50,
       backgroundColor: theme ? colors.secondary : colors.black,
     },
     loginButton: {

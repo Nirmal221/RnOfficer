@@ -67,13 +67,13 @@ const style = (theme: boolean) =>
   StyleSheet.create({
     container: {},
     textInput: {
-      borderRadius: 5,
       borderWidth: 0.5,
       paddingHorizontal: 10,
       paddingVertical: 10,
       borderColor: theme ? colors.black : colors.secondary,
       backgroundColor: theme ? colors.secondary : colors.black,
       color: theme ? colors.black : colors.secondary,
+      borderStyle: 'dashed',
       ...ApplicationStyle.f15w400,
     },
     titleText: {

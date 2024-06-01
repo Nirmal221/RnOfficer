@@ -5,8 +5,7 @@ import {
   RootStackParamList,
 } from './types';
 import { colors } from '../themes';
-import { AppIcons } from '../assets';
-import HomeScreen from '../screens/HomeScreen/HomeScreen';
+import { AppIcons, AppImages } from '../assets';
 import LoginScreen from '../screens/LoginScreen/LoginScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
@@ -17,6 +16,8 @@ import TalukaRegistrationScreen from '../screens/RegistrationScreen/TalukaRegist
 import ForgotPassword from '../screens/ForgotPassword/ForgotPassword';
 import ResetPassword from '../screens/ResetPassword/ResetPassword';
 import { Context } from '../AppContext/AppContext';
+import Timer from '../screens/Timer/Timer';
+import { Image } from 'react-native';
 
 const Stack = createStackNavigator<AuthStackParamList>();
 const RootStack = createStackNavigator<RootStackParamList>();
@@ -53,7 +54,7 @@ function TabStack() {
       }}>
       <Tab.Screen
         name="HomeScreen"
-        component={HomeScreen}
+        component={Timer}
         options={{
           tabBarIcon: ({ focused }) => (
             <AppIcons.Home
@@ -74,11 +75,16 @@ function TabStack() {
         name="ProfileScreen"
         component={ProfileScreen}
         options={{
-          tabBarIcon: ({ focused }) => (
-            <AppIcons.Profile
-              height={30}
-              width={30}
-              color={focused ? colors.black : colors.grey}
+          tabBarIcon: ({}) => (
+            <Image
+              source={AppImages.appLogo}
+              style={{
+                height: 40,
+                width: 40,
+                alignSelf: 'center',
+                borderRadius: 100,
+              }}
+              resizeMode="contain"
             />
           ),
         }}

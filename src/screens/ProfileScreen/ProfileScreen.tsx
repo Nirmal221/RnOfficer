@@ -79,7 +79,7 @@ const ProfileScreen = (props: ProfileScreenProps) => {
       <ScrollView
         style={styles.container}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}>
+        contentContainerStyle={{ flex: 1, justifyContent: 'center' }}>
         <View style={styles.imgContainer}>
           <Text style={styles.profileTitle}>{`${data.username}`}</Text>
         </View>
@@ -106,6 +106,10 @@ const ProfileScreen = (props: ProfileScreenProps) => {
             }
           }}>
           <Text style={styles.buttonTitle}>Theme</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.buttonContainer, showProfile && styles.profileButton]}>
+          <Text style={styles.buttonTitle}>About Us</Text>
         </TouchableOpacity>
         {/* <TouchableOpacity
           style={[styles.buttonContainer, showSupport && styles.profileButton]}

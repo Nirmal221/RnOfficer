@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { GOOGLE_WEB_CLIENT } from '../../services/GoogleLoginService';
 import style from './style';
 import { setInAsync } from '../../utils';
@@ -10,8 +10,8 @@ import { AuthStackParamList } from '../../navigation/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { ApiConstant, post } from '../../services/ApiServices';
 import { Context } from '../../AppContext/AppContext';
+import { AppIcons, AppImages } from '../../assets';
 
 GoogleSignin.configure({
   webClientId: GOOGLE_WEB_CLIENT,
@@ -34,19 +34,31 @@ const LoginScreen = (props: LoginScreenProps) => {
       username: email,
       password: password,
     };
-    post(ApiConstant.LOGIN, obj)
-      .then(async () => {
-        await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(obj));
-        navigation.dispatch(StackActions.replace('AppStackScreens'));
-      })
-      .catch(() => {
-        Alert.alert('Something Went Wrong');
-      });
+    await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(obj));
+    navigation.dispatch(StackActions.replace('AppStackScreens'));
+    // post(ApiConstant.LOGIN, obj)
+    //   .then(async () => {
+    //     await setInAsync(ASYNC_KEY.AUTH, JSON.stringify(obj));
+    //     navigation.dispatch(StackActions.replace('AppStackScreens'));
+    //   })
+    //   .catch(() => {
+    //     Alert.alert('Something Went Wrong');
+    //   });
   };
 
   return (
     <SafeAreaView style={styles.mainContainer}>
       <View style={styles.container}>
+        <Image
+          source={AppImages.appLogo}
+          style={{
+            height: 200,
+            width: 200,
+            alignSelf: 'center',
+            borderRadius: 100,
+          }}
+          resizeMode="contain"
+        />
         <TextInputField
           value={email}
           title={'Email'}

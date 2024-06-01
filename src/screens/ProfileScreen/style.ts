@@ -73,10 +73,10 @@ const style = (theme: boolean) =>
       paddingBottom: 0,
     },
     buttonContainer: {
+      alignItems: 'center',
       backgroundColor: colors.secondary,
       paddingVertical: 15,
       paddingHorizontal: 15,
-      borderRadius: 10,
       marginTop: 10,
     },
     buttonTitle: {

@@ -77,6 +77,7 @@ const TalukaRegistrationScreen = (props: TalukaRegistrationScreenProps) => {
         style={styles.container}>
         <ScrollView
           style={styles.scrollContainer}
+          contentContainerStyle={{ flex: 1, justifyContent: 'flex-end' }}
           showsVerticalScrollIndicator={false}>
           <View style={{ paddingBottom: 50 }}>
             <TextInputField
@@ -98,14 +99,14 @@ const TalukaRegistrationScreen = (props: TalukaRegistrationScreenProps) => {
               onChangeText={text => setPassword(text)}
             />
           </View>
+          <ActionButton
+            title={APP_CONSTANT.CREATE_ACCOUNT}
+            onPress={() => onPressCreateAccount()}
+            mainContainerStyle={styles.createBtnContainer}
+          />
         </ScrollView>
       </KeyboardAvoidingView>
 
-      <ActionButton
-        title={APP_CONSTANT.CREATE_ACCOUNT}
-        onPress={() => onPressCreateAccount()}
-        mainContainerStyle={styles.createBtnContainer}
-      />
       {loader && <Loader />}
     </SafeAreaView>
   );

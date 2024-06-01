@@ -10,7 +10,8 @@ const style = (theme: boolean) =>
     container: {
       flex: 1,
       paddingHorizontal: 30,
-      justifyContent: 'center',
+      paddingBottom: 50,
+      justifyContent: 'flex-end',
       backgroundColor: theme ? colors.secondary : colors.black,
     },
     loginButton: {
@@ -26,7 +27,6 @@ const style = (theme: boolean) =>
       shadowOpacity: 0.8,
       shadowRadius: 2,
       elevation: 5,
-      borderRadius: 10,
     },
     googleLogo: {
       marginRight: 5,

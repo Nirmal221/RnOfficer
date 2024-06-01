@@ -1,5 +1,5 @@
 const APP_CONSTANT = {
-  APP_NAME: 'Patidar Karmyogi',
+  APP_NAME: 'Timer',
   NAME: 'Name',
   ENTER_NAME: 'Enter Name',
   MIDDAL_NAME: 'Middal Name',
